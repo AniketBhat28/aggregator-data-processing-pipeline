@@ -8,6 +8,7 @@ import json
 import importlib
 import configparser
 import time
+import logging
 
 
 
@@ -23,6 +24,25 @@ CONFIG_PATH = BASE_PATH# + "/configuration"
 
 # Main Function
 if __name__ == '__main__':
+
+	# Enabling logger
+	logging.basicConfig(level=logging.INFO)
+	logger = logging.getLogger(__name__)
+
+	# Create a file handler
+	handler = logging.FileHandler('Output/Output.log')
+	handler.setLevel(logging.INFO)
+
+	# Create a logging format
+	formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+	handler.setFormatter(formatter)
+
+	# Add the handlers to the logger
+	logger.addHandler(handler)
+
+	logger.info("######################################")
+	logger.info("             INITIALISING             ")
+	logger.info("######################################")
 
 
 	# app_configs_list = []
@@ -55,8 +75,15 @@ if __name__ == '__main__':
 	module = importlib.import_module(module_path)
 	className = getattr(module, module_path_relative.split('.')[-1])
 	classObj = className()
-	classObj.initialise_processing(app_config, rule_config)
+	classObj.initialise_processing(logger, app_config, rule_config)
 
-	print("Time taken by the current run is %s seconds ---" % (time.time() - start_time))
+	logger.info("#################################")
+	logger.info("             EXITING             ")
+	logger.info("#################################\n\n")
+
+	# Delete the logger
+	logger.removeHandler(handler)
+	del logger, handler
+
+	#logger.info("Time taken by the current run is %s seconds ---" % (time.time() - start_time))
 		
-

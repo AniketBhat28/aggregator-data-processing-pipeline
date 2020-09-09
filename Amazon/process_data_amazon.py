@@ -30,10 +30,12 @@ from read_data import read_data
 
 class process_data_amazon:
 
-	# Function Description :	This function reads input data file and processes it.
-	# Input Parameters : 		None
-	# Return Values : 			data - Returns the input dataframe
-	def initialise_processing(self, app_config, rule_config):
+	# Function Description :	This function aggregates revenue for all Amazon files
+	# Input Parameters : 		logger - For the logging output file.
+	#							app_config - Configuration
+	#							rule_config - Rules json
+	# Return Values : 			None
+	def initialise_processing(self, logger, app_config, rule_config):
 
 		# Getting configuration file details
 		Input_List = list(ast.literal_eval(app_config['INPUT']['File_Data']))
@@ -55,14 +57,13 @@ class process_data_amazon:
 		for eachFile in files_in_s3:
 			if eachFile != '':
 		
-				print('\n+-+-+-+-+-+-+')
-				print(eachFile)
-				print('\n+-+-+-+-+-+-+')
+				logger.info('\n+-+-+-+-+-+-+')
+				logger.info(eachFile)
+				logger.info('\n+-+-+-+-+-+-+')
 
 				# Load the data
 				objReadData = read_data()
-				data = objReadData.load_data(app_config['INPUT'], eachFile)
-				print(data)
+				data = objReadData.load_data(logger, app_config['INPUT'], eachFile)
 				
 				# Get the corresponding rules object
 				if 'rental' in eachFile.lower():
@@ -153,24 +154,26 @@ class process_data_amazon:
 					blank_entries = pd.isnull(data[output_column_name])
 					data.loc[blank_entries, output_column_name] = default_value
 
-				print(data)
-
+				
 				# Group the data to get aggregated revenue
 				grouped_data = data.groupby(['aggregator', 'product_type', 'month', 'year', 'transaction_type'])['total_revenue'].sum().reset_index()
-				print('\n+-+-+-+-+-+-+')
-				print(grouped_data)
+				logger.info('\n+-+-+-+-+-+-+')
+				logger.info(grouped_data)
 
 				# Append the results to the final staging output
 				final_data = pd.concat([final_data,grouped_data])
 				
 
-		print('\n+-+-+-+-+-+-+')	
-		print(final_data)
+		logger.info('\n+-+-+-+-+-+-+')	
+		logger.info(final_data)
 
 		# Aggregate the staging output results
 		final_data = final_data.groupby(['aggregator', 'product_type','month', 'year', 'transaction_type'])['total_revenue'].sum().reset_index()
-		print('\n+-+-+-+-+-+-+')
-		print(final_data)
+		logger.info('\n+-+-+-+-+-+-+')
+		logger.info(final_data)
 
 		# Write the output to a csv
 		final_data.to_csv('Output/Amazon_Results.csv', sep=',')
+
+
+

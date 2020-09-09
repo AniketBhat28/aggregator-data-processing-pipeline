@@ -1,0 +1,834 @@
+2020-09-09 10:44:10,691 - __main__ - INFO - ######################################
+2020-09-09 10:44:10,692 - __main__ - INFO -              INITIALISING             
+2020-09-09 10:44:10,692 - __main__ - INFO - ######################################
+2020-09-09 10:44:14,781 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:14,781 - __main__ - INFO - INHQQ Amazon Canada January 2020.csv
+2020-09-09 10:44:14,782 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:14,782 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:18,865 - __main__ - INFO - Input Dataframe size in memory : 3.41015625 kB
+2020-09-09 10:44:18,866 - __main__ - INFO - Exiting load_data(), Time taken to load : 4.08193564414978 seconds
+2020-09-09 10:44:18,933 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:18,934 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020            SALES         100.55
+2020-09-09 10:44:18,955 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:18,955 - __main__ - INFO - INHQQ Amazon US January 2020.csv
+2020-09-09 10:44:18,956 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:18,956 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:19,801 - __main__ - INFO - Input Dataframe size in memory : 2.1298828125 kB
+2020-09-09 10:44:19,802 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.8463785648345947 seconds
+2020-09-09 10:44:19,832 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:19,832 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020            SALES          30.74
+2020-09-09 10:44:19,854 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:19,854 - __main__ - INFO - TAYQQ Amazon AU January 2020.csv
+2020-09-09 10:44:19,855 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:19,855 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:20,762 - __main__ - INFO - Input Dataframe size in memory : 32.3212890625 kB
+2020-09-09 10:44:20,764 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.908332347869873 seconds
+2020-09-09 10:44:20,800 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:20,800 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        1697.66
+2020-09-09 10:44:20,825 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:20,826 - __main__ - INFO - TAYQQ Amazon Brazil January 2020.csv
+2020-09-09 10:44:20,826 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:20,827 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:21,727 - __main__ - INFO - Input Dataframe size in memory : 31.3203125 kB
+2020-09-09 10:44:21,727 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.9000558853149414 seconds
+2020-09-09 10:44:21,765 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:21,766 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        4502.43
+2020-09-09 10:44:21,792 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:21,793 - __main__ - INFO - TAYQQ Amazon Canada January 2020.csv
+2020-09-09 10:44:21,795 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:21,796 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:22,800 - __main__ - INFO - Input Dataframe size in memory : 102.6796875 kB
+2020-09-09 10:44:22,800 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.004187822341919 seconds
+2020-09-09 10:44:22,840 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:22,840 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS          51.58
+1     Amazon          EBK  January  2020            SALES        6700.48
+2020-09-09 10:44:22,866 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:22,867 - __main__ - INFO - TAYQQ Amazon DE January 2020.csv
+2020-09-09 10:44:22,869 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:22,871 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:23,975 - __main__ - INFO - Input Dataframe size in memory : 96.19921875 kB
+2020-09-09 10:44:23,975 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.1036787033081055 seconds
+2020-09-09 10:44:24,014 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:24,014 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS          28.75
+1     Amazon          EBK  January  2020            SALES        4001.59
+2020-09-09 10:44:24,043 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:24,044 - __main__ - INFO - TAYQQ Amazon France January 2020.csv
+2020-09-09 10:44:24,046 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:24,047 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:25,011 - __main__ - INFO - Input Dataframe size in memory : 35.3623046875 kB
+2020-09-09 10:44:25,011 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.9640555381774902 seconds
+2020-09-09 10:44:25,048 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:25,049 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        1297.52
+2020-09-09 10:44:25,077 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:25,078 - __main__ - INFO - TAYQQ Amazon GB January 2020.csv
+2020-09-09 10:44:25,080 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:25,081 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:26,061 - __main__ - INFO - Input Dataframe size in memory : 149.20703125 kB
+2020-09-09 10:44:26,061 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.9787676334381104 seconds
+2020-09-09 10:44:26,097 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:26,097 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        5080.62
+2020-09-09 10:44:26,124 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:26,125 - __main__ - INFO - TAYQQ Amazon Italy January 2020.csv
+2020-09-09 10:44:26,126 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:26,127 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:27,034 - __main__ - INFO - Input Dataframe size in memory : 39.9248046875 kB
+2020-09-09 10:44:27,035 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.9069328308105469 seconds
+2020-09-09 10:44:27,066 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:27,066 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        1476.11
+2020-09-09 10:44:27,094 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:27,095 - __main__ - INFO - TAYQQ Amazon Japan January 2020.csv
+2020-09-09 10:44:27,097 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:27,098 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:28,240 - __main__ - INFO - Input Dataframe size in memory : 110.2978515625 kB
+2020-09-09 10:44:28,240 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.142232894897461 seconds
+2020-09-09 10:44:28,276 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:28,277 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS            0.0
+1     Amazon          EBK  January  2020            SALES       782944.0
+2020-09-09 10:44:28,306 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:28,307 - __main__ - INFO - TAYQQ Amazon Mexico January 2020.csv
+2020-09-09 10:44:28,308 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:28,309 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:29,207 - __main__ - INFO - Input Dataframe size in memory : 30.3662109375 kB
+2020-09-09 10:44:29,207 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.8976254463195801 seconds
+2020-09-09 10:44:29,248 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:29,249 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS            0.0
+1     Amazon          EBK  January  2020            SALES        28500.1
+2020-09-09 10:44:29,284 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:29,286 - __main__ - INFO - TAYQQ Amazon Spain January 2020.csv
+2020-09-09 10:44:29,288 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:29,289 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:30,151 - __main__ - INFO - Input Dataframe size in memory : 18.7294921875 kB
+2020-09-09 10:44:30,152 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.8624136447906494 seconds
+2020-09-09 10:44:30,189 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:30,190 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES         657.73
+2020-09-09 10:44:30,222 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:30,223 - __main__ - INFO - TAYQQ Amazon US January 2020.csv
+2020-09-09 10:44:30,223 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:30,224 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:32,201 - __main__ - INFO - Input Dataframe size in memory : 1910.5302734375 kB
+2020-09-09 10:44:32,202 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.9772047996520996 seconds
+2020-09-09 10:44:32,247 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:32,248 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS         616.46
+1     Amazon          EBK  January  2020            SALES      143054.97
+2020-09-09 10:44:32,273 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:32,274 - __main__ - INFO - TYFQQ Amazon AU January 2020.csv
+2020-09-09 10:44:32,276 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:32,276 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:33,437 - __main__ - INFO - Input Dataframe size in memory : 582.5478515625 kB
+2020-09-09 10:44:33,437 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.1597449779510498 seconds
+2020-09-09 10:44:33,474 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:33,475 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES       28971.24
+2020-09-09 10:44:33,505 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:33,505 - __main__ - INFO - TYFQQ Amazon Brazil January 2020.csv
+2020-09-09 10:44:33,506 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:33,507 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:34,685 - __main__ - INFO - Input Dataframe size in memory : 354.7001953125 kB
+2020-09-09 10:44:34,685 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.1783874034881592 seconds
+2020-09-09 10:44:34,724 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:34,725 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS            0.0
+1     Amazon          EBK  January  2020            SALES        40770.6
+2020-09-09 10:44:34,754 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:34,755 - __main__ - INFO - TYFQQ Amazon Canada January 2020.csv
+2020-09-09 10:44:34,756 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:34,757 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:36,265 - __main__ - INFO - Input Dataframe size in memory : 987.3125 kB
+2020-09-09 10:44:36,265 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.5062382221221924 seconds
+2020-09-09 10:44:36,302 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:36,303 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS         171.83
+1     Amazon          EBK  January  2020            SALES       54529.11
+2020-09-09 10:44:36,329 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:36,330 - __main__ - INFO - TYFQQ Amazon DE January 2020.csv
+2020-09-09 10:44:36,331 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:36,332 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:37,986 - __main__ - INFO - Input Dataframe size in memory : 1156.498046875 kB
+2020-09-09 10:44:37,986 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.6523430347442627 seconds
+2020-09-09 10:44:38,024 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:38,025 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS         198.73
+1     Amazon          EBK  January  2020            SALES       33636.74
+2020-09-09 10:44:38,054 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:38,054 - __main__ - INFO - TYFQQ Amazon France January 2020.csv
+2020-09-09 10:44:38,055 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:38,056 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:39,262 - __main__ - INFO - Input Dataframe size in memory : 435.34375 kB
+2020-09-09 10:44:39,262 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.2049074172973633 seconds
+2020-09-09 10:44:39,297 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:39,298 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS          61.72
+1     Amazon          EBK  January  2020            SALES       14198.25
+2020-09-09 10:44:39,326 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:39,327 - __main__ - INFO - TYFQQ Amazon GB January 2020.csv
+2020-09-09 10:44:39,328 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:39,329 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:42,042 - __main__ - INFO - Input Dataframe size in memory : 2650.6376953125 kB
+2020-09-09 10:44:42,043 - __main__ - INFO - Exiting load_data(), Time taken to load : 2.7127106189727783 seconds
+2020-09-09 10:44:42,093 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:42,093 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS         231.38
+1     Amazon          EBK  January  2020            SALES       80885.81
+2020-09-09 10:44:42,119 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:42,119 - __main__ - INFO - TYFQQ Amazon India January 2020.csv
+2020-09-09 10:44:42,121 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:42,122 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:43,466 - __main__ - INFO - Input Dataframe size in memory : 349.826171875 kB
+2020-09-09 10:44:43,466 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.342602014541626 seconds
+2020-09-09 10:44:43,499 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:43,500 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES      660877.87
+2020-09-09 10:44:43,526 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:43,527 - __main__ - INFO - TYFQQ Amazon Italy January 2020.csv
+2020-09-09 10:44:43,528 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:43,529 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:44,852 - __main__ - INFO - Input Dataframe size in memory : 585.4541015625 kB
+2020-09-09 10:44:44,852 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.3223748207092285 seconds
+2020-09-09 10:44:44,895 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:44,895 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES       15005.34
+2020-09-09 10:44:44,922 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:44,923 - __main__ - INFO - TYFQQ Amazon Japan January 2020 .csv
+2020-09-09 10:44:44,925 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:44,925 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:46,416 - __main__ - INFO - Input Dataframe size in memory : 881.904296875 kB
+2020-09-09 10:44:46,417 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.4906585216522217 seconds
+2020-09-09 10:44:46,461 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:46,461 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS            0.0
+1     Amazon          EBK  January  2020            SALES      3902731.0
+2020-09-09 10:44:46,485 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:46,486 - __main__ - INFO - TYFQQ Amazon Mexico January 2020.csv
+2020-09-09 10:44:46,486 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:46,486 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:47,628 - __main__ - INFO - Input Dataframe size in memory : 243.18359375 kB
+2020-09-09 10:44:47,629 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.1415009498596191 seconds
+2020-09-09 10:44:47,662 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:47,663 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES      132929.39
+2020-09-09 10:44:47,688 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:47,690 - __main__ - INFO - TYFQQ Amazon NL January 2020.csv
+2020-09-09 10:44:47,690 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:47,690 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:48,621 - __main__ - INFO - Input Dataframe size in memory : 77.36328125 kB
+2020-09-09 10:44:48,623 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.9330422878265381 seconds
+2020-09-09 10:44:48,657 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:48,658 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        1783.93
+2020-09-09 10:44:48,683 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:48,683 - __main__ - INFO - TYFQQ Amazon Spain January 2020.csv
+2020-09-09 10:44:48,684 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:48,684 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:49,877 - __main__ - INFO - Input Dataframe size in memory : 368.18359375 kB
+2020-09-09 10:44:49,877 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.1933116912841797 seconds
+2020-09-09 10:44:49,910 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:49,910 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS          22.53
+1     Amazon          EBK  January  2020            SALES        9311.08
+2020-09-09 10:44:49,935 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:49,936 - __main__ - INFO - TYFQQ Amazon US January 2020.csv
+2020-09-09 10:44:49,936 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:49,936 - __main__ - INFO - Executing load_data()
+2020-09-09 10:44:56,513 - __main__ - INFO - Input Dataframe size in memory : 10628.1328125 kB
+2020-09-09 10:44:56,513 - __main__ - INFO - Exiting load_data(), Time taken to load : 6.575893402099609 seconds
+2020-09-09 10:44:56,629 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:56,629 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS         649.91
+1     Amazon          EBK  January  2020            SALES      924448.18
+2020-09-09 10:44:56,651 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:56,652 - __main__ - INFO - TYFRQ Amazon Rental US January 2020.csv
+2020-09-09 10:44:56,652 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:44:56,652 - __main__ - INFO - Executing load_data()
+2020-09-09 10:45:03,144 - __main__ - INFO - Input Dataframe size in memory : 12953.26953125 kB
+2020-09-09 10:45:03,144 - __main__ - INFO - Exiting load_data(), Time taken to load : 6.4924092292785645 seconds
+2020-09-09 10:45:03,240 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:45:03,240 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS         221.81
+1     Amazon          EBK  January  2020            SALES      487771.24
+2020-09-09 10:45:03,265 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:45:03,265 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020            SALES         100.55
+0     Amazon          EBK  January  2020            SALES          30.74
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        1697.66
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        4502.43
+0     Amazon          EBK  January  2020          RETURNS          51.58
+1     Amazon          EBK  January  2020            SALES        6700.48
+0     Amazon          EBK  January  2020          RETURNS          28.75
+1     Amazon          EBK  January  2020            SALES        4001.59
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        1297.52
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        5080.62
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        1476.11
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES      782944.00
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES       28500.10
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES         657.73
+0     Amazon          EBK  January  2020          RETURNS         616.46
+1     Amazon          EBK  January  2020            SALES      143054.97
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES       28971.24
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES       40770.60
+0     Amazon          EBK  January  2020          RETURNS         171.83
+1     Amazon          EBK  January  2020            SALES       54529.11
+0     Amazon          EBK  January  2020          RETURNS         198.73
+1     Amazon          EBK  January  2020            SALES       33636.74
+0     Amazon          EBK  January  2020          RETURNS          61.72
+1     Amazon          EBK  January  2020            SALES       14198.25
+0     Amazon          EBK  January  2020          RETURNS         231.38
+1     Amazon          EBK  January  2020            SALES       80885.81
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES      660877.87
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES       15005.34
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES     3902731.00
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES      132929.39
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        1783.93
+0     Amazon          EBK  January  2020          RETURNS          22.53
+1     Amazon          EBK  January  2020            SALES        9311.08
+0     Amazon          EBK  January  2020          RETURNS         649.91
+1     Amazon          EBK  January  2020            SALES      924448.18
+0     Amazon          EBK  January  2020          RETURNS         221.81
+1     Amazon          EBK  January  2020            SALES      487771.24
+2020-09-09 10:45:03,313 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:45:03,313 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS        2254.70
+1     Amazon          EBK  January  2020            SALES     7367894.28
+2020-09-09 10:45:03,343 - __main__ - INFO - #################################
+2020-09-09 10:45:03,343 - __main__ - INFO -              EXITING             
+2020-09-09 10:45:03,344 - __main__ - INFO - #################################
+
+
+2020-09-09 10:48:28,185 - __main__ - INFO - ######################################
+2020-09-09 10:48:28,186 - __main__ - INFO -              INITIALISING             
+2020-09-09 10:48:28,187 - __main__ - INFO - ######################################
+2020-09-09 10:48:31,621 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:31,622 - __main__ - INFO - INHQQ Amazon Canada January 2020.csv
+2020-09-09 10:48:31,623 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:31,623 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:35,374 - __main__ - INFO - Input Dataframe size in memory : 3.41015625 kB
+2020-09-09 10:48:35,374 - __main__ - INFO - Exiting load_data(), Time taken to load : 3.750706672668457 seconds
+2020-09-09 10:48:35,422 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:35,423 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020            SALES         100.55
+2020-09-09 10:48:35,447 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:35,447 - __main__ - INFO - INHQQ Amazon US January 2020.csv
+2020-09-09 10:48:35,448 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:35,448 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:36,318 - __main__ - INFO - Input Dataframe size in memory : 2.1298828125 kB
+2020-09-09 10:48:36,319 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.870856761932373 seconds
+2020-09-09 10:48:36,365 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:36,365 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020            SALES          30.74
+2020-09-09 10:48:36,390 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:36,390 - __main__ - INFO - TAYQQ Amazon AU January 2020.csv
+2020-09-09 10:48:36,391 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:36,391 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:37,246 - __main__ - INFO - Input Dataframe size in memory : 32.3212890625 kB
+2020-09-09 10:48:37,247 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.8558554649353027 seconds
+2020-09-09 10:48:37,284 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:37,285 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        1697.66
+2020-09-09 10:48:37,310 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:37,310 - __main__ - INFO - TAYQQ Amazon Brazil January 2020.csv
+2020-09-09 10:48:37,311 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:37,311 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:38,141 - __main__ - INFO - Input Dataframe size in memory : 31.3203125 kB
+2020-09-09 10:48:38,141 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.8299579620361328 seconds
+2020-09-09 10:48:38,173 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:38,173 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        4502.43
+2020-09-09 10:48:38,196 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:38,196 - __main__ - INFO - TAYQQ Amazon Canada January 2020.csv
+2020-09-09 10:48:38,197 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:38,197 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:39,301 - __main__ - INFO - Input Dataframe size in memory : 102.6796875 kB
+2020-09-09 10:48:39,302 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.104870080947876 seconds
+2020-09-09 10:48:39,334 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:39,334 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS          51.58
+1     Amazon          EBK  January  2020            SALES        6700.48
+2020-09-09 10:48:39,357 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:39,358 - __main__ - INFO - TAYQQ Amazon DE January 2020.csv
+2020-09-09 10:48:39,359 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:39,359 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:40,437 - __main__ - INFO - Input Dataframe size in memory : 96.19921875 kB
+2020-09-09 10:48:40,437 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.0780420303344727 seconds
+2020-09-09 10:48:40,469 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:40,469 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS          28.75
+1     Amazon          EBK  January  2020            SALES        4001.59
+2020-09-09 10:48:40,493 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:40,495 - __main__ - INFO - TAYQQ Amazon France January 2020.csv
+2020-09-09 10:48:40,495 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:40,495 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:41,339 - __main__ - INFO - Input Dataframe size in memory : 35.3623046875 kB
+2020-09-09 10:48:41,339 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.8440256118774414 seconds
+2020-09-09 10:48:41,371 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:41,372 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        1297.52
+2020-09-09 10:48:41,397 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:41,398 - __main__ - INFO - TAYQQ Amazon GB January 2020.csv
+2020-09-09 10:48:41,399 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:41,399 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:42,388 - __main__ - INFO - Input Dataframe size in memory : 149.20703125 kB
+2020-09-09 10:48:42,389 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.9896786212921143 seconds
+2020-09-09 10:48:42,421 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:42,421 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        5080.62
+2020-09-09 10:48:42,444 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:42,445 - __main__ - INFO - TAYQQ Amazon Italy January 2020.csv
+2020-09-09 10:48:42,445 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:42,446 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:43,281 - __main__ - INFO - Input Dataframe size in memory : 39.9248046875 kB
+2020-09-09 10:48:43,281 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.83510422706604 seconds
+2020-09-09 10:48:43,314 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:43,314 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        1476.11
+2020-09-09 10:48:43,340 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:43,340 - __main__ - INFO - TAYQQ Amazon Japan January 2020.csv
+2020-09-09 10:48:43,341 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:43,341 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:44,381 - __main__ - INFO - Input Dataframe size in memory : 110.2978515625 kB
+2020-09-09 10:48:44,382 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.0406408309936523 seconds
+2020-09-09 10:48:44,434 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:44,435 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS            0.0
+1     Amazon          EBK  January  2020            SALES       782944.0
+2020-09-09 10:48:44,469 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:44,469 - __main__ - INFO - TAYQQ Amazon Mexico January 2020.csv
+2020-09-09 10:48:44,470 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:44,470 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:45,319 - __main__ - INFO - Input Dataframe size in memory : 30.3662109375 kB
+2020-09-09 10:48:45,319 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.8488101959228516 seconds
+2020-09-09 10:48:45,351 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:45,351 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS            0.0
+1     Amazon          EBK  January  2020            SALES        28500.1
+2020-09-09 10:48:45,374 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:45,374 - __main__ - INFO - TAYQQ Amazon Spain January 2020.csv
+2020-09-09 10:48:45,374 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:45,375 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:46,240 - __main__ - INFO - Input Dataframe size in memory : 18.7294921875 kB
+2020-09-09 10:48:46,240 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.8652095794677734 seconds
+2020-09-09 10:48:46,277 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:46,277 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES         657.73
+2020-09-09 10:48:46,302 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:46,302 - __main__ - INFO - TAYQQ Amazon US January 2020.csv
+2020-09-09 10:48:46,303 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:46,303 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:48,243 - __main__ - INFO - Input Dataframe size in memory : 1910.5302734375 kB
+2020-09-09 10:48:48,244 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.940971851348877 seconds
+2020-09-09 10:48:48,308 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:48,308 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS         616.46
+1     Amazon          EBK  January  2020            SALES      143054.97
+2020-09-09 10:48:48,346 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:48,346 - __main__ - INFO - TYFQQ Amazon AU January 2020.csv
+2020-09-09 10:48:48,347 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:48,347 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:49,477 - __main__ - INFO - Input Dataframe size in memory : 582.5478515625 kB
+2020-09-09 10:48:49,477 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.1295745372772217 seconds
+2020-09-09 10:48:49,515 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:49,517 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES       28971.24
+2020-09-09 10:48:49,546 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:49,547 - __main__ - INFO - TYFQQ Amazon Brazil January 2020.csv
+2020-09-09 10:48:49,547 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:49,547 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:50,835 - __main__ - INFO - Input Dataframe size in memory : 354.7001953125 kB
+2020-09-09 10:48:50,836 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.2888174057006836 seconds
+2020-09-09 10:48:50,880 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:50,881 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS            0.0
+1     Amazon          EBK  January  2020            SALES        40770.6
+2020-09-09 10:48:50,913 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:50,913 - __main__ - INFO - TYFQQ Amazon Canada January 2020.csv
+2020-09-09 10:48:50,913 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:50,914 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:52,389 - __main__ - INFO - Input Dataframe size in memory : 987.3125 kB
+2020-09-09 10:48:52,435 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.5207109451293945 seconds
+2020-09-09 10:48:52,492 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:52,493 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS         171.83
+1     Amazon          EBK  January  2020            SALES       54529.11
+2020-09-09 10:48:52,520 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:52,521 - __main__ - INFO - TYFQQ Amazon DE January 2020.csv
+2020-09-09 10:48:52,521 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:52,521 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:54,187 - __main__ - INFO - Input Dataframe size in memory : 1156.498046875 kB
+2020-09-09 10:48:54,187 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.665224313735962 seconds
+2020-09-09 10:48:54,221 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:54,222 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS         198.73
+1     Amazon          EBK  January  2020            SALES       33636.74
+2020-09-09 10:48:54,264 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:54,264 - __main__ - INFO - TYFQQ Amazon France January 2020.csv
+2020-09-09 10:48:54,265 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:54,265 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:55,465 - __main__ - INFO - Input Dataframe size in memory : 435.34375 kB
+2020-09-09 10:48:55,465 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.1996116638183594 seconds
+2020-09-09 10:48:55,513 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:55,514 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS          61.72
+1     Amazon          EBK  January  2020            SALES       14198.25
+2020-09-09 10:48:55,547 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:55,548 - __main__ - INFO - TYFQQ Amazon GB January 2020.csv
+2020-09-09 10:48:55,549 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:55,550 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:57,953 - __main__ - INFO - Input Dataframe size in memory : 2650.6376953125 kB
+2020-09-09 10:48:57,953 - __main__ - INFO - Exiting load_data(), Time taken to load : 2.402876377105713 seconds
+2020-09-09 10:48:57,999 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:58,000 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS         231.38
+1     Amazon          EBK  January  2020            SALES       80885.81
+2020-09-09 10:48:58,024 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:58,025 - __main__ - INFO - TYFQQ Amazon India January 2020.csv
+2020-09-09 10:48:58,025 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:58,026 - __main__ - INFO - Executing load_data()
+2020-09-09 10:48:59,143 - __main__ - INFO - Input Dataframe size in memory : 349.826171875 kB
+2020-09-09 10:48:59,143 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.1177525520324707 seconds
+2020-09-09 10:48:59,176 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:59,176 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES      660877.87
+2020-09-09 10:48:59,200 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:59,200 - __main__ - INFO - TYFQQ Amazon Italy January 2020.csv
+2020-09-09 10:48:59,200 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:48:59,201 - __main__ - INFO - Executing load_data()
+2020-09-09 10:49:00,471 - __main__ - INFO - Input Dataframe size in memory : 585.4541015625 kB
+2020-09-09 10:49:00,472 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.2706537246704102 seconds
+2020-09-09 10:49:00,504 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:00,504 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES       15005.34
+2020-09-09 10:49:00,532 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:00,532 - __main__ - INFO - TYFQQ Amazon Japan January 2020 .csv
+2020-09-09 10:49:00,532 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:00,532 - __main__ - INFO - Executing load_data()
+2020-09-09 10:49:01,863 - __main__ - INFO - Input Dataframe size in memory : 881.904296875 kB
+2020-09-09 10:49:01,863 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.3298490047454834 seconds
+2020-09-09 10:49:01,897 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:01,898 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS            0.0
+1     Amazon          EBK  January  2020            SALES      3902731.0
+2020-09-09 10:49:01,920 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:01,921 - __main__ - INFO - TYFQQ Amazon Mexico January 2020.csv
+2020-09-09 10:49:01,921 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:01,921 - __main__ - INFO - Executing load_data()
+2020-09-09 10:49:03,161 - __main__ - INFO - Input Dataframe size in memory : 243.18359375 kB
+2020-09-09 10:49:03,162 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.2391486167907715 seconds
+2020-09-09 10:49:03,210 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:03,210 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES      132929.39
+2020-09-09 10:49:03,236 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:03,237 - __main__ - INFO - TYFQQ Amazon NL January 2020.csv
+2020-09-09 10:49:03,237 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:03,237 - __main__ - INFO - Executing load_data()
+2020-09-09 10:49:04,206 - __main__ - INFO - Input Dataframe size in memory : 77.36328125 kB
+2020-09-09 10:49:04,207 - __main__ - INFO - Exiting load_data(), Time taken to load : 0.9700534343719482 seconds
+2020-09-09 10:49:04,258 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:04,259 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        1783.93
+2020-09-09 10:49:04,285 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:04,285 - __main__ - INFO - TYFQQ Amazon Spain January 2020.csv
+2020-09-09 10:49:04,285 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:04,286 - __main__ - INFO - Executing load_data()
+2020-09-09 10:49:05,519 - __main__ - INFO - Input Dataframe size in memory : 368.18359375 kB
+2020-09-09 10:49:05,520 - __main__ - INFO - Exiting load_data(), Time taken to load : 1.2327582836151123 seconds
+2020-09-09 10:49:05,553 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:05,554 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS          22.53
+1     Amazon          EBK  January  2020            SALES        9311.08
+2020-09-09 10:49:05,577 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:05,577 - __main__ - INFO - TYFQQ Amazon US January 2020.csv
+2020-09-09 10:49:05,578 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:05,579 - __main__ - INFO - Executing load_data()
+2020-09-09 10:49:13,029 - __main__ - INFO - Input Dataframe size in memory : 10628.1328125 kB
+2020-09-09 10:49:13,029 - __main__ - INFO - Exiting load_data(), Time taken to load : 7.448798179626465 seconds
+2020-09-09 10:49:13,123 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:13,123 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS         649.91
+1     Amazon          EBK  January  2020            SALES      924448.18
+2020-09-09 10:49:13,148 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:13,149 - __main__ - INFO - TYFRQ Amazon Rental US January 2020.csv
+2020-09-09 10:49:13,150 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:13,150 - __main__ - INFO - Executing load_data()
+2020-09-09 10:49:20,884 - __main__ - INFO - Input Dataframe size in memory : 12953.26953125 kB
+2020-09-09 10:49:20,885 - __main__ - INFO - Exiting load_data(), Time taken to load : 7.735427379608154 seconds
+2020-09-09 10:49:20,985 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:20,985 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS         221.81
+1     Amazon          EBK  January  2020            SALES      487771.24
+2020-09-09 10:49:21,012 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:21,013 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020            SALES         100.55
+0     Amazon          EBK  January  2020            SALES          30.74
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        1697.66
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        4502.43
+0     Amazon          EBK  January  2020          RETURNS          51.58
+1     Amazon          EBK  January  2020            SALES        6700.48
+0     Amazon          EBK  January  2020          RETURNS          28.75
+1     Amazon          EBK  January  2020            SALES        4001.59
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        1297.52
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        5080.62
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        1476.11
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES      782944.00
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES       28500.10
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES         657.73
+0     Amazon          EBK  January  2020          RETURNS         616.46
+1     Amazon          EBK  January  2020            SALES      143054.97
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES       28971.24
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES       40770.60
+0     Amazon          EBK  January  2020          RETURNS         171.83
+1     Amazon          EBK  January  2020            SALES       54529.11
+0     Amazon          EBK  January  2020          RETURNS         198.73
+1     Amazon          EBK  January  2020            SALES       33636.74
+0     Amazon          EBK  January  2020          RETURNS          61.72
+1     Amazon          EBK  January  2020            SALES       14198.25
+0     Amazon          EBK  January  2020          RETURNS         231.38
+1     Amazon          EBK  January  2020            SALES       80885.81
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES      660877.87
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES       15005.34
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES     3902731.00
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES      132929.39
+0     Amazon          EBK  January  2020          RETURNS           0.00
+1     Amazon          EBK  January  2020            SALES        1783.93
+0     Amazon          EBK  January  2020          RETURNS          22.53
+1     Amazon          EBK  January  2020            SALES        9311.08
+0     Amazon          EBK  January  2020          RETURNS         649.91
+1     Amazon          EBK  January  2020            SALES      924448.18
+0     Amazon          EBK  January  2020          RETURNS         221.81
+1     Amazon          EBK  January  2020            SALES      487771.24
+2020-09-09 10:49:21,056 - __main__ - INFO - 
++-+-+-+-+-+-+
+2020-09-09 10:49:21,056 - __main__ - INFO -   aggregator product_type    month  year transaction_type  total_revenue
+0     Amazon          EBK  January  2020          RETURNS        2254.70
+1     Amazon          EBK  January  2020            SALES     7367894.28
+2020-09-09 10:49:21,091 - __main__ - INFO - #################################
+2020-09-09 10:49:21,091 - __main__ - INFO -              EXITING             
+2020-09-09 10:49:21,093 - __main__ - INFO - #################################
+
+
