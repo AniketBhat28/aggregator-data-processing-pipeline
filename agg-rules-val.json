@@ -55,16 +55,7 @@
 																		"value": "USD"
 																	}
 												}
-											],
-						"column_rules": [
-											{
-												"column_name": "net_units",
-												"output_column_name": "transaction_type",
-												"condition": "net_units <= 0",
-												"value": "RETURNS",
-												"default_value": "SALES" 
-											}
-										]
+											]
 					}
 	},
 
@@ -117,16 +108,7 @@
 																		"value": "current_date"
 																	}
 												}
-											],
-						"column_rules": [
-											{
-												"column_name": "Net Units",
-												"output_column_name": "transaction_type",
-												"condition": "`Net Units` <= 0",
-												"value": "RETURNS",
-												"default_value": "SALES" 
-											}
-										]
+											]
 					} 
 	}
 ]

@@ -7,7 +7,6 @@ import ast
 import pandas as pd
 import numpy as np
 import time
-import boto3
 
 
 
@@ -42,11 +41,11 @@ class read_data:
 		input_base_path = Input_List[0]['input_base_path']
 		input_file_name = Input_List[0]['input_file_name']
 		input_sheet_name = Input_List[0]['input_sheet_name']
-		
+
 		# Contatenate file path
 		file_path = input_base_path + filename
-		
-		# Read input data file. 
+
+		# Read input data file.
 		inputFileExtension = filename.split('.')[-1]
 		if (inputFileExtension == 'xlsx') or (inputFileExtension == 'xls'):
 			excelFrame = pd.ExcelFile(file_path)
@@ -57,14 +56,20 @@ class read_data:
 				data = excelFrame.parse(input_sheet_name) #, dtype=str)
 		elif inputFileExtension == 'csv':
 			data = pd.read_csv(file_path) #, dtype=str)
-
-		
 		# Pre-processing null values
-		data.replace('', np.nan, inplace=True)
+			data.replace('', np.nan, inplace=True)
 		logger.info('Input Dataframe size in memory : %s kB', data.memory_usage(deep=True).sum()/1024)
-
 		logger.info('Exiting load_data(), Time taken to load : %s seconds', time.time() - current_time)
 		return data
 
-
-		
+	def start_process_data(self, logger, element, data):
+		if element['missing_data']['process_type'] == 'discard':
+			data = data.dropna(subset=[element['column_name']])
+			logger.info('Input Dataframe size in memory : %s kB', data.memory_usage(deep=True).sum() / 1024)
+			logger.info('MISSING DATA has been discarded')
+		elif element['missing_data']['process_type'] == 'process':
+			blank_entries = pd.isnull(data[element['column_name']])
+			data.loc[blank_entries, element['column_name']] = element['missing_data']['value']
+			logger.info('Input Dataframe size in memory : %s kB', data.memory_usage(deep=True).sum() / 1024)
+			logger.info('MISSING DATA has been processed as per '+ element['dtype']+ ' TYPE')
+		return data

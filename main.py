@@ -55,7 +55,7 @@ if __name__ == '__main__':
 	app_config = configparser.ConfigParser()
 	app_config.read(CONFIG_PATH+'/config.ini')
 
-	with open(CONFIG_PATH+'/agg-rules-1Sep.json') as f:
+	with open(CONFIG_PATH+'/agg-rules-val.json') as f:
 		rule_config = json.load(f)
 
 	# Record the start time for current run
