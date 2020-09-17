@@ -35,7 +35,7 @@
 													"column_name": "payment_amount",
 													"dtype": "float",
 													"missing_data":	{
-																		"process_type": "discard",
+																		"process_type": "process",
 																		"value": "None"
 																	}
 												},
@@ -96,8 +96,8 @@
 													"column_name": "Payment Amount",
 													"dtype": "float",
 													"missing_data":	{
-																		"process_type": "discard",
-																		"value": "None"
+																		"process_type": "process",
+																		"value": "0"
 																	}
 												},
 												{

@@ -8,7 +8,7 @@ import ast
 import pandas as pd
 import boto3
 
-from read_data import read_data
+from ProcessCore import ProcessCore
 
 
 #################################
@@ -24,7 +24,7 @@ from read_data import read_data
 #################################
 
 
-class process_data_amazon:
+class ProcessDataAmazon:
 
     # Function Description :	This function aggregates revenue for all Amazon files
     # Input Parameters : 		logger - For the logging output file.
@@ -34,10 +34,10 @@ class process_data_amazon:
     def initialise_processing(self, logger, app_config, rule_config):
 
         # Getting configuration file details
-        Input_List = list(ast.literal_eval(app_config['INPUT']['File_Data']))
-        input_base_path = Input_List[0]['input_base_path']
-        input_bucket_name = Input_List[0]['input_bucket_name']
-        dir_path = Input_List[0]['input_directory']
+        input_list = list(ast.literal_eval(app_config['INPUT']['File_Data']))
+        input_base_path = input_list[0]['input_base_path']
+        input_bucket_name = input_list[0]['input_bucket_name']
+        dir_path = input_list[0]['input_directory']
 
         # Connect to s3 bucket
         s3 = boto3.resource("s3")
@@ -45,28 +45,25 @@ class process_data_amazon:
 
         # Listing files in s3 bucket
         files_in_s3 = [f.key.split(dir_path + "/")[1] for f in s3_bucket.objects.filter(Prefix=dir_path).all()]
-        # directory = 'C:/Users/manoj.das/Desktop/manoj.das/jobDocuments/input_s3files/'
-        output_directory = 'C:/Users/manoj.das/Desktop/manoj.das/jobDocuments/output_s3files/'
-        # files = os.listdir(directory)
         # For the final staging output
         final_data = pd.DataFrame()
 
         # Processing for each file in the fiven folder
-        for eachFile in files_in_s3:
+        for each_file in files_in_s3:
             # for eachFile in os.listdir(directory):
             # for eachFile in files_in_s3:
-            if eachFile != '':
+            if each_file != '':
 
                 logger.info('\n+-+-+-+-+-+-+')
-                logger.info(eachFile)
+                logger.info(each_file)
                 logger.info('\n+-+-+-+-+-+-+')
 
                 # Load the data
-                objReadData = read_data()
-                data = objReadData.load_data(logger, app_config['INPUT'], eachFile)
+                obj_read_data = ProcessCore()
+                data = obj_read_data.load_data(logger, app_config['INPUT'], each_file)
 
                 # Get the corresponding rules object
-                if 'rental' in eachFile.lower():
+                if 'rental' in each_file.lower():
                     agg_rules = next((item for item in rule_config if
                                       (item['name'] == 'Amazon' and item['filename_pattern'] == '/Amazon Rental')),
                                      None)
@@ -109,17 +106,18 @@ class process_data_amazon:
                         data[element['column_name']] = pd.to_numeric(data[element['column_name']], errors='coerce')
                         # data[element['column_name']] = data[element['column_name']].astype(float)
                         if 'missing_data' in element.keys():
-                            final_data = objReadData.start_process_data(logger, element, data)
+                            final_data = obj_read_data.start_process_data(logger, element, data)
 
                     elif element['dtype'] == 'str':
                         if 'missing_data' in element.keys():
-                            final_data = objReadData.start_process_data(logger, element, data)
+                            final_data = obj_read_data.start_process_data(logger, element, data)
 
                 logger.info('\n+-+-+-+-+-+-+')
-                # logger.info(final_data)
+                logger.info(final_data)
+                   
 
                 # Write the output to a csv
-                final_data.to_csv(output_directory+'Result '+eachFile, sep=',')
+                # final_data.to_csv(output_directory+'Result '+eachFile, sep=',')
 
 
 

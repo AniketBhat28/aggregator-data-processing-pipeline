@@ -53,9 +53,9 @@ if __name__ == '__main__':
 	# 	app_configs_list.append(config)
 
 	app_config = configparser.ConfigParser()
-	app_config.read(CONFIG_PATH+'/config.ini')
+	app_config.read(CONFIG_PATH+'/Config.ini')
 
-	with open(CONFIG_PATH+'/agg-rules-val.json') as f:
+	with open(CONFIG_PATH+'/AggRulesVal.json') as f:
 		rule_config = json.load(f)
 
 	# Record the start time for current run
@@ -66,9 +66,9 @@ if __name__ == '__main__':
 
 	# Check the aggregator to initialise appropriate module
 	if aggregator == 'Amazon':
-		module_path_relative = 'Amazon.process_data_amazon'
+		module_path_relative = 'Amazon.ProcessDataAmazon'
 	elif aggregator == 'Chegg':
-		module_path_relative = 'Chegg.process_data_chegg'
+		module_path_relative = 'Chegg.ProcessDataChegg'
 	
 	# Get the module path and start the process
 	module_path = module_path_relative

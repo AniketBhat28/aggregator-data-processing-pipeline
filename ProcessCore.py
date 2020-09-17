@@ -24,7 +24,7 @@ import time
 #################################
 
 
-class read_data:
+class ProcessCore:
 
 	# Function Description :	This function reads input data file and stores its contents to a pandas dataframe.
 	# Input Parameters : 		logger - For the logging output file.
@@ -37,24 +37,24 @@ class read_data:
 		current_time = time.time()
 
 		# Getting configuration file details
-		Input_List = list(ast.literal_eval(config['File_Data']))
-		input_base_path = Input_List[0]['input_base_path']
-		input_file_name = Input_List[0]['input_file_name']
-		input_sheet_name = Input_List[0]['input_sheet_name']
+		input_list = list(ast.literal_eval(config['File_Data']))
+		input_base_path = input_list[0]['input_base_path']
+		input_file_name = input_list[0]['input_file_name']
+		input_sheet_name = input_list[0]['input_sheet_name']
 
 		# Contatenate file path
 		file_path = input_base_path + filename
 
 		# Read input data file.
-		inputFileExtension = filename.split('.')[-1]
-		if (inputFileExtension == 'xlsx') or (inputFileExtension == 'xls'):
-			excelFrame = pd.ExcelFile(file_path)
-			sheets = excelFrame.sheet_names
+		input_file_extn = filename.split('.')[-1]
+		if (input_file_extn == 'xlsx') or (input_file_extn == 'xls'):
+			excel_frame = pd.ExcelFile(file_path)
+			sheets = excel_frame.sheet_names
 			if input_sheet_name is None:
-				data = excelFrame.parse(sheets[0]) #, dtype=str)
+				data = excel_frame.parse(sheets[0]) #, dtype=str)
 			else:
-				data = excelFrame.parse(input_sheet_name) #, dtype=str)
-		elif inputFileExtension == 'csv':
+				data = excel_frame.parse(input_sheet_name) #, dtype=str)
+		elif input_file_extn == 'csv':
 			data = pd.read_csv(file_path) #, dtype=str)
 		# Pre-processing null values
 			data.replace('', np.nan, inplace=True)
