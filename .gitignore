@@ -1,2 +1,4 @@
 **/__pycache__
 *.pyc
+Output/Output.log
+.vscode/launch.json

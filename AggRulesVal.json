@@ -35,7 +35,7 @@
 													"column_name": "payment_amount",
 													"dtype": "float",
 													"missing_data":	{
-																		"process_type": "discard",
+																		"process_type": "process",
 																		"value": "None"
 																	}
 												},
@@ -55,16 +55,7 @@
 																		"value": "USD"
 																	}
 												}
-											],
-						"column_rules": [
-											{
-												"column_name": "net_units",
-												"output_column_name": "transaction_type",
-												"condition": "net_units <= 0",
-												"value": "RETURNS",
-												"default_value": "SALES" 
-											}
-										]
+											]
 					}
 	},
 
@@ -105,8 +96,8 @@
 													"column_name": "Payment Amount",
 													"dtype": "float",
 													"missing_data":	{
-																		"process_type": "discard",
-																		"value": "None"
+																		"process_type": "process",
+																		"value": "0"
 																	}
 												},
 												{
@@ -117,16 +108,7 @@
 																		"value": "current_date"
 																	}
 												}
-											],
-						"column_rules": [
-											{
-												"column_name": "Net Units",
-												"output_column_name": "transaction_type",
-												"condition": "`Net Units` <= 0",
-												"value": "RETURNS",
-												"default_value": "SALES" 
-											}
-										]
+											]
 					} 
 	}
 ]
