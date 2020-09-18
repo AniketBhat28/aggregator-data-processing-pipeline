@@ -10,37 +10,73 @@
 		"data_row": 1,
 		"discard_last_rows":0,
 		"relevant_attributes":	[
-									"invoice_date",
-									"physical_isbn_10",
-									"physical_isbn_13",
-									"digital_isbn",
-									"units_rented",
-									"units_refunded",
-									"net_units",
-									"adjustments_made",
-									"list_price",
-									"payment_amount",
-									"amount_currency"
+									{"input_column_name": "invoice_date", "staging_column_name":"transaction_date"},
+									{"input_column_name": "digital_isbn", "staging_column_name":"e_product_id"},
+									{"input_column_name": "physical_isbn_10", "staging_column_name":"p_backup_poduct_id"},
+									{"input_column_name": "physical_isbn_13", "staging_column_name":"p_product_id"},
+
+									{"input_column_name": "title", "staging_column_name":"title"},
+									{"input_column_name": "imprint", "staging_column_name":"imprint"},
+									{"input_column_name": "FORMAT_00001", "staging_column_name":"product_format"},
+
+									{"input_column_name": "vendor_code", "staging_column_name":"vendor_code"},
+									{"input_column_name": "rental_type", "staging_column_name":"sale_type"},
+
+									{"input_column_name": "list_price", "staging_column_name":"list_price"},
+									{"input_column_name": "amount_currency", "staging_column_name":"trans_currency"},
+									{"input_column_name": "new_discount_percentage", "staging_column_name":"disc_percentage"},
+									{"input_column_name": "payment_amount", "staging_column_name":"revenue_value"},
+									{"input_column_name": "net_units", "staging_column_name":"net_units"},
+
+									{"input_column_name": "units_rented", "staging_column_name":"total_sales_count"},
+									{"input_column_name": "units_refunded", "staging_column_name":"total_returns_count"}
 								],
 
 		"filters":	{
-						"mandatory_columns": ["payment_amount"],
-						"amount_column":"payment_amount",
-						"dates_proessing":	{
-												"column_name": "invoice_date",
-												"formats":["%d%m%Y"]
-											},
+						"amount_column":"revenue_value",
 						"column_validations": [
 												{
-													"column_name": "payment_amount",
+													"column_name": "revenue_value",
 													"dtype": "float",
 													"missing_data":	{
 																		"process_type": "process",
-																		"value": "None"
+																		"value": 0.0
 																	}
 												},
 												{
-													"column_name": "invoice_date",
+													"column_name": "list_price",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "total_sales_count",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0
+																	}
+												},
+												{
+													"column_name": "total_returns_count",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0
+																	}
+												},
+												{
+													"column_name": "disc_percentage",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "transaction_date",
 													"dtype": "date",
 													"missing_data":	{
 																		"process_type": "process",
@@ -48,14 +84,15 @@
 																	}
 												},
 												{
-													"column_name": "amount_currency",
+													"column_name": "trans_currency",
 													"dtype": "str",
 													"missing_data": {
 																		"process_type": "process",
 																		"value": "USD"
 																	}
 												}
-											]
+											],
+						"convert_percentage": "no"
 					}
 	},
 
@@ -69,46 +106,87 @@
 		"header_row": 0,
 		"data_row": 1,
 		"discard_last_rows":3,
+		"attribute_names":	["Invoice Date", "ASIN", "Physical ISBN-10","Physical ISBN-13","Digital ISBN","Title","Author","Imprint","Format","Units Purchased","Units Refunded","Net Units","Net Units MTD","Adjustments Made","List Price","List Price Currency","Publisher Price","Publisher Price Currency","Discount Percentage","Payment Amount","Payment Amount Currency","Program Type"],
+
 		"relevant_attributes":	[
-									"Invoice Date",
-									"Physical ISBN-10",
-									"Physical ISBN-13",
-									"Digital ISBN",
-									"Units Purchased",
-									"Units Refunded",
-									"Net Units",
-									"Net Units MTD",
-									"Adjustments Made",
-									"List Price",
-									"List Price Currency",
-									"Payment Amount",
-									"Payment Amount Currency"
+									{"input_column_name": "Invoice Date", "staging_column_name":"transaction_date"},
+									{"input_column_name": "Digital ISBN", "staging_column_name":"e_product_id"},
+									{"input_column_name": "Physical ISBN-10", "staging_column_name":"p_backup_poduct_id"},
+									{"input_column_name": "Physical ISBN-13", "staging_column_name":"p_product_id"},
+									
+									{"input_column_name": "Title", "staging_column_name":"title"},
+									{"input_column_name": "Imprint", "staging_column_name":"imprint"},
+									{"input_column_name": "Format", "staging_column_name":"product_format"},
+
+									{"input_column_name": "List Price", "staging_column_name":"list_price"},
+									{"input_column_name": "Payment Amount Currency", "staging_column_name":"trans_currency"},
+									{"input_column_name": "Discount Percentage", "staging_column_name":"disc_percentage"},
+									{"input_column_name": "Payment Amount", "staging_column_name":"revenue_value"},
+									{"input_column_name": "Net Units", "staging_column_name":"net_units"},
+									{"input_column_name": "Units Purchased", "staging_column_name":"total_sales_count"},
+									{"input_column_name": "Units Refunded", "staging_column_name":"total_returns_count"}
 								],
 		"filters": {
-						"mandatory_columns": ["Payment Amount"],
-						"amount_column":"Payment Amount",
-						"dates_proessing":	{
-												"column_name": "Invoice Date",
-												"formats":["%Y/%d/%m", "%m/%d/%Y", "%Y-%d-%m", "%m/%d/%Y", "%d-%m-%Y", "%d/%m/%Y"]
-											},
+						"amount_column":"revenue_value",
 						"column_validations": [
 												{
-													"column_name": "Payment Amount",
+													"column_name": "revenue_value",
 													"dtype": "float",
 													"missing_data":	{
 																		"process_type": "process",
-																		"value": "0"
+																		"value": 0.0
 																	}
 												},
 												{
-													"column_name": "Invoice Date",
+													"column_name": "list_price",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "total_sales_count",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0
+																	}
+												},
+												{
+													"column_name": "total_returns_count",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0
+																	}
+												},
+												{
+													"column_name": "disc_percentage",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "transaction_date",
 													"dtype": "date",
-													"missing_data": {
+													"missing_data":	{
 																		"process_type": "process",
 																		"value": "current_date"
 																	}
+												},
+												{
+													"column_name": "trans_currency",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "USD"
+																	}
 												}
-											]
+											],
+						"convert_percentage": "yes"
 					} 
 	}
 ]
