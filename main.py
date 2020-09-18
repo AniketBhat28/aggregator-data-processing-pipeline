@@ -77,6 +77,7 @@ if __name__ == '__main__':
 	classObj = className()
 	classObj.initialise_processing(logger, app_config, rule_config)
 
+	logger.info('\n+-+-+-+-+-+-+')
 	logger.info("#################################")
 	logger.info("             EXITING             ")
 	logger.info("#################################\n\n")

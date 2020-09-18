@@ -13,7 +13,9 @@ import calendar
 import re
 from io import StringIO
 
+from ReadData import ReadData
 from ProcessCore import ProcessCore
+from Amazon.GenerateStagingDataAmazon import GenerateStagingDataAmazon
 
 
 
@@ -55,6 +57,11 @@ class ProcessDataAmazon:
 		# For the final staging output
 		final_data = pd.DataFrame()
 
+		# Initialising Objects
+		obj_read_data = ReadData()
+		obj_process_core = ProcessCore()
+		obj_gen_stage_data = GenerateStagingDataAmazon()
+
 		# Processing for each file in the fiven folder
 		for each_file in files_in_s3:
 			
@@ -65,8 +72,7 @@ class ProcessDataAmazon:
 				logger.info('\n+-+-+-+-+-+-+')
 
 				# Load the data
-				obj_process_core = ProcessCore()
-				data = obj_process_core.load_data(logger, app_config['INPUT'], each_file)
+				data = obj_read_data.load_data(logger, app_config['INPUT'], each_file)
 
 				if not data.empty:
 
@@ -135,74 +141,14 @@ class ProcessDataAmazon:
 
 						# Generating staging output from the pre-processed data
 						logger.info("Generating Staging Output")
-						extracted_data = self.generate_staging_output(each_file, agg_rules, extracted_data)
+						extracted_data = obj_gen_stage_data.generate_staging_output(logger, each_file, agg_rules, extracted_data)
 						logger.info("Staging output generated for given file")
 
 						# Append staging data of current file into final staging dataframe
 						final_data = pd.concat([final_data, extracted_data], ignore_index=True, sort=True)
 
 		# Store the results to given S3 location
+		logger.info('\n+-+-+-+-+-+-+')
 		logger.info("Storing the staging output at the given S3 location")
-		self.write_staging_output(s3, app_config, final_data)
-
-	
-	# Function Description :	This function generates staging data for Amazon files
-	# Input Parameters : 		filename - Name of the file
-	#							agg_rules - Rules json
-	#							extracted_data - pr-processed_data
-	# Return Values : 			extracted - extracted staging data
-	def generate_staging_output(self, filename, agg_rules, extracted_data):
-
-		# Processing data for final output
-		extracted_data['aggregator'] = agg_rules['name']
-		extracted_data['product_type'] = agg_rules['product_type']
-
-		# Extracting region from the filename
-		regions = "AU|Brazil|Canada|DE|France|GB|India|Italy|Japan|Mexico|NL|Spain|US"
-		temp_region = re.findall(fr"(?i)((?:{regions}))", filename, re.IGNORECASE)
-		if len(temp_region) != 0:
-			extracted_data['region_of_sale'] = temp_region[0]
-
-		# Extracting vendor code from the filename
-		vendor_codes = "ASHEU|INHQQ|TAYQQ|TYFQQ|TYFRQ"
-		temp_code = re.findall(fr"(?i)((?:{vendor_codes}))", filename, re.IGNORECASE)
-		if len(temp_code) != 0:
-			extracted_data['vendor_code'] = temp_code[0]
-
-		# Converting negative amounts to positives
-		amount_column = agg_rules['filters']['amount_column']
-		extracted_data[amount_column] = extracted_data[amount_column].abs()
-
-		# Converting percentages
-		if agg_rules['filters']['convert_percentage'] == 'yes':
-			extracted_data['disc_percentage'] = extracted_data['disc_percentage']/100
-
-		extracted_data['net_unit_price'] = round((extracted_data[amount_column]/extracted_data['net_units']))
-
-		# Computing sales and returns
-		extracted_data['total_sales_value'] = round((extracted_data['total_sales_count'] * (1-extracted_data['disc_percentage']) * extracted_data['list_price']), 2)
-		extracted_data['total_returns_value'] = round((extracted_data['total_returns_count'] * (1-extracted_data['disc_percentage']) * extracted_data['list_price']), 2)
-
-		return extracted_data
-
-
-	# Function Description :	This function writes the output to given S3 location
-	# Input Parameters : 		s3 - S3 object
-	#							app_config - Configuration
-	#							final_data - Final staging data
-	# Return Values : 			None
-	def write_staging_output(self, s3, app_config, final_data):
-
-		# Get the output bucket name and directory
-		output_bucket_name = app_config['OUTPUT']['output_bucket_name']
-		output_directory = app_config['OUTPUT']['output_directory']
-
-		# Grouping the staging data
-		agg_fn = {'list_price': 'sum', 'net_unit_price': 'sum', 'net_units': 'sum', 'revenue_value': 'sum', 'total_sales_count': 'sum', 'total_sales_value':'sum', 'total_returns_count': 'sum', 'total_returns_value':'sum'}
-		final_grouped_data = final_data.groupby(['transaction_date', 'e_product_id', 'p_backup_poduct_id', 'p_product_id', 'title', 'vendor_code', 'product_type', 'imprint', 'product_format', 'sale_type', 'trans_currency', 'disc_percentage', 'region_of_sale'], as_index=False).agg(agg_fn)
-		
-		# Write the output
-		csv_buffer = StringIO()
-		final_grouped_data.to_csv(csv_buffer)
-		s3.Object(output_bucket_name, output_directory).put(Body=csv_buffer.getvalue())
-						
+		logger.info('\n+-+-+-+-+-+-+')
+		obj_gen_stage_data.write_staging_output(logger, s3, app_config, final_data)			
