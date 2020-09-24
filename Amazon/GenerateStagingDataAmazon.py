@@ -4,6 +4,7 @@
 
 
 import pandas as pd
+import numpy as np
 import boto3
 import calendar
 import re
@@ -54,6 +55,9 @@ class GenerateStagingDataAmazon:
 			extracted_data['vendor_code'] = temp_code[0]
 			logger.info('Vendor codes extracted')
 
+		if 'sale_type' not in extracted_data.columns.to_list():
+			extracted_data['sale_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units']<0) else ('PURCHASE'), axis=1)
+
 		# Converting negative amounts to positives
 		amount_column = agg_rules['filters']['amount_column']
 		extracted_data[amount_column] = extracted_data[amount_column].abs()
@@ -64,7 +68,8 @@ class GenerateStagingDataAmazon:
 			extracted_data['disc_percentage'] = extracted_data['disc_percentage']/100
 
 		logger.info('Computing net unit price')
-		extracted_data['net_unit_price'] = round((extracted_data[amount_column]/extracted_data['net_units']))
+		#extracted_data['net_unit_price'] = round((extracted_data[amount_column]/extracted_data['net_units']))
+		extracted_data['net_unit_price'] = round(((1-extracted_data['disc_percentage']) * extracted_data['list_price']), 2)
 		logger.info('Net units price computed')
 
 		# Computing sales and returns

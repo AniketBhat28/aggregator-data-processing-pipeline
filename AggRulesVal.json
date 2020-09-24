@@ -90,6 +90,22 @@
 																		"process_type": "process",
 																		"value": "USD"
 																	}
+												},
+												{
+													"column_name": "imprint",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "product_format",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
 												}
 											],
 						"convert_percentage": "no"
@@ -184,9 +200,119 @@
 																		"process_type": "process",
 																		"value": "USD"
 																	}
+												},
+												{
+													"column_name": "imprint",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "product_format",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
 												}
 											],
 						"convert_percentage": "yes"
 					} 
+	},
+
+	{
+		"name": "Ebsco",
+		"filename_pattern": "/Ebsco",
+		"product_type": "EBK",
+		"data_sheet":"all",
+		"acceptable_currencies":["USD","GBP"],
+		"file_type":"xlsx",
+		"header_row": 0,
+		"data_row": 2,
+		"discard_last_rows":0,
+		"relevant_attributes":	[
+									{"input_column_name": "Transaction Date", "staging_column_name":"transaction_date"},
+									
+									{"input_column_name": "EISBN", "staging_column_name":"digital_isbn"},
+									{"input_column_name": "ISBN", "staging_column_name":"physical_isbn"},
+
+									{"input_column_name": "TITLE", "staging_column_name":"title"},
+									{"input_column_name": "IMPRINT", "staging_column_name":"imprint"},
+									
+									{"input_column_name": "SALE TYPE", "staging_column_name":"sale_type"},
+
+									{"input_column_name": "List Price", "staging_column_name":"list_price"},
+									{"input_column_name": "Transaction Currency", "staging_column_name":"trans_currency"},
+									{"input_column_name": "DISC RATE", "staging_column_name":"disc_percentage"},
+									{"input_column_name": "ROYALTY DUE", "staging_column_name":"revenue_value"},
+									{"input_column_name": "QTY", "staging_column_name":"net_units"},
+
+									{"input_column_name": "CTRY", "staging_column_name":"region_of_sale"}
+								
+								],
+
+		"filters":	{	
+						"mandatory_columns": ["EISBN","ISBN"],
+						"amount_column":"revenue_value",
+						"column_validations": [
+												{
+													"column_name": "revenue_value",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "list_price",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "transaction_date",
+													"dtype": "date",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": "current_date"
+																	}
+												},
+												{
+													"column_name": "trans_currency",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "USD"
+																	}
+												},
+												{
+													"column_name": "imprint",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												}
+												
+											],
+						"convert_percentage": "no"
+					}
+	},
+
+	{
+		"name": "Ebsco",
+		"filename_pattern": "/Ebsco Subscription",
+		"product_type": "EBK",
+		"data_sheet":"all",
+		"acceptable_currencies":[],
+		"file_type":"xlsx",
+		"header_row": 0,
+		"data_row": 0,
+		"discard_last_rows":0
+		
 	}
 ]
