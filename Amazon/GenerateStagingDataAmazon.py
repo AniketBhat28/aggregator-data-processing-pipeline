@@ -59,7 +59,7 @@ class GenerateStagingDataAmazon:
 			extracted_data['sale_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units']<0) else ('PURCHASE'), axis=1)
 
 		if 'rental_duration' not in extracted_data.columns.to_list():
-			extracted_data['rental_duration'] = 'NA'
+			extracted_data['rental_duration'] = 0
 
 		# Converting negative amounts to positives
 		amount_column = agg_rules['filters']['amount_column']
