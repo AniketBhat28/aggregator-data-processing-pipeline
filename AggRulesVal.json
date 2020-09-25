@@ -12,7 +12,7 @@
 		"relevant_attributes":	[
 									{"input_column_name": "invoice_date", "staging_column_name":"transaction_date"},
 									{"input_column_name": "digital_isbn", "staging_column_name":"e_product_id"},
-									{"input_column_name": "physical_isbn_10", "staging_column_name":"p_backup_poduct_id"},
+									{"input_column_name": "physical_isbn_10", "staging_column_name":"p_backup_product_id"},
 									{"input_column_name": "physical_isbn_13", "staging_column_name":"p_product_id"},
 
 									{"input_column_name": "title", "staging_column_name":"title"},
@@ -21,6 +21,7 @@
 
 									{"input_column_name": "vendor_code", "staging_column_name":"vendor_code"},
 									{"input_column_name": "rental_type", "staging_column_name":"sale_type"},
+									{"input_column_name": "rental_duration", "staging_column_name":"rental_duration"},
 
 									{"input_column_name": "list_price", "staging_column_name":"list_price"},
 									{"input_column_name": "amount_currency", "staging_column_name":"trans_currency"},
@@ -127,7 +128,7 @@
 		"relevant_attributes":	[
 									{"input_column_name": "Invoice Date", "staging_column_name":"transaction_date"},
 									{"input_column_name": "Digital ISBN", "staging_column_name":"e_product_id"},
-									{"input_column_name": "Physical ISBN-10", "staging_column_name":"p_backup_poduct_id"},
+									{"input_column_name": "Physical ISBN-10", "staging_column_name":"p_backup_product_id"},
 									{"input_column_name": "Physical ISBN-13", "staging_column_name":"p_product_id"},
 									
 									{"input_column_name": "Title", "staging_column_name":"title"},
@@ -286,7 +287,7 @@
 													"dtype": "str",
 													"missing_data": {
 																		"process_type": "process",
-																		"value": "USD"
+																		"value": "NA"
 																	}
 												},
 												{

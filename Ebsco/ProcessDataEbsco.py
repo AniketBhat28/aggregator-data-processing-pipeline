@@ -141,8 +141,7 @@ class ProcessDataEbsco:
 
 							# Append staging data of current file into final staging dataframe
 							final_data = pd.concat([final_data, extracted_data], ignore_index=True, sort=True)
-							final_data.to_csv('output.csv')
-
+							
 		# Store the results to given S3 location
 		logger.info('\n+-+-+-+-+-+-+')
 		logger.info("Storing the staging output at the given S3 location")

@@ -75,6 +75,7 @@ class GenerateStagingDataEbsco:
 		# Converting negative amounts to positives
 		amount_column = agg_rules['filters']['amount_column']
 		extracted_data[amount_column] = extracted_data[amount_column].abs()
+		extracted_data['list_price'] = extracted_data['list_price'].abs()
 
 		# Converting percentages
 		if agg_rules['filters']['convert_percentage'] == 'yes':
@@ -84,6 +85,7 @@ class GenerateStagingDataEbsco:
 
 		logger.info('Computing net unit price')
 		extracted_data['net_unit_price'] = round((extracted_data[amount_column]/extracted_data['net_units']), 2)
+		extracted_data['net_unit_price'] = extracted_data['net_unit_price'].abs()
 		logger.info('Net units price computed')
 
 		# Computing sales and returns
@@ -118,7 +120,7 @@ class GenerateStagingDataEbsco:
 		logger.info('Grouping staging data')
 
 		agg_fn = {'list_price': 'sum', 'net_unit_price': 'sum', 'net_units': 'sum', 'revenue_value': 'sum', 'total_sales_count': 'sum', 'total_sales_value':'sum', 'total_returns_count': 'sum', 'total_returns_value':'sum'}
-		final_grouped_data = final_data.groupby(['transaction_date', 'e_product_id', 'e_backup_product_id', 'p_product_id', 'p_backup_product_id', 'title', 'vendor_code', 'product_type', 'imprint', 'product_format', 'sale_type', 'trans_currency', 'disc_percentage', 'region_of_sale'], as_index=False).agg(agg_fn)
+		final_grouped_data = final_data.groupby(['transaction_date', 'e_product_id', 'e_backup_product_id', 'p_product_id', 'p_backup_product_id', 'title', 'vendor_code', 'product_type', 'imprint', 'product_format', 'sale_type', 'trans_currency', 'disc_percentage', 'region_of_sale', 'misc_product_ids'], as_index=False).agg(agg_fn)
 		logger.info('Staging data grouped')
 		final_grouped_data = final_grouped_data.replace({'NA':np.nan})
 
