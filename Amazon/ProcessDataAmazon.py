@@ -72,7 +72,7 @@ class ProcessDataAmazon:
 				logger.info('\n+-+-+-+-+-+-+')
 
 				# Load the data
-				data = obj_read_data.load_data(logger, app_config['INPUT'], each_file)
+				data = obj_read_data.load_data(logger, input_list, each_file)
 
 				if not data.empty:
 

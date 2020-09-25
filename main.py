@@ -67,8 +67,8 @@ if __name__ == '__main__':
 	# Check the aggregator to initialise appropriate module
 	if aggregator == 'Amazon':
 		module_path_relative = 'Amazon.ProcessDataAmazon'
-	elif aggregator == 'Chegg':
-		module_path_relative = 'Chegg.ProcessDataChegg'
+	elif aggregator == 'Ebsco':
+		module_path_relative = 'Ebsco.ProcessDataEbsco'
 	
 	# Get the module path and start the process
 	module_path = module_path_relative

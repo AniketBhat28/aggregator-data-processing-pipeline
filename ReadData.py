@@ -37,7 +37,7 @@ class ReadData:
 		current_time = time.time()
 
 		# Getting configuration file details
-		input_list = list(ast.literal_eval(config['File_Data']))
+		input_list = config #list(ast.literal_eval(config['File_Data']))
 		input_base_path = input_list[0]['input_base_path']
 		input_file_name = input_list[0]['input_file_name']
 		input_sheet_name = input_list[0]['input_sheet_name']
@@ -49,7 +49,7 @@ class ReadData:
 		input_file_extn = filename.split('.')[-1]
 
 		try:
-			if (input_file_extn == 'xlsx') or (input_file_extn == 'xls'):
+			if (input_file_extn.lower() == 'xlsx') or (input_file_extn.lower() == 'xls'):
 				excel_frame = pd.ExcelFile(file_path)
 				sheets = excel_frame.sheet_names
 				if input_sheet_name is None:

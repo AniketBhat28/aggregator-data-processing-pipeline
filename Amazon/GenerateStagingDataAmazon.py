@@ -4,6 +4,7 @@
 
 
 import pandas as pd
+import numpy as np
 import boto3
 import calendar
 import re
@@ -54,6 +55,12 @@ class GenerateStagingDataAmazon:
 			extracted_data['vendor_code'] = temp_code[0]
 			logger.info('Vendor codes extracted')
 
+		if 'sale_type' not in extracted_data.columns.to_list():
+			extracted_data['sale_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units']<0) else ('PURCHASE'), axis=1)
+
+		if 'rental_duration' not in extracted_data.columns.to_list():
+			extracted_data['rental_duration'] = 0
+
 		# Converting negative amounts to positives
 		amount_column = agg_rules['filters']['amount_column']
 		extracted_data[amount_column] = extracted_data[amount_column].abs()
@@ -64,7 +71,8 @@ class GenerateStagingDataAmazon:
 			extracted_data['disc_percentage'] = extracted_data['disc_percentage']/100
 
 		logger.info('Computing net unit price')
-		extracted_data['net_unit_price'] = round((extracted_data[amount_column]/extracted_data['net_units']))
+		#extracted_data['net_unit_price'] = round((extracted_data[amount_column]/extracted_data['net_units']))
+		extracted_data['net_unit_price'] = round(((1-extracted_data['disc_percentage']) * extracted_data['list_price']), 2)
 		logger.info('Net units price computed')
 
 		# Computing sales and returns
@@ -91,7 +99,7 @@ class GenerateStagingDataAmazon:
 		# Grouping the staging data
 		logger.info('Grouping staging data')
 		agg_fn = {'list_price': 'sum', 'net_unit_price': 'sum', 'net_units': 'sum', 'revenue_value': 'sum', 'total_sales_count': 'sum', 'total_sales_value':'sum', 'total_returns_count': 'sum', 'total_returns_value':'sum'}
-		final_grouped_data = final_data.groupby(['transaction_date', 'e_product_id', 'p_backup_poduct_id', 'p_product_id', 'title', 'vendor_code', 'product_type', 'imprint', 'product_format', 'sale_type', 'trans_currency', 'disc_percentage', 'region_of_sale'], as_index=False).agg(agg_fn)
+		final_grouped_data = final_data.groupby(['transaction_date', 'e_product_id', 'p_backup_product_id', 'p_product_id', 'title', 'vendor_code', 'product_type', 'imprint', 'product_format', 'sale_type', 'rental_duration', 'trans_currency', 'disc_percentage', 'region_of_sale'], as_index=False).agg(agg_fn)
 		logger.info('Staging data grouped')
 
 		# Write the output
