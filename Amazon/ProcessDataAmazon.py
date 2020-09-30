@@ -15,6 +15,7 @@ from io import StringIO
 
 from ReadData import ReadData
 from ProcessCore import ProcessCore
+from PreProcess import PreProcess
 from Amazon.GenerateStagingDataAmazon import GenerateStagingDataAmazon
 
 
@@ -24,7 +25,10 @@ from Amazon.GenerateStagingDataAmazon import GenerateStagingDataAmazon
 #################################
 
 
-# None
+obj_read_data = ReadData()
+obj_process_core = ProcessCore()
+obj_pre_process = PreProcess()
+obj_gen_stage_data = GenerateStagingDataAmazon()
 
 
 #################################
@@ -57,11 +61,6 @@ class ProcessDataAmazon:
 		# For the final staging output
 		final_data = pd.DataFrame()
 
-		# Initialising Objects
-		obj_read_data = ReadData()
-		obj_process_core = ProcessCore()
-		obj_gen_stage_data = GenerateStagingDataAmazon()
-
 		# Processing for each file in the fiven folder
 		for each_file in files_in_s3:
 			
@@ -75,7 +74,6 @@ class ProcessDataAmazon:
 				data = obj_read_data.load_data(logger, input_list, each_file)
 
 				if not data.empty:
-
 					# Get the corresponding rules object
 					if 'rental' in each_file.lower():
 						agg_rules = next((item for item in rule_config if
@@ -111,11 +109,8 @@ class ProcessDataAmazon:
 					# Discarding leading/trailing spacs from the columns
 					data.columns = data.columns.str.strip()
 
-					# Extracting relevent columns
-					extracted_data = pd.DataFrame()
-					relevent_cols = agg_rules['relevant_attributes']
-					for each_col in relevent_cols:
-						extracted_data[each_col['staging_column_name']] = data[each_col['input_column_name']]
+					# Extracting relevant columns
+					extracted_data = obj_pre_process.extract_relevant_attributes(logger, data, agg_rules['relevant_attributes'])
 
 
 					if extracted_data.dropna(how='all').empty:
@@ -128,16 +123,7 @@ class ProcessDataAmazon:
 							extracted_data[amount_column].replace('[,)]', '', regex=True).replace('[(]', '-', regex=True))
 
 						# Column Validations
-						for element in agg_rules['filters']['column_validations']:
-							if element['dtype'] == 'float':
-								extracted_data[element['column_name']] = pd.to_numeric(extracted_data[element['column_name']], errors='coerce')
-								#extracted_data[element['column_name']] = extracted_data[element['column_name']].astype(float)
-								if 'missing_data' in element.keys():
-									extracted_data = obj_process_core.start_process_data(logger, element, extracted_data)
-
-							elif element['dtype'] == 'str':
-								if 'missing_data' in element.keys():
-									extracted_data = obj_process_core.start_process_data(logger, element, extracted_data)
+							extracted_data = obj_pre_process.validate_columns(logger, extracted_data, agg_rules['filters']['column_validations'])
 
 						# Generating staging output from the pre-processed data
 						logger.info("Generating Staging Output")

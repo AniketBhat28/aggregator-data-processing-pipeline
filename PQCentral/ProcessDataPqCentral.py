@@ -15,6 +15,7 @@ from io import StringIO
 
 from ReadData import ReadData
 from ProcessCore import ProcessCore
+from PreProcess import PreProcess
 from PQCentral.GenerateStagingDataPqCentral import GenerateStagingDataPqCentral
 
 
@@ -24,7 +25,10 @@ from PQCentral.GenerateStagingDataPqCentral import GenerateStagingDataPqCentral
 #################################
 
 
-# None
+obj_read_data = ReadData()
+obj_process_core = ProcessCore()
+obj_pre_process = PreProcess()
+obj_gen_stage_data = GenerateStagingDataPqCentral()
 
 
 #################################
@@ -57,11 +61,6 @@ class ProcessDataPqCentral:
 		# For the final staging output
 		final_data = pd.DataFrame()
 
-		# Initialising Objects
-		obj_read_data = ReadData()
-		obj_process_core = ProcessCore()
-		obj_gen_stage_data = GenerateStagingDataPqCentral()
-
 		# Processing for each file in the fiven folder
 		for each_file in files_in_s3:
 			if each_file != '' and each_file.split('.')[-1] != 'txt':
@@ -93,25 +92,11 @@ class ProcessDataPqCentral:
 											  (item['name'] == 'PqCentral' and item['filename_pattern'] == '/PqCentral')), None)
 						
 						# Take the subset of data, remove header blanks
-						logger.info('Removing metadata and blanks')
-						raw_data = data
-						for i, row in raw_data.iterrows():
-							if row.notnull().all():
-								data = raw_data.iloc[(i+1):].reset_index(drop=True)
-								data.columns = list(raw_data.iloc[i])
-								break
-						data = data.dropna(subset=[data.columns[0]], how='all')
-						logger.info('Actual data extracted')
-
-						# Discarding leading/trailing spacs from the columns
-						data.columns = data.columns.str.strip()
+						mandatory_columns = agg_rules['filters']['mandatory_columns']
+						data = obj_pre_process.process_header_templates(logger, data, mandatory_columns)
 
 						# Extracting relevent columns
-						logger.info('Getting and mapping relevant attributes')
-						extracted_data = pd.DataFrame()
-						relevent_cols = agg_rules['relevant_attributes']
-						for each_col in relevent_cols:
-							extracted_data[each_col['staging_column_name']] = data[each_col['input_column_name']]
+						extracted_data = obj_pre_process.extract_relevant_attributes(logger, data, agg_rules['relevant_attributes'])
 
 						if extracted_data.dropna(how='all').empty:
 							logger.info("This file is empty")
@@ -123,16 +108,7 @@ class ProcessDataPqCentral:
 								extracted_data[amount_column].replace('[,)]', '', regex=True).replace('[(]', '-', regex=True))
 
 							# Column Validations
-							for element in agg_rules['filters']['column_validations']:
-								if element['dtype'] == 'float':
-									extracted_data[element['column_name']] = pd.to_numeric(extracted_data[element['column_name']], errors='coerce')
-									#extracted_data[element['column_name']] = extracted_data[element['column_name']].astype(float)
-									if 'missing_data' in element.keys():
-										extracted_data = obj_process_core.start_process_data(logger, element, extracted_data)
-
-								elif element['dtype'] == 'str':
-									if 'missing_data' in element.keys():
-										extracted_data = obj_process_core.start_process_data(logger, element, extracted_data)
+							extracted_data = obj_pre_process.validate_columns(logger, extracted_data, agg_rules['filters']['column_validations'])
 
 							# Generating staging output from the pre-processed data
 							logger.info("Generating Staging Output")

@@ -255,7 +255,7 @@
 								],
 
 		"filters":	{	
-						"mandatory_columns": ["EISBN","ISBN"],
+						"mandatory_columns": ["ORDER ID"],
 						"amount_column":"revenue_value",
 						"column_validations": [
 												{
@@ -351,6 +351,7 @@
 								],
 
 		"filters":	{	
+						"mandatory_columns": ["EbookIsbn","PrintIsbn"],
 						"amount_column":"revenue_value",
 						"column_validations": [
 												{
