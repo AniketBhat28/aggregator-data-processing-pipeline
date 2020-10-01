@@ -29,7 +29,6 @@ class PreProcess:
 
 	def process_header_templates(self, logger, data, mandatory_columns):
 		
-		# Take the subset of data, remove header blanks
 		logger.info('Removing metadata and blanks')
 		raw_data = data
 		for i, row in raw_data.iterrows():
@@ -39,7 +38,7 @@ class PreProcess:
 				break
 		data = data.dropna(subset=mandatory_columns, how='all')
 		
-		# Discarding leading/trailing spacs from the columns
+		logger.info('Discarding leading/trailing spacs from the columns')
 		data.columns = data.columns.str.strip()
 		
 		logger.info('Actual data extracted')

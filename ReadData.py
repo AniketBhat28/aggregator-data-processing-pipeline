@@ -36,16 +36,12 @@ class ReadData:
 		logger.info('Executing load_data()')
 		current_time = time.time()
 
-		# Getting configuration file details
 		input_list = config #list(ast.literal_eval(config['File_Data']))
 		input_base_path = input_list[0]['input_base_path']
 		input_file_name = input_list[0]['input_file_name']
 		input_sheet_name = input_list[0]['input_sheet_name']
 
-		# Contatenate file path
 		file_path = input_base_path + filename
-
-		# Read input data file.
 		input_file_extn = filename.split('.')[-1]
 
 		try:
@@ -59,7 +55,6 @@ class ReadData:
 			elif input_file_extn == 'csv':
 				data = pd.read_csv(file_path) #, dtype=str)
 			
-			# Pre-processing null values
 			data.replace('', np.nan, inplace=True)
 			
 			logger.info('Input Dataframe size in memory : %s kB', data.memory_usage(deep=True).sum()/1024)
