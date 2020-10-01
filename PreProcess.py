@@ -27,6 +27,11 @@ obj_process_core = ProcessCore()
 
 class PreProcess:
 
+	# Function Description :	This function is to process header templates and trailing metadata
+	# Input Parameters : 		logger - For the logging output file.
+	#							data - input data
+	#							mandatory_columns - list of mandatory columns
+	# Return Values : 			data
 	def process_header_templates(self, logger, data, mandatory_columns):
 		
 		logger.info('Removing metadata and blanks')
@@ -45,6 +50,11 @@ class PreProcess:
 		return data
 
 
+	# Function Description :	This function is to extract relevant attributes
+	# Input Parameters : 		logger - For the logging output file.
+	#							data - input data
+	#							relevant_cols - list of relevant columns
+	# Return Values : 			data
 	def extract_relevant_attributes(self, logger, data, relevant_cols):
 		
 		logger.info('Getting and mapping relevant attributes')
@@ -56,6 +66,11 @@ class PreProcess:
 		return extracted_data
 
 
+	# Function Description :	This function is to initiate column validations
+	# Input Parameters : 		logger - For the logging output file.
+	#							data - input data
+	#							column_validations - list of column validations
+	# Return Values : 			data
 	def validate_columns(self, logger, data, column_validations):
 
 		for element in column_validations:

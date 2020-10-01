@@ -28,6 +28,14 @@ import itertools
 
 class GenerateStagingAttributes:
 
+	# Function Description :	This function is to process comma seperated isbn
+	# Input Parameters : 		logger - For the logging output file.
+	#							data - input data
+	#							input_column - input column name
+	#							staging_column - staging column name
+	#							bckp_staging_column - backup staging column name
+	#							default_val - Deafult value to be inserted
+	# Return Values : 			data
 	def process_isbn(self, logger, data, input_column, staging_column, bckp_staging_column, default_val):
 
 		logger.info('Processing ISBN')
@@ -41,6 +49,14 @@ class GenerateStagingAttributes:
 		return data
 		
 
+	# Function Description :	This function is to process comma seperated miscellaneous isbn
+	# Input Parameters : 		logger - For the logging output file.
+	#							data - input data
+	#							e_column - input digital column name
+	#							p_column - input physical column name
+	#							staging_column - staging column name
+	#							default_val - Deafult value to be inserted
+	# Return Values : 			data
 	def generate_misc_isbn(self, logger, data, e_column, p_column, staging_column, default_val):
 
 		logger.info('Processing Miscellaneous ISBN')
@@ -57,6 +73,11 @@ class GenerateStagingAttributes:
 		return data
 
 
+	# Function Description :	This function is to extract patterns using regular expressions
+	# Input Parameters : 		data - input data
+	#							pattern_dict - containg regex
+	#							input_string - input string to search
+	# Return Values : 			data
 	def extract_patterns(self, data, pattern_dict, input_string):
 
 		pattern = pattern_dict['regex']
@@ -66,7 +87,12 @@ class GenerateStagingAttributes:
 			
 		return data
 
-	
+
+	# Function Description :	This function is to group staging data
+	# Input Parameters : 		logger - For the logging output file.
+	#							data - input data
+	#							groupby_object - includes agg_fn and columns to group
+	# Return Values : 			final_grouped_data
 	def group_data(self, logger, data, groupby_object):
 
 		logger.info('Grouping staging data')

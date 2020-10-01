@@ -30,7 +30,6 @@ class ConnectToS3:
 	# Input Parameters : 		logger - For the logging output file.
 	#							input_list - input list params
 	# Return Values : 			files_in_s3 - list of filenames
-
 	def get_files(self, logger, input_list):
 
 		logger.info('Getting list of files from given S3 location')
