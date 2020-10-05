@@ -34,7 +34,7 @@
 								],
 
 		"filters":	{
-						"mandatory_columns": ["Digital ISBN", "Physical ISBN-10", "Physical ISBN-13"],
+						"mandatory_columns": ["digital_isbn", "physical_isbn_10", "physical_isbn_13"],
 						"amount_column":"revenue_value",
 						"column_validations": [
 												{
@@ -422,6 +422,14 @@
 												},
 												{
 													"column_name": "imprint",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "region_of_sale",
 													"dtype": "str",
 													"missing_data": {
 																		"process_type": "process",

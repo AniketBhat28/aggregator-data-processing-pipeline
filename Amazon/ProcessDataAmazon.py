@@ -45,7 +45,7 @@ class ProcessDataAmazon:
 	def initialise_processing(self, logger, app_config, rule_config):
 
 		# For the final staging output
-		final_data = pd.DataFrame()
+		final_staging_data = pd.DataFrame()
 		input_list = list(ast.literal_eval(app_config['INPUT']['File_Data']))
 		
 		# Processing for each file in the fiven folder
@@ -78,6 +78,7 @@ class ProcessDataAmazon:
 						else:
 							data.columns = agg_rules['attribute_names']
 					data.columns = data.columns.str.strip()
+					data[agg_rules['filters']['mandatory_columns']] = data[agg_rules['filters']['mandatory_columns']].fillna(value='NA')
 
 					extracted_data = obj_pre_process.extract_relevant_attributes(logger, data, agg_rules['relevant_attributes'])
 
@@ -97,8 +98,8 @@ class ProcessDataAmazon:
 						logger.info("Staging output generated for given file")
 
 						# Append staging data of current file into final staging dataframe
-						final_data = pd.concat([final_data, extracted_data], ignore_index=True, sort=True)
+						final_staging_data = pd.concat([final_staging_data, extracted_data], ignore_index=True, sort=True)
 
 		# Grouping and storing data
-		final_grouped_data = obj_gen_attrs.group_data(logger, final_data, agg_rules['group_staging_data'])
+		final_grouped_data = obj_gen_attrs.group_data(logger, final_staging_data, agg_rules['group_staging_data'])
 		obj_s3_connect.store_data(logger, app_config, final_grouped_data)
