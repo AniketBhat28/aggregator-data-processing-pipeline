@@ -49,6 +49,7 @@ class ProcessDataEbsco:
 		input_list = list(ast.literal_eval(app_config['INPUT']['File_Data']))
 		
 		# Processing for each file in the fiven folder
+		logger.info('\n+-+-+-+-+-+-+Starting Ebsco files Processing\n')
 		files_in_s3 = obj_s3_connect.get_files(logger, input_list)
 		for each_file in files_in_s3:
 			if each_file != '':
@@ -65,7 +66,7 @@ class ProcessDataEbsco:
 
 					data = obj_read_data.load_data(logger, input_list, each_file)
 					if not data.empty:
-						logger.info('Get the corresponding rules object')
+						logger.info('Get the corresponding rules object for Ebsco')
 						if 'subscription' in each_file.lower():
 							agg_rules = next((item for item in rule_config if
 											  (item['name'] == 'Ebsco' and item['filename_pattern'] == '/Ebsco Subscription')),
@@ -101,4 +102,5 @@ class ProcessDataEbsco:
 							
 		# Grouping and storing data
 		final_grouped_data = obj_gen_attrs.group_data(logger, final_staging_data, agg_rules['group_staging_data'])
-		obj_s3_connect.store_data(logger, app_config, final_grouped_data)		
+		obj_s3_connect.store_data(logger, app_config, final_grouped_data)
+		logger.info('\n+-+-+-+-+-+-+Finished Processing Ebsco files\n')
