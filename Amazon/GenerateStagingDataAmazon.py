@@ -34,8 +34,9 @@ class GenerateStagingDataAmazon:
 	# Return Values : 			extracted - extracted staging data
 	def generate_staging_output(self, logger, filename, agg_rules, extracted_data):
 
-		extracted_data['aggregator'] = agg_rules['name']
+		extracted_data['aggregator_name'] = agg_rules['name']
 		extracted_data['product_type'] = agg_rules['product_type']
+		extracted_data['pod'] = 'NA'
 
 		logger.info('Extracting patterns from filename')
 		for each_rule in agg_rules['pattern_extractions']:

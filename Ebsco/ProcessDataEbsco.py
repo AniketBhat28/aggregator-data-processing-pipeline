@@ -69,13 +69,13 @@ class ProcessDataEbsco:
 						logger.info('Get the corresponding rules object for Ebsco')
 						if 'subscription' in each_file.lower():
 							agg_rules = next((item for item in rule_config if
-											  (item['name'] == 'Ebsco' and item['filename_pattern'] == '/Ebsco Subscription')),
+											  (item['name'] == 'EBSCO_HOST' and item['filename_pattern'] == '/Ebsco Subscription')),
 											 None)
 							logger.info('This is subscription data, not processed')
 							break
 						else:
 							agg_rules = next((item for item in rule_config if
-											  (item['name'] == 'Ebsco' and item['filename_pattern'] == '/Ebsco')), None)
+											  (item['name'] == 'EBSCO_HOST' and item['filename_pattern'] == '/Ebsco')), None)
 						
 						mandatory_columns = agg_rules['filters']['mandatory_columns']
 						data = obj_pre_process.process_header_templates(logger, data, mandatory_columns)

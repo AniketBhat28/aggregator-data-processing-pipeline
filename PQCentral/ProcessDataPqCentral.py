@@ -68,13 +68,13 @@ class ProcessDataPqCentral:
 						logger.info('Get the corresponding rules object for PQ-Central')
 						if 'Q1_' in each_file or 'Q2_' in each_file :
 							agg_rules = next((item for item in rule_config if
-											  (item['name'] == 'PqCentral' and item['filename_pattern'] == '/PqCentral Subscription')),
+											  (item['name'] == 'PQ_CENTRAL' and item['filename_pattern'] == '/PqCentral Subscription')),
 											 None)
 							logger.info('This is subscription data, not processed')
 							break
 						else:
 							agg_rules = next((item for item in rule_config if
-											  (item['name'] == 'PqCentral' and item['filename_pattern'] == '/PqCentral')), None)
+											  (item['name'] == 'PQ_CENTRAL' and item['filename_pattern'] == '/PqCentral')), None)
 						
 						mandatory_columns = agg_rules['filters']['mandatory_columns']
 						data = obj_pre_process.process_header_templates(logger, data, mandatory_columns)

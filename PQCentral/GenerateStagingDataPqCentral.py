@@ -34,9 +34,10 @@ class GenerateStagingDataPqCentral:
 	# Return Values : 			extracted - extracted staging data
 	def generate_staging_output(self, logger, filename, agg_rules, extracted_data):
 
-		extracted_data['aggregator'] = agg_rules['name']
+		extracted_data['aggregator_name'] = agg_rules['name']
 		extracted_data['product_type'] = agg_rules['product_type']
 
+		extracted_data['pod'] = 'NA'
 		extracted_data['product_format'] = 'NA'
 		extracted_data['e_backup_product_id'] = 'NA'
 		extracted_data['p_backup_product_id'] = 'NA'

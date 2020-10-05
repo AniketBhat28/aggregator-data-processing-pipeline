@@ -63,11 +63,11 @@ class ProcessDataAmazon:
 					logger.info('Get the corresponding rules object for Amazon')
 					if 'rental' in each_file.lower():
 						agg_rules = next((item for item in rule_config if
-										  (item['name'] == 'Amazon' and item['filename_pattern'] == '/Amazon Rental')),
+										  (item['name'] == 'AMAZON' and item['filename_pattern'] == '/Amazon Rental')),
 										 None)
 					else:
 						agg_rules = next((item for item in rule_config if
-										  (item['name'] == 'Amazon' and item['filename_pattern'] == '/Amazon')), None)
+										  (item['name'] == 'AMAZON' and item['filename_pattern'] == '/Amazon')), None)
 
 					if agg_rules['discard_last_rows'] != 0:
 						data = data.iloc[:-agg_rules['discard_last_rows']]
