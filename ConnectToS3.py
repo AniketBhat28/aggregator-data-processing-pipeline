@@ -61,7 +61,7 @@ class ConnectToS3:
 
 		logger.info('Writing the output at the given S3 location')
 		csv_buffer = StringIO()
-		final_data.to_csv(csv_buffer)
+		final_data.to_csv(csv_buffer, index=False)
 		s3.Object(output_bucket_name, output_directory).put(Body=csv_buffer.getvalue())
 		logger.info('Staging data successfully stored at the given S3 location')
 
