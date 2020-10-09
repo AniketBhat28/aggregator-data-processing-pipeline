@@ -57,6 +57,8 @@ class ProcessDataAmazon:
 
 		if 'rental_duration' not in extracted_data.columns.to_list():
 			extracted_data['rental_duration'] = 0
+		else:
+			extracted_data['rental_duration'] = extracted_data['rental_duration'].apply(lambda row: pd.to_numeric(row, errors='coerce')).fillna(0)
 
 		# Converting negative amounts to positives
 		amount_column = agg_rules['filters']['amount_column']
