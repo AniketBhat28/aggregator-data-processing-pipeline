@@ -73,7 +73,9 @@ if __name__ == '__main__':
 		module_path_relative = 'PQCentral.ProcessDataPqCentral'
 	elif aggregator == 'Chegg':
 		module_path_relative = 'Chegg.ProcessDataChegg'
-	
+	elif aggregator == 'Ingram':
+		module_path_relative = 'Ingram.ProcessDataIngram'
+
 	# Get the module path and start the process
 	module_path = module_path_relative
 	module = importlib.import_module(module_path)

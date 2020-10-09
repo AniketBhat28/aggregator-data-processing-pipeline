@@ -2,3 +2,8 @@
 *.pyc
 Output/Output.log
 .vscode/launch.json
+.idea/ingram_aggregator.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/inspectionProfiles/profiles_settings.xml
