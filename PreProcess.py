@@ -85,3 +85,31 @@ class PreProcess:
 					data = obj_process_core.start_process_data(logger, element, data)
 
 		return data
+
+
+	# Function Description :	This function is to process dates and convert them to a common format
+	# Input Parameters : 		logger - For the logging output file.
+	#							extracted_data - input data
+	#							date_formats - list of date formats
+	#							date_column_name - Name of the date column
+	#							output_date_format - Output date format
+	# Return Values : 			data
+	def process_dates(self, logger, extracted_data, date_formats, date_column_name, output_date_format):
+
+		logger.info("Processing dates and converting to common format")
+		if len(date_formats) == 1:
+			extracted_data['temp_transaction_date'] = pd.to_datetime(extracted_data[date_column_name], format=date_formats[0])
+			extracted_data['temp_transaction_date'] = extracted_data['temp_transaction_date'].dt.strftime('%d-%m-%Y')
+		else:
+			for i in range(len(date_formats)):
+				if i == 0:
+					date_rows = pd.to_datetime(extracted_data[date_column_name], format=date_formats[i], errors="coerce")
+				else:
+					date_rows = date_rows.fillna(pd.to_datetime(extracted_data[date_column_name], format=date_formats[i], errors="coerce"))
+			extracted_data['temp_transaction_date'] = date_rows
+			extracted_data['temp_transaction_date'] = extracted_data['temp_transaction_date'].dt.strftime('%d-%m-%Y')
+
+		extracted_data[date_column_name] = extracted_data['temp_transaction_date']
+
+		logger.info("Dates converted to given common format")
+		return extracted_data

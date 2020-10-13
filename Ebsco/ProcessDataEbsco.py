@@ -49,33 +49,38 @@ class ProcessDataEbsco:
 		extracted_data['pod'] = 'NA'
 		extracted_data['vendor_code'] = 'NA'
 		extracted_data['product_format'] = 'NA'
+		extracted_data['disc_code'] = 'NA'
+		extracted_data['total_rental_duration'] = 0
+
+		current_date_format = agg_rules['date_formats']
+		extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'transaction_date', '%d-%m-%Y')
 
 		extracted_data = obj_gen_attrs.process_isbn(logger, extracted_data, 'digital_isbn', 'e_product_id', 'e_backup_product_id', 'NA')
 		extracted_data = obj_gen_attrs.process_isbn(logger, extracted_data, 'physical_isbn', 'p_product_id', 'p_backup_product_id', 'NA')
 		extracted_data = obj_gen_attrs.generate_misc_isbn(logger, extracted_data, 'digital_isbn', 'physical_isbn', 'misc_product_ids', 'NA')
+		extracted_data = extracted_data.replace('nan', 'NA')
 		
-
 		extracted_data['net_units'] = pd.to_numeric(extracted_data['net_units'], errors='coerce')
-		if 'sale_type' not in extracted_data.columns.to_list():
-			extracted_data['sale_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units']<0) else ('PURCHASE'), axis=1)
+		extracted_data.loc[(extracted_data['net_units'] < 0), 'sale_type'] = extracted_data.loc[(extracted_data['net_units'] < 0),'sale_type'].fillna('REFUNDS')
+		extracted_data.loc[(extracted_data['net_units'] >= 0), 'sale_type'] = extracted_data.loc[(extracted_data['net_units'] >= 0),'sale_type'].fillna('PURCHASE')
+		extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units']<0) else ('SALE'), axis=1)
 		
-		# Converting negative amounts to positives
 		amount_column = agg_rules['filters']['amount_column']
-		extracted_data[amount_column] = extracted_data[amount_column].abs()
-		extracted_data['list_price'] = extracted_data['list_price'].abs()
+		#extracted_data[amount_column] = extracted_data[amount_column].abs()
+		extracted_data['publisher_price'] = extracted_data['publisher_price'].abs()
 
 		if agg_rules['filters']['convert_percentage'] == 'yes':
 			logger.info('Converting percentages to decimals')
 			extracted_data['disc_percentage'] = extracted_data['disc_percentage']/100
 
-		logger.info('Computing net unit price')
-		extracted_data['net_unit_price'] = round((extracted_data[amount_column]/extracted_data['net_units']), 2)
-		extracted_data['net_unit_price'] = extracted_data['net_unit_price'].abs()
-		logger.info('Net units price computed')
+		extracted_data = obj_gen_attrs.process_net_unit_prices(logger, extracted_data, amount_column)
+		extracted_data['agg_net_price_per_unit'] = extracted_data['agg_net_price_per_unit'].abs()
 
 		logger.info('Computing Sales and Returns')
 		extracted_data['total_sales_value'] = extracted_data.apply(lambda row:row[amount_column] if (row['net_units'] >= 0) else 0.0, axis=1)
 		extracted_data['total_returns_value'] = extracted_data.apply(lambda row:row[amount_column] if (row['net_units'] < 0) else 0.0, axis=1)
+		extracted_data['total_sales_value'] = extracted_data['total_sales_value'].abs()
+		extracted_data['total_returns_value'] = extracted_data['total_returns_value'].abs()
 
 		extracted_data['total_sales_count'] = extracted_data.apply(lambda row:row['net_units'] if (row['net_units'] >= 0) else 0, axis=1)
 		extracted_data['total_returns_count'] = extracted_data.apply(lambda row:row['net_units'] if (row['net_units'] < 0) else 0, axis=1)

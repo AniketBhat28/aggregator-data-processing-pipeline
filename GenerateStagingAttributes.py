@@ -104,3 +104,18 @@ class GenerateStagingAttributes:
 		logger.info('Staging data grouped')
 		return final_grouped_data
 
+	# Function Description :	This function is to compute net unit prices
+	# Input Parameters : 		logger - For the logging output file.
+	#							data - input data
+	#							amount_column - name of the amount column
+	# Return Values : 			data
+	def process_net_unit_prices(self, logger, data, amount_column):
+
+		logger.info('Computing aggregator and tnf net unit prices')
+		data['tnf_net_price_per_unit'] = round(((1-data['disc_percentage']) * data['publisher_price']), 2)
+		data['agg_net_price_per_unit'] = round((data[amount_column]/data['net_units']).replace(np.nan, data['tnf_net_price_per_unit']), 2)
+		data['agg_net_price_per_unit'] = data['agg_net_price_per_unit'].replace(np.inf, data['tnf_net_price_per_unit'])
+		
+		logger.info('Net units prices computed')
+		return data
+

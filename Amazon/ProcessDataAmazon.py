@@ -46,35 +46,48 @@ class ProcessDataAmazon:
 		extracted_data['aggregator_name'] = agg_rules['name']
 		extracted_data['product_type'] = agg_rules['product_type']
 		extracted_data['pod'] = 'NA'
+		extracted_data['e_backup_product_id'] = 'NA'
+		extracted_data['disc_code'] = 'NA'
+		extracted_data['misc_product_ids'] = 'NA'
 
 		logger.info('Extracting patterns from filename')
 		for each_rule in agg_rules['pattern_extractions']:
 			extracted_data = obj_gen_attrs.extract_patterns(extracted_data, each_rule, filename)
 		logger.info('Patterns extracted')
 
+		current_country = extracted_data['region_of_sale'][0]
+		current_date_format = next(item for item in agg_rules['date_formats'] if item["country"] == current_country)['format']
+		extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'transaction_date', '%d-%m-%Y')
+		
 		if 'sale_type' not in extracted_data.columns.to_list():
-			extracted_data['sale_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units']<0) else ('PURCHASE'), axis=1)
-
-		if 'rental_duration' not in extracted_data.columns.to_list():
-			extracted_data['rental_duration'] = 0
+			extracted_data['sale_type'] = extracted_data.apply(lambda row: ('REFUNDS') if(row['net_units']<0) else ('PURCHASE'), axis=1)
+			extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units']<0) else ('SALE'), axis=1)
 		else:
-			extracted_data['rental_duration'] = extracted_data['rental_duration'].apply(lambda row: pd.to_numeric(row, errors='coerce')).fillna(0)
+			extracted_data.loc[(extracted_data['net_units'] < 0), 'sale_type'] = extracted_data.loc[(extracted_data['net_units'] < 0),'sale_type'].fillna('REFUNDS')
+			extracted_data.loc[(extracted_data['net_units'] >= 0), 'sale_type'] = extracted_data.loc[(extracted_data['net_units'] >= 0),'sale_type'].fillna('PURCHASE')
+			extracted_data['trans_type'] = 'RENTAL'
 
-		# Converting negative amounts to positives
+		if 'total_rental_duration' not in extracted_data.columns.to_list():
+			extracted_data['total_rental_duration'] = 0
+		else:
+			extracted_data['total_rental_duration'] = extracted_data['total_rental_duration'].apply(lambda row: pd.to_numeric(row, errors='coerce')).fillna(0)
+
 		amount_column = agg_rules['filters']['amount_column']
-		extracted_data[amount_column] = extracted_data[amount_column].abs()
+		# extracted_data[amount_column] = extracted_data[amount_column].abs()
+
+		if 'country_iso_values' in agg_rules['filters'].keys():
+			extracted_data['region_of_sale'] = extracted_data['region_of_sale'].map(
+                agg_rules['filters']['country_iso_values']).fillna(extracted_data['region_of_sale'])
 
 		if agg_rules['filters']['convert_percentage'] == 'yes':
 			logger.info('Converting percentages to decimals')
 			extracted_data['disc_percentage'] = extracted_data['disc_percentage']/100
 
-		logger.info('Computing net unit price')
-		extracted_data['net_unit_price'] = round(((1-extracted_data['disc_percentage']) * extracted_data['list_price']), 2)
-		logger.info('Net units price computed')
+		extracted_data = obj_gen_attrs.process_net_unit_prices(logger, extracted_data, amount_column)
 
 		logger.info('Computing Sales and Returns')
-		extracted_data['total_sales_value'] = round((extracted_data['total_sales_count'] * (1-extracted_data['disc_percentage']) * extracted_data['list_price']), 2)
-		extracted_data['total_returns_value'] = round((extracted_data['total_returns_count'] * (1-extracted_data['disc_percentage']) * extracted_data['list_price']), 2)
+		extracted_data['total_sales_value'] = round((extracted_data['total_sales_count'] * (1-extracted_data['disc_percentage']) * extracted_data['publisher_price']), 2)
+		extracted_data['total_returns_value'] = round((extracted_data['total_returns_count'] * (1-extracted_data['disc_percentage']) * extracted_data['publisher_price']), 2)
 		logger.info('Sales and Return Values computed')
 
 		return extracted_data

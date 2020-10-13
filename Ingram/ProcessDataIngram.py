@@ -48,31 +48,31 @@ class ProcessDataIngram:
         extracted_data['vendor_code'] = 'NA'
         extracted_data['misc_product_ids'] = 'NA'
 
-        if 'sale_type' not in extracted_data.columns.to_list():
-            extracted_data['sale_type'] = extracted_data.apply(
-                lambda row: 'SALES' if (pd.isna(row['duration'])) else 'RENTALS', axis=1)
+        current_date_format = agg_rules['date_formats']
+        extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'transaction_date', '%d-%m-%Y')
+        
+        extracted_data['sale_type'] = extracted_data.apply(lambda row: ('REFUNDS') if(row['net_units']<0) else ('PURCHASE'), axis=1)
+        extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RENTAL') if(pd.isna(row['total_rental_duration'])) else (('RETURNS') if(row['net_units']<0) else ('SALE')), axis=1)
 
-        if 'rental_duration' not in extracted_data.columns.to_list():
-            extracted_data['rental_duration'] = 0
+        extracted_data['total_rental_duration'] = extracted_data.apply(
+                lambda row: 0 if (pd.isna(row['total_rental_duration'])) else row['total_rental_duration'], axis=1)
 
-        # Converting negative amounts to positives
         amount_column = agg_rules['filters']['amount_column']
-        extracted_data[amount_column] = extracted_data[amount_column].abs()
+        #extracted_data[amount_column] = extracted_data[amount_column].abs()
 
         if agg_rules['filters']['convert_percentage'] == 'yes':
             logger.info('Converting percentages to decimals')
             extracted_data['disc_percentage'] = extracted_data['disc_percentage'] / 100
 
-        logger.info('Computing net unit price')
-        extracted_data['net_unit_price'] = round((extracted_data[amount_column] / extracted_data['net_units']), 2)
-        extracted_data['net_unit_price'] = extracted_data['net_unit_price'].abs()
-        logger.info('Net units price computed')
+        extracted_data = obj_gen_attrs.process_net_unit_prices(logger, extracted_data, amount_column)
+        extracted_data['agg_net_price_per_unit'] = extracted_data['agg_net_price_per_unit'].abs()
 
         logger.info('Computing Sales and Returns')
         extracted_data['total_sales_value'] = extracted_data.apply(
             lambda row: row[amount_column] if (row['net_units'] >= 0) else 0.0, axis=1)
         extracted_data['total_returns_value'] = extracted_data.apply(
             lambda row: row[amount_column] if (row['net_units'] < 0) else 0.0, axis=1)
+        extracted_data['total_returns_value'] = extracted_data['total_returns_value'].abs()
 
         extracted_data['total_sales_count'] = extracted_data.apply(
             lambda row: row['net_units'] if (row['net_units'] >= 0) else 0, axis=1)
@@ -141,7 +141,7 @@ class ProcessDataIngram:
                                                               agg_rules['filters']['column_validations'])
 
             extracted_data['region_of_sale'] = extracted_data['region_of_sale'].map(
-                agg_rules['filters']['country_iso_values'])
+                agg_rules['filters']['country_iso_values']).fillna(extracted_data['region_of_sale'])
 
             logger.info("Generating Staging Output")
             extracted_data = self.generate_staging_output(logger, each_file, agg_rules, extracted_data)

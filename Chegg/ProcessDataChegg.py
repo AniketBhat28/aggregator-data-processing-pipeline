@@ -50,13 +50,18 @@ class ProcessDataChegg:
 		extracted_data['pod'] = 'NA'
 		extracted_data['product_format'] = 'NA'
 		extracted_data['trans_currency'] = 'USD'
+		extracted_data['vendor_code'] = 'NA'
+		extracted_data['misc_product_ids'] = 'NA'
+		extracted_data['disc_percentage'] = 0.0
+		extracted_data['total_rental_duration'] = 0
 		
 		if 'p_product_id' not in extracted_data.columns.to_list():
 			extracted_data['p_product_id'] = 'NA'
 		if 'p_backup_product_id' not in extracted_data.columns.to_list():
 			extracted_data['p_backup_product_id'] = 'NA'
-		if 'sale_type' not in extracted_data.columns.to_list():
-			extracted_data['sale_type'] = 'NA'
+		
+		current_date_format = agg_rules['date_formats']
+		extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'transaction_date', '%d-%m-%Y')
 		
 		amount_column = agg_rules['filters']['amount_column']
 		
@@ -68,19 +73,22 @@ class ProcessDataChegg:
 		extracted_data['total_returns_count'] = extracted_data.apply(lambda row: 1 if (row[amount_column] < 0) else 0, axis=1)
 		logger.info('Sales and Return Values computed')
 
+		extracted_data['net_units'] = extracted_data['total_sales_count'] - extracted_data['total_returns_count']
 
-		# Converting negative amounts to positives
+		if 'trans_type' not in extracted_data.columns.to_list():
+			extracted_data['sale_type'] = extracted_data.apply(lambda row: ('REFUNDS') if(row['net_units']<0) else ('PURCHASE'), axis=1)
+			extracted_data['trans_type'] = 'SUBSCRIPTION'
+		else:
+			extracted_data['sale_type'] = extracted_data.apply(lambda row: (row['trans_type']) if(row['trans_type'] == 'EXTENSION') else (('REFUNDS') if(row['net_units']<0) else ('PURCHASE')), axis=1)
+			extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units']<0) else ('SALE'), axis=1)
+
 		logger.info('Converting negative amounts to positives')
-		extracted_data[amount_column] = extracted_data[amount_column].abs()
-		extracted_data['list_price'] = extracted_data['list_price'].abs()
+		#extracted_data[amount_column] = extracted_data[amount_column].abs()
+		extracted_data['publisher_price'] = extracted_data['publisher_price'].abs()
 		extracted_data['total_returns_value'] = extracted_data['total_returns_value'].abs()
 
-		logger.info('Computing net units and net unit price')
-		extracted_data['net_units'] = extracted_data['total_sales_count'] - extracted_data['total_returns_count']
-		extracted_data['net_unit_price'] = round((extracted_data[amount_column]/extracted_data['net_units']), 2)
-		extracted_data['net_unit_price'] = extracted_data['net_unit_price'].abs()
-		logger.info('Net units price computed')
-
+		extracted_data = obj_gen_attrs.process_net_unit_prices(logger, extracted_data, amount_column)
+		
 		return extracted_data
 
 
