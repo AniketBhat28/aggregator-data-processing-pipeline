@@ -76,7 +76,6 @@ class PreProcess:
 		for element in column_validations:
 			if element['dtype'] == 'float':
 				data[element['column_name']] = pd.to_numeric(data[element['column_name']], errors='coerce')
-				#data[element['column_name']] = data[element['column_name']].astype(float)
 				if 'missing_data' in element.keys():
 					data = obj_process_core.start_process_data(logger, element, data)
 
@@ -92,14 +91,15 @@ class PreProcess:
 	#							extracted_data - input data
 	#							date_formats - list of date formats
 	#							date_column_name - Name of the date column
-	#							output_date_format - Output date format
+	#							default_config - Default config for output date format
 	# Return Values : 			data
-	def process_dates(self, logger, extracted_data, date_formats, date_column_name, output_date_format):
+	def process_dates(self, logger, extracted_data, date_formats, date_column_name, default_config):
 
 		logger.info("Processing dates and converting to common format")
+		output_date_format = default_config[0]['output_date_format']
 		if len(date_formats) == 1:
 			extracted_data['temp_transaction_date'] = pd.to_datetime(extracted_data[date_column_name], format=date_formats[0])
-			extracted_data['temp_transaction_date'] = extracted_data['temp_transaction_date'].dt.strftime('%d-%m-%Y')
+			extracted_data['temp_transaction_date'] = extracted_data['temp_transaction_date'].dt.strftime(output_date_format)
 		else:
 			for i in range(len(date_formats)):
 				if i == 0:
@@ -107,7 +107,7 @@ class PreProcess:
 				else:
 					date_rows = date_rows.fillna(pd.to_datetime(extracted_data[date_column_name], format=date_formats[i], errors="coerce"))
 			extracted_data['temp_transaction_date'] = date_rows
-			extracted_data['temp_transaction_date'] = extracted_data['temp_transaction_date'].dt.strftime('%d-%m-%Y')
+			extracted_data['temp_transaction_date'] = extracted_data['temp_transaction_date'].dt.strftime(output_date_format)
 
 		extracted_data[date_column_name] = extracted_data['temp_transaction_date']
 

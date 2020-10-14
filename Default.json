@@ -1,0 +1,9 @@
+[
+	{
+		"output_date_format":"%d-%m-%Y",
+		"group_staging_data": 	{
+									"aggregation_function":{"net_units": "sum", "revenue_value": "sum", "total_sales_count": "sum", "total_sales_value":"sum", "total_returns_count": "sum", "total_returns_value":"sum"},
+									"groupby_columns": ["aggregator_name","transaction_date", "e_product_id", "e_backup_product_id", "p_product_id", "p_backup_product_id", "product_title", "vendor_code", "product_type", "imprint", "product_format", "publisher_price", "trans_type", "sale_type", "agg_net_price_per_unit", "tnf_net_price_per_unit", "trans_currency", "disc_percentage", "disc_code", "region_of_sale", "total_rental_duration", "pod", "misc_product_ids"]
+								}
+	}
+]
