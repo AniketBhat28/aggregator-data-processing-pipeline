@@ -26,6 +26,11 @@ import time
 
 class ProcessCore:
 
+	# Function Description :	This function processes data
+	# Input Parameters : 		logger - For the logging output file.
+	#							element - given sub-process
+	#							data - input data
+	# Return Values : 			data - data
 	def start_process_data(self, logger, element, data):
 		
 		if element['missing_data']['process_type'] == 'discard':

@@ -58,6 +58,9 @@ if __name__ == '__main__':
 	with open(CONFIG_PATH+'/AggRulesVal.json') as f:
 		rule_config = json.load(f)
 
+	with open(CONFIG_PATH+'/Default.json') as f:
+		default_config = json.load(f)
+
 	# Record the start time for current run
 	start_time = time.time()
 
@@ -81,7 +84,7 @@ if __name__ == '__main__':
 	module = importlib.import_module(module_path)
 	className = getattr(module, module_path_relative.split('.')[-1])
 	classObj = className()
-	classObj.initialise_processing(logger, app_config, rule_config)
+	classObj.initialise_processing(logger, app_config, rule_config, default_config)
 
 	logger.info('\n+-+-+-+-+-+-+')
 	logger.info("#################################")
