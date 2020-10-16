@@ -786,5 +786,110 @@
 						"country_iso_values" : {"Australia": "AU", "United States": "US", "Canada": "CA", "United Kingdom": "GB", "South Africa": "ZA", "Saudi Arabia": "SA", "New Zealand": "NZ", "Ireland": "IE"}
 					},
 		"date_formats":	["%d-%b-%y"]
+	},
+
+	{
+		"name": "GARDNERS",
+		"filename_pattern": "",
+		"product_type": "EBK",
+		"data_sheet":0,
+		"acceptable_currencies":[],
+		"file_type":"xlsx",
+		"header_row": 0,
+		"data_row": 1,
+		"discard_last_rows":0,
+		
+		"relevant_attributes":	[
+									{"input_column_name": "SALE-DATE", "staging_column_name":"transaction_date"},
+									{"input_column_name": "ISBN13", "staging_column_name":"e_product_id"},
+
+									{"input_column_name": "EB-FORMAT", "staging_column_name":"product_format"},
+									{"input_column_name": "TITLE", "staging_column_name":"product_title"},
+									
+									{"input_column_name": "PURCHASE-DISCOUNT-COMMISSION", "staging_column_name":"disc_percentage"},
+									{"input_column_name": "RRP", "staging_column_name":"publisher_price"},
+									{"input_column_name": "CURRENCY", "staging_column_name":"trans_currency"},
+									{"input_column_name": "UNITS", "staging_column_name":"net_units"},
+									{"input_column_name": "TOTAL-NET-LINE-VALUE", "staging_column_name":"revenue_value"},
+									{"input_column_name": "PRICE-LESS-DISCOUNT", "staging_column_name":"discounted_price"},
+									
+									{"input_column_name": "INVorCN", "staging_column_name":"sale_type"},
+									{"input_column_name": "LICENCE-TYPE", "staging_column_name":"licence_type"},
+									
+									{"input_column_name": "VENDOR", "staging_column_name":"vendor_code"},					
+									{"input_column_name": "VENDOR-COUNTRY", "staging_column_name":"region_of_sale"}
+								],
+		"filters": {	
+						"mandatory_columns": ["ISBN13"],
+						"amount_column":"revenue_value",
+						"column_validations": [
+												{
+													"column_name": "revenue_value",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "publisher_price",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "disc_percentage",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "transaction_date",
+													"dtype": "date",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": "current_date"
+																	}
+												},
+												{
+													"column_name": "trans_currency",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "USD"
+																	}
+												},
+												{
+													"column_name": "region_of_sale",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "product_format",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "vendor_code",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												}
+											],
+						"convert_percentage": "yes"
+					},
+		"date_formats":	["%Y-%m-%d %H:%M:%S", "%d.%m.%Y"]
 	}
 ]

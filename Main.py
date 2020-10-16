@@ -78,6 +78,8 @@ if __name__ == '__main__':
 		module_path_relative = 'Chegg.ProcessDataChegg'
 	elif aggregator == 'Ingram':
 		module_path_relative = 'Ingram.ProcessDataIngram'
+	elif aggregator == 'Gardners':
+		module_path_relative = 'Gardners.ProcessDataGardners'
 
 	# Get the module path and start the process
 	module_path = module_path_relative
