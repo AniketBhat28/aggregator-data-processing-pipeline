@@ -1,0 +1,24 @@
+language: python
+python:
+  - "3.8"
+
+addons:
+  sonarcloud:
+    organization: tandfgroup
+
+branches:
+  only:
+    - master
+
+stages:
+  - name: build_sonar
+    if: repo = tandfgroup/aggregator-data-processing-pipeline
+      AND type = pull_request
+      AND branch = master
+
+jobs:
+  include:
+    - stage: build_sonar
+      name: 'Will do the code quality check with Sonar Cloud'
+      script:
+        - sonar-scanner
