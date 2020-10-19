@@ -63,7 +63,7 @@ class ProcessDataGardners:
 
 		extracted_data['e_backup_product_id'] = 'NA'
 		extracted_data['p_product_id'] = 'NA'
-		extracted_data['p_backup_product_id'] = 'USD'
+		extracted_data['p_backup_product_id'] = 'NA'
 
 		extracted_data['pod'] = 'NA'
 		extracted_data['imprint'] = 'NA'
@@ -77,7 +77,7 @@ class ProcessDataGardners:
 		if agg_rules['filters']['convert_percentage'] == 'yes':
 			logger.info('Converting percentages to decimals')
 			extracted_data['disc_percentage'] = extracted_data['disc_percentage']/100
-		extracted_data['disc_percentage'] = 1 - (round((extracted_data['discounted_price']/ extracted_data['publisher_price']), 1))
+		extracted_data['disc_percentage'] = 1 - (round((extracted_data['discounted_price']/ extracted_data['publisher_price']), 2))
 		
 		amount_column = agg_rules['filters']['amount_column']
 		extracted_data = self.process_trans_type(logger, extracted_data)
