@@ -80,6 +80,8 @@ if __name__ == '__main__':
 		module_path_relative = 'Ingram.ProcessDataIngram'
 	elif aggregator == 'Gardners':
 		module_path_relative = 'Gardners.ProcessDataGardners'
+	elif aggregator == 'Follett':
+		module_path_relative = 'Follett.ProcessDataFollett'
 
 	# Get the module path and start the process
 	module_path = module_path_relative
