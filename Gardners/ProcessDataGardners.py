@@ -43,7 +43,8 @@ class ProcessDataGardners:
 
 		logger.info("Processing transaction and sales types")
 		extracted_data['sale_type'] = extracted_data.apply(lambda row: ('REFUNDS') if(row['sale_type'] == 'CREDIT') else ('PURCHASE'), axis=1)
-		extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RENTAL') if(row['licence_type'] == 'RENTAL') else (('RETURNS') if(row['net_units']<0) else ('SALE')), axis=1)
+		extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units'] < 0) else ('SALE'), axis=1)
+		extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RENTAL') if(row['licence_type'] == 'RENTAL') else (row['trans_type']), axis=1)
 		
 		logger.info("Transaction and sales types processed")
 		return extracted_data

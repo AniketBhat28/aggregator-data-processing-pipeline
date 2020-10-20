@@ -78,7 +78,6 @@ class ProcessDataPqCentral:
 		
 		logger.info('Converting negative amounts to positives')
 		amount_column = agg_rules['filters']['amount_column']
-		#extracted_data[amount_column] = extracted_data[amount_column].abs()
 		extracted_data['publisher_price'] = extracted_data['publisher_price'].abs()
 
 		if agg_rules['filters']['convert_percentage'] == 'yes':

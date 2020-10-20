@@ -980,8 +980,9 @@
 																	}
 												}
 											],
-						"convert_percentage": "no"
+						"convert_percentage": "no",
+						"country_iso_values" : {"USD": "US", "CAD": "CA"}
 					},
-		"date_formats":	["%Y-%m-%d"]
+		"date_formats":	["%Y-%m-%d", "%d/%m/%Y"]
 	}
 ]

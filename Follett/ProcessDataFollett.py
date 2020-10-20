@@ -60,7 +60,7 @@ class ProcessDataFollett:
 		extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'transaction_date', default_config)
 		
 		logger.info('Processing region of sale')
-		extracted_data['region_of_sale'] = extracted_data.apply(lambda row: ('US') if(row['trans_currency'] == 'USD') else (('CA') if(row['trans_currency'] == 'CAD') else ('NA')), axis=1)
+		extracted_data['region_of_sale'] = extracted_data['trans_currency'].map(agg_rules['filters']['country_iso_values']).fillna('NA')
 		
 		amount_column = agg_rules['filters']['amount_column']
 		extracted_data['disc_percentage'] = 1 - (round((extracted_data[amount_column] / extracted_data['publisher_price']), 2))

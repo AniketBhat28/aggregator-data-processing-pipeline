@@ -87,8 +87,6 @@ class ProcessDataAmazon:
 			extracted_data['total_rental_duration'] = extracted_data['total_rental_duration'].apply(lambda row: pd.to_numeric(row, errors='coerce')).fillna(0)
 
 		amount_column = agg_rules['filters']['amount_column']
-		# extracted_data[amount_column] = extracted_data[amount_column].abs()
-
 		if 'country_iso_values' in agg_rules['filters'].keys():
 			extracted_data['region_of_sale'] = extracted_data['region_of_sale'].map(agg_rules['filters']['country_iso_values']).fillna(extracted_data['region_of_sale'])
 

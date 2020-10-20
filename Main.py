@@ -44,14 +44,6 @@ if __name__ == '__main__':
 	logger.info("             INITIALISING             ")
 	logger.info("######################################")
 
-
-	# app_configs_list = []
-	# config_files = os.listdir( CONFIG_PATH )
-	# for each_config in config_files:
-	# 	config = configparser.ConfigParser()
-	# 	config.read(CONFIG_PATH + '/' + each_config)
-	# 	app_configs_list.append(config)
-
 	app_config = configparser.ConfigParser()
 	app_config.read(CONFIG_PATH+'/Config.ini')
 
