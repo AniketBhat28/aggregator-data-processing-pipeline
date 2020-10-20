@@ -61,7 +61,7 @@ if __name__ == '__main__':
 	with open(CONFIG_PATH+'/Default.json') as f:
 		default_config = json.load(f)
 
-	# Record the start time for current run in milliseconds
+	# Record the start time for current run 
 	start_time = time.time()
 
 	# Get aggregator name
