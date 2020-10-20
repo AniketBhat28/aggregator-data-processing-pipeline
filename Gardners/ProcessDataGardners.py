@@ -79,6 +79,7 @@ class ProcessDataGardners:
 			logger.info('Converting percentages to decimals')
 			extracted_data['disc_percentage'] = extracted_data['disc_percentage']/100
 		extracted_data['disc_percentage'] = 1 - (round((extracted_data['discounted_price']/ extracted_data['publisher_price']), 2))
+		extracted_data['disc_percentage'] = extracted_data['disc_percentage'].replace(np.nan, 0)
 		
 		amount_column = agg_rules['filters']['amount_column']
 		extracted_data = self.process_trans_type(logger, extracted_data)
