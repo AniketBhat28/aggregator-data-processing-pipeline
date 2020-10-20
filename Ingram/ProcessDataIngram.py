@@ -60,8 +60,6 @@ class ProcessDataIngram:
 		extracted_data['total_rental_duration'] = extracted_data.apply(lambda row: 0 if (pd.isna(row['total_rental_duration'])) else row['total_rental_duration'], axis=1)
 
 		amount_column = agg_rules['filters']['amount_column']
-		#extracted_data[amount_column] = extracted_data[amount_column].abs()
-
 		if agg_rules['filters']['convert_percentage'] == 'yes':
 			logger.info('Converting percentages to decimals')
 			extracted_data['disc_percentage'] = extracted_data['disc_percentage'] / 100

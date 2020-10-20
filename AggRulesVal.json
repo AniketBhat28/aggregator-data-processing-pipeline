@@ -891,5 +891,98 @@
 						"convert_percentage": "yes"
 					},
 		"date_formats":	["%Y-%m-%d %H:%M:%S", "%d.%m.%Y"]
+	},
+
+	{
+		"name": "FOLLETT",
+		"filename_pattern": "",
+		"product_type": "EBK",
+		"data_sheet":0,
+		"acceptable_currencies":[],
+		"file_type":"xlsx",
+		"header_row": 0,
+		"data_row": 1,
+		"discard_last_rows":0,
+		
+		"relevant_attributes":	[
+									{"input_column_name": "Date", "staging_column_name":"transaction_date"},
+									{"input_column_name": "Digital ISBN13", "staging_column_name":"e_product_id"},
+									{"input_column_name": "Digital ISBN10", "staging_column_name":"e_backup_product_id"},
+
+									{"input_column_name": "VendorName", "staging_column_name":"imprint"},
+									{"input_column_name": "Description", "staging_column_name":"product_title"},
+									{"input_column_name": "Publisher", "staging_column_name":"vendor_code"},					
+									{"input_column_name": "Retail", "staging_column_name":"publisher_price"},
+									{"input_column_name": "Cost", "staging_column_name":"revenue_value"},
+									{"input_column_name": "TransactionType", "staging_column_name":"sale_type"},
+									{"input_column_name": "CurrencyType", "staging_column_name":"trans_currency"}
+									
+									
+								],
+		"filters": {	
+						"mandatory_columns": ["Digital ISBN13"],
+						"amount_column":"revenue_value",
+						"column_validations": [
+												{
+													"column_name": "revenue_value",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "publisher_price",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "transaction_date",
+													"dtype": "date",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": "current_date"
+																	}
+												},
+												{
+													"column_name": "trans_currency",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "USD"
+																	}
+												},
+												{
+													"column_name": "imprint",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "e_backup_product_id",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "vendor_code",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												}
+											],
+						"convert_percentage": "no",
+						"country_iso_values" : {"USD": "US", "CAD": "CA"}
+					},
+		"date_formats":	["%Y-%m-%d", "%d/%m/%Y"]
 	}
 ]

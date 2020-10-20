@@ -38,7 +38,6 @@ class ReadData:
 
 		input_list = config #list(ast.literal_eval(config['File_Data']))
 		input_base_path = input_list[0]['input_base_path']
-		input_file_name = input_list[0]['input_file_name']
 		input_sheet_name = input_list[0]['input_sheet_name']
 
 		file_path = input_base_path + filename
@@ -61,9 +60,17 @@ class ReadData:
 			logger.info('Exiting load_data(), Time taken to load : %s seconds', time.time() - current_time)
 			return data
 
-		except:
-			logger.error('Error while loading file', exc_info=False)
-			return pd.DataFrame()
+		except UnicodeDecodeError:
+			try:
+				if input_file_extn == 'csv':
+					data = pd.read_csv(file_path, encoding="windows-1252")
+					return data
+				else:
+					logger.error('Error while loading file', exc_info=True)
+					return pd.DataFrame()
+			except FileNotFoundError:
+				logger.error('Error while loading file', exc_info=True)
+				return pd.DataFrame()
 
 			
 

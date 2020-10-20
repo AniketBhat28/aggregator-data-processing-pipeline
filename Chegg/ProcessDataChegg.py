@@ -95,7 +95,6 @@ class ProcessDataChegg:
 		extracted_data = self.process_trans_type(logger, extracted_data)
 
 		logger.info('Converting negative amounts to positives')
-		#extracted_data[amount_column] = extracted_data[amount_column].abs()
 		extracted_data['publisher_price'] = extracted_data['publisher_price'].abs()
 		extracted_data['total_returns_value'] = extracted_data['total_returns_value'].abs()
 

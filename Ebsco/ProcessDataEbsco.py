@@ -80,7 +80,6 @@ class ProcessDataEbsco:
 		extracted_data = self.process_trans_type(logger, extracted_data)
 		
 		amount_column = agg_rules['filters']['amount_column']
-		#extracted_data[amount_column] = extracted_data[amount_column].abs()
 		extracted_data['publisher_price'] = extracted_data['publisher_price'].abs()
 
 		if agg_rules['filters']['convert_percentage'] == 'yes':

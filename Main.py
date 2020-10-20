@@ -44,14 +44,6 @@ if __name__ == '__main__':
 	logger.info("             INITIALISING             ")
 	logger.info("######################################")
 
-
-	# app_configs_list = []
-	# config_files = os.listdir( CONFIG_PATH )
-	# for each_config in config_files:
-	# 	config = configparser.ConfigParser()
-	# 	config.read(CONFIG_PATH + '/' + each_config)
-	# 	app_configs_list.append(config)
-
 	app_config = configparser.ConfigParser()
 	app_config.read(CONFIG_PATH+'/Config.ini')
 
@@ -80,6 +72,8 @@ if __name__ == '__main__':
 		module_path_relative = 'Ingram.ProcessDataIngram'
 	elif aggregator == 'Gardners':
 		module_path_relative = 'Gardners.ProcessDataGardners'
+	elif aggregator == 'Follett':
+		module_path_relative = 'Follett.ProcessDataFollett'
 
 	# Get the module path and start the process
 	module_path = module_path_relative
