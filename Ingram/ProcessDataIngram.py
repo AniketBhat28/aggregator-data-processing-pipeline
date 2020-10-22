@@ -53,10 +53,11 @@ class ProcessDataIngram:
 
 		current_date_format = agg_rules['date_formats']
 		extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'transaction_date', default_config)
-		
-		extracted_data['sale_type'] = extracted_data.apply(lambda row: ('REFUNDS') if(row['net_units']<0) else ('PURCHASE'), axis=1)
-		extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RENTAL') if(pd.isna(row['total_rental_duration'])) else (('RETURNS') if(row['net_units']<0) else ('SALE')), axis=1)
 
+		extracted_data['sale_type'] = extracted_data.apply(lambda row: ('REFUNDS') if(row['net_units']<0) else ('PURCHASE'), axis=1)
+		extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units'] < 0) else ('SALE'), axis=1)
+		extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RENTAL') if(pd.isna(row['total_rental_duration'])) else (row['trans_type']), axis=1)
+		
 		extracted_data['total_rental_duration'] = extracted_data.apply(lambda row: 0 if (pd.isna(row['total_rental_duration'])) else row['total_rental_duration'], axis=1)
 
 		amount_column = agg_rules['filters']['amount_column']

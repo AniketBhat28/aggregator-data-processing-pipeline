@@ -46,7 +46,8 @@ class ProcessDataChegg:
 			extracted_data['sale_type'] = extracted_data.apply(lambda row: ('REFUNDS') if(row['net_units']<0) else ('PURCHASE'), axis=1)
 			extracted_data['trans_type'] = 'SUBSCRIPTION'
 		else:
-			extracted_data['sale_type'] = extracted_data.apply(lambda row: (row['trans_type']) if(row['trans_type'] == 'EXTENSION') else (('REFUNDS') if(row['net_units']<0) else ('PURCHASE')), axis=1)
+			extracted_data['sale_type'] = extracted_data.apply(lambda row: ('REFUNDS') if(row['net_units'] < 0) else ('PURCHASE'), axis=1)
+			extracted_data['sale_type'] = extracted_data.apply(lambda row: ('EXTENSION') if(row['trans_type'] == 'EXTENSION') else (row['sale_type']), axis=1)
 			extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units']<0) else ('SALE'), axis=1)
 
 		logger.info("Transaction and sales types processed")
@@ -158,14 +159,8 @@ class ProcessDataChegg:
 					data = obj_read_data.load_data(logger, input_list, each_file)
 					if not data.empty:
 						logger.info('Get the corresponding rules object for Chegg')
-						if 'rental' in each_file.lower():
-							agg_rules = next((item for item in rule_config if
-											  (item['name'] == 'CHEGG' and item['filename_pattern'] == '/Chegg Rental')),
-											 None)
-						else:
-							agg_rules = next((item for item in rule_config if
-											  (item['name'] == 'CHEGG' and item['filename_pattern'] == '/Chegg')), None)
-						
+						agg_rules = obj_process_core.get_rules_object(rule_config, 'rental', 'CHEGG', each_file, '/Chegg Rental', '/Chegg')
+
 						data = data.dropna(how='all')
 						data.columns = data.columns.str.strip()
 						mandatory_columns = agg_rules['filters']['mandatory_columns']
