@@ -46,7 +46,15 @@ class ProcessCore:
 		
 		return data
 
-
+	
+	# Function Description :	This function to fetch rules object for given aggregator
+	# Input Parameters : 		rule_config - rule_config
+	#							condition - condition for filename
+	#							aggregator_name - aggregator_name
+	#							filename - filename
+	#							pattern1 - pattern1
+	#							pattern2 - pattern2
+	# Return Values : 			data - data
 	def get_rules_object(self, rule_config, condition, aggregator_name, filename, pattern1, pattern2):
 
 		if condition in filename.lower():
