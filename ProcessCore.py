@@ -52,8 +52,8 @@ class ProcessCore:
 	#							condition - condition for filename
 	#							aggregator_name - aggregator_name
 	#							filename - filename
-	#							pattern1 - pattern1
-	#							pattern2 - pattern2
+	#							pattern1 - filename pattern1
+	#							pattern2 - filename pattern2
 	# Return Values : 			data - data
 	def get_rules_object(self, rule_config, condition, aggregator_name, filename, pattern1, pattern2):
 
