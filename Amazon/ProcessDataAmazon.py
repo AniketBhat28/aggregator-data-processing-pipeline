@@ -159,14 +159,8 @@ class ProcessDataAmazon:
 					data = obj_read_data.load_data(logger, input_list, each_file)
 					if not data.empty:
 						logger.info('Get the corresponding rules object for Amazon')
-						if 'rental' in each_file.lower():
-							agg_rules = next((item for item in rule_config if
-											  (item['name'] == 'AMAZON' and item['filename_pattern'] == '/Amazon Rental')),
-											 None)
-						else:
-							agg_rules = next((item for item in rule_config if
-											  (item['name'] == 'AMAZON' and item['filename_pattern'] == '/Amazon')), None)
-
+						agg_rules = obj_process_core.get_rules_object(rule_config, 'rental', 'AMAZON', each_file, '/Amazon Rental', '/Amazon')
+						
 						if agg_rules['discard_last_rows'] != 0:
 							data = data.iloc[:-agg_rules['discard_last_rows']]
 						data = data.dropna(how='all')

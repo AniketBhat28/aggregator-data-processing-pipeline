@@ -160,21 +160,17 @@ class ProcessDataEbsco:
 				for each_sheet in sheets:
 					logger.info('Processing sheet: %s', each_sheet)
 					input_list[0]['input_sheet_name'] = each_sheet
+
+					if 'subscription' in each_file.lower():
+						logger.info('This is subscription data, not processed')
+						break
 					
 					try:
 						data = obj_read_data.load_data(logger, input_list, each_file)
 						if not data.empty:
 							logger.info('Get the corresponding rules object for Ebsco')
-							if 'subscription' in each_file.lower():
-								agg_rules = next((item for item in rule_config if
-												  (item['name'] == 'EBSCO_HOST' and item['filename_pattern'] == '/Ebsco Subscription')),
-												 None)
-								logger.info('This is subscription data, not processed')
-								break
-							else:
-								agg_rules = next((item for item in rule_config if
-												  (item['name'] == 'EBSCO_HOST' and item['filename_pattern'] == '/Ebsco')), None)
-							
+							agg_rules = obj_process_core.get_rules_object(rule_config, 'subscription', 'EBSCO_HOST', each_file, '/Ebsco Subscription', '/Ebsco')
+														
 							mandatory_columns = agg_rules['filters']['mandatory_columns']
 							data = obj_pre_process.process_header_templates(logger, data, mandatory_columns)
 							

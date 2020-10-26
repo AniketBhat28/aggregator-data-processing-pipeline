@@ -38,10 +38,10 @@ class GenerateStagingAttributes:
 
 		logger.info('Processing ISBN')
 		data[input_column] = data[input_column].astype(str)
+
+		data[staging_column] = data.apply(lambda row: (row[input_column].split(',')[0]) if ((pd.notnull(row[input_column])) and (len(row[input_column].split(',')) >= 1)) else(default_val) , axis=1)
+		data[bckp_staging_column] = data.apply(lambda row: (row[input_column].split(',')[0]) if ((pd.notnull(row[input_column])) and (len(row[input_column].split(',')) >= 2)) else(default_val) , axis=1)
 		
-		data[staging_column] = data.apply(lambda row: default_val if (pd.isnull(row[input_column])) else(row[input_column].split(',')[0] if (len(row[input_column].split(',')) >= 1) else default_val) , axis=1)
-		
-		data[bckp_staging_column] = data.apply(lambda row: default_val if (pd.isnull(row[input_column])) else(row[input_column].split(',')[1] if (len(row[input_column].split(',')) >= 2) else default_val) , axis=1)
 		logger.info('ISBN processed')
 
 		return data
@@ -58,10 +58,10 @@ class GenerateStagingAttributes:
 	def generate_misc_isbn(self, logger, data, e_column, p_column, staging_column, default_val):
 
 		logger.info('Processing Miscellaneous ISBN')
-		
-		data['misc_e_product_id'] = data.apply(lambda row: [] if (pd.isnull(row[e_column])) else(row[e_column].split(',')[2:] if (len(row[e_column].split(',')) > 2) else []) , axis=1)
-		data['misc_p_product_id'] = data.apply(lambda row: [] if (pd.isnull(row[p_column])) else(row[p_column].split(',')[2:] if (len(row[p_column].split(',')) > 2) else []) , axis=1)
 
+		data['misc_e_product_id'] = data.apply(lambda row: (row[e_column].split(',')[2:]) if ((pd.notnull(row[e_column])) and (len(row[e_column].split(',')) > 2)) else [] , axis=1)
+		data['misc_p_product_id'] = data.apply(lambda row: (row[p_column].split(',')[2:]) if ((pd.notnull(row[p_column])) and (len(row[p_column].split(',')) > 2)) else [] , axis=1)
+		
 		data[staging_column] = data[['misc_e_product_id', 'misc_p_product_id']].values.tolist()
 		data[staging_column] = data.apply(lambda row: [] if (row[staging_column] == [[],[]]) else list(itertools.chain.from_iterable(row[staging_column])), axis=1)
 		data[staging_column] = [','.join(map(str, l)) for l in data[staging_column]]
@@ -102,6 +102,7 @@ class GenerateStagingAttributes:
 		logger.info('Staging data grouped')
 		return final_grouped_data
 
+	
 	# Function Description :	This function is to compute net unit prices
 	# Input Parameters : 		logger - For the logging output file.
 	#							data - input data
@@ -116,4 +117,3 @@ class GenerateStagingAttributes:
 		
 		logger.info('Net units prices computed')
 		return data
-
