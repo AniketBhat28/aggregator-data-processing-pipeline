@@ -74,6 +74,10 @@ if __name__ == '__main__':
 		module_path_relative = 'Gardners.ProcessDataGardners'
 	elif aggregator == 'Follett':
 		module_path_relative = 'Follett.ProcessDataFollett'
+	elif aggregator == 'Barnes':
+		module_path_relative = 'Barnes.ProcessDataBarnes'
+	elif aggregator == 'Overdrive':
+		module_path_relative = 'Overdrive.ProcessDataOverdrive'
 
 	# Get the module path and start the process
 	module_path = module_path_relative
