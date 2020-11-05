@@ -154,6 +154,14 @@ class ProcessDataOverdrive:
 						
 						data = data.dropna(how='all')
 						data.columns = data.columns.str.strip()
+
+						for each_dict in agg_rules['attribute_mappings']:
+							if list(each_dict.values())[0] not in data.columns.to_list():
+								data = data.rename(columns=each_dict)
+						for each_col in agg_rules['missing_columns']:
+							if each_col not in data.columns.to_list():
+								data[each_col] = 'NA'
+								
 						mandatory_columns = agg_rules['filters']['mandatory_columns']
 						data[mandatory_columns] = data[mandatory_columns].fillna(value='NA')
 

@@ -1100,6 +1100,13 @@
 		"data_row": 1,
 		"discard_last_rows":0,
 		
+		"attribute_mappings":	[
+									{"eISBN":"ISBN"},
+									{"Country of sale":"CustomerCountry"},
+									{"SRP USD":"Srp USD"},
+									{"Amt Due To Publisher USD":"Amt owed USD"}					
+								],
+		"missing_columns":["Retailer","Format"],
 		"relevant_attributes":	[
 									{"input_column_name": "Date", "staging_column_name":"transaction_date"},
 									{"input_column_name": "ISBN", "staging_column_name":"e_product_id"},
@@ -1169,6 +1176,6 @@
 											],
 						"convert_percentage": "no"
 					},
-		"date_formats":	["%Y-%m-%d","%d.%m.%Y"]
+		"date_formats":	["%Y-%m-%d","%d.%m.%Y","%m/%d/%Y"]
 	}
 ]
