@@ -50,8 +50,8 @@ class ConnectToS3:
         logger.info("Storing the staging output at the given S3 location")
         logger.info('\n+-+-+-+-+-+-+')
 
-        output_bucket_name = app_config['OUTPUT']['output_bucket_name']
-        output_directory = app_config['OUTPUT']['output_directory']
+        output_bucket_name = app_config['output_params']['output_bucket_name']
+        output_directory = app_config['output_params']['output_directory']
 
         logger.info('Writing the output at the given S3 location')
         csv_buffer = StringIO()
