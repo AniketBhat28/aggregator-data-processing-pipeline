@@ -4,6 +4,7 @@
 
 
 import os
+import sys
 import json
 import importlib
 import configparser
@@ -18,8 +19,7 @@ import logging
 
 
 BASE_PATH = os.path.dirname(os.path.realpath(__file__))
-CONFIG_PATH = BASE_PATH# + "/configuration"
-
+sys.path.append('Output/aggregator_data_processing_pipeline-1.0-py3.7.egg')
 
 
 # Main Function
@@ -44,40 +44,53 @@ if __name__ == '__main__':
 	logger.info("             INITIALISING             ")
 	logger.info("######################################")
 
-	app_config = configparser.ConfigParser()
-	app_config.read(CONFIG_PATH+'/Config.ini')
+	with open(BASE_PATH+'/Config.json') as f:
+		config_json = json.load(f)
 
-	with open(CONFIG_PATH+'/AggRulesVal.json') as f:
+	input_bucket_name = config_json['input_bucket_name']
+	input_directory = config_json['input_directory']
+	output_bucket_name = config_json['output_bucket_name']
+	output_directory = config_json['output_directory']
+	aggregator = config_json['aggregator_name']
+
+	app_config, input_dict = {}, {}
+	app_config['input_params'], app_config['output_params'] = [], {}
+	input_dict['input_base_path'] = 's3://' + input_bucket_name + '/' + input_directory + '/'
+	input_dict['input_bucket_name'] = input_bucket_name
+	input_dict['input_directory'] = input_directory
+	input_dict['input_sheet_name'] = None
+	app_config['input_params'].append(input_dict)
+	app_config['output_params']['output_bucket_name'] = output_bucket_name
+	app_config['output_params']['output_directory'] = output_directory
+
+	print(app_config)
+	input()
+
+	with open(BASE_PATH+'/AggRulesVal.json') as f:
 		rule_config = json.load(f)
 
-	with open(CONFIG_PATH+'/Default.json') as f:
+	with open(BASE_PATH+'/Default.json') as f:
 		default_config = json.load(f)
-
-	# Record the start time for current run 
-	start_time = time.time()
-
-	# Get aggregator name
-	aggregator = str(app_config['INPUT']['File_Aggregator'])
 
 	# Check the aggregator to initialise appropriate module
 	if aggregator == 'Amazon':
-		module_path_relative = 'Amazon.ProcessDataAmazon'
+		module_path_relative = 'StagingDataGenerators.ProcessDataAmazon'
 	elif aggregator == 'Ebsco':
-		module_path_relative = 'Ebsco.ProcessDataEbsco'
+		module_path_relative = 'StagingDataGenerators.ProcessDataEbsco'
 	elif aggregator == 'PQ':
-		module_path_relative = 'PQCentral.ProcessDataPqCentral'
+		module_path_relative = 'StagingDataGenerators.ProcessDataPqCentral'
 	elif aggregator == 'Chegg':
-		module_path_relative = 'Chegg.ProcessDataChegg'
+		module_path_relative = 'StagingDataGenerators.ProcessDataChegg'
 	elif aggregator == 'Ingram':
-		module_path_relative = 'Ingram.ProcessDataIngram'
+		module_path_relative = 'StagingDataGenerators.ProcessDataIngram'
 	elif aggregator == 'Gardners':
-		module_path_relative = 'Gardners.ProcessDataGardners'
+		module_path_relative = 'StagingDataGenerators.ProcessDataGardners'
 	elif aggregator == 'Follett':
-		module_path_relative = 'Follett.ProcessDataFollett'
+		module_path_relative = 'StagingDataGenerators.ProcessDataFollett'
 	elif aggregator == 'Barnes':
-		module_path_relative = 'Barnes.ProcessDataBarnes'
+		module_path_relative = 'StagingDataGenerators.ProcessDataBarnes'
 	elif aggregator == 'Overdrive':
-		module_path_relative = 'Overdrive.ProcessDataOverdrive'
+		module_path_relative = 'StagingDataGenerators.ProcessDataOverdrive'
 
 	# Get the module path and start the process
 	module_path = module_path_relative
@@ -95,5 +108,4 @@ if __name__ == '__main__':
 	logger.removeHandler(handler)
 	del logger, handler
 
-	#logger.info("Time taken by the current run is %s seconds ---" % (time.time() - start_time))
-		
+	

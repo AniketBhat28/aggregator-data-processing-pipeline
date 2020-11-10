@@ -7,11 +7,11 @@ import ast
 import pandas as pd
 import numpy as np
 
-from ReadData import ReadData
-from ProcessCore import ProcessCore
-from PreProcess import PreProcess
-from ConnectToS3 import ConnectToS3
-from GenerateStagingAttributes import GenerateStagingAttributes
+from ReadWriteData.ReadData import ReadData
+from Preprocessing.ProcessCore import ProcessCore
+from Preprocessing.PreProcess import PreProcess
+from ReadWriteData.ConnectToS3 import ConnectToS3
+from AttributeGenerators.GenerateStagingAttributes import GenerateStagingAttributes
 
 
 
@@ -146,7 +146,7 @@ class ProcessDataPqCentral:
 
 		# For the final staging output
 		final_staging_data = pd.DataFrame()
-		input_list = list(ast.literal_eval(app_config['INPUT']['File_Data']))
+		input_list = list(app_config['input_params'])
 		
 		# Processing for each file in the fiven folder
 		logger.info('\n+-+-+-+-+-+-+Starting PQ-Central files Processing\n')
