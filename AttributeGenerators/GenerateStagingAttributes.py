@@ -96,7 +96,6 @@ class GenerateStagingAttributes:
 		logger.info('Grouping staging data')
 		agg_fn = groupby_object['aggregation_function']
 		groupby_columns = groupby_object['groupby_columns']
-
 		final_grouped_data = data.groupby(groupby_columns, as_index=False).agg(agg_fn)
 
 		logger.info('Staging data grouped')

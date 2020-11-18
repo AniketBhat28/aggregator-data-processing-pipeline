@@ -21,6 +21,20 @@ import logging
 BASE_PATH = os.path.dirname(os.path.realpath(__file__))
 sys.path.append('Output/aggregator_data_processing_pipeline-1.0-py3.7.egg')
 
+#Converting Month name to numbers to create output filename
+def processMonth(month):
+	monthMapper={'JAN':'01','FEB':'02',
+				'MAR':'03',
+				'APR':'04',
+				'MAY':'05',
+				'JUN':'06',
+				'JUL':'07',
+				'AUG':'08',
+				'SEP':'09',
+				'OCT':'10',
+				'NOV':'11',
+				'DEC':'12'}
+	return monthMapper.get(month,"Invalid month of year")
 
 # Main Function
 if __name__ == '__main__':
@@ -48,13 +62,26 @@ if __name__ == '__main__':
 		config_json = json.load(f)
 
 	input_bucket_name = config_json['input_bucket_name']
-	input_directory = config_json['input_directory']
 	output_bucket_name = config_json['output_bucket_name']
-	output_directory = config_json['output_directory']
 	aggregator = config_json['aggregator_name']
+
+	aggregator_FileName = config_json['aggregator']
+	month = config_json['month']
+	year = config_json['year']
+
+
 
 	app_config, input_dict = {}, {}
 	app_config['input_params'], app_config['output_params'] = [], {}
+
+	fileName = processMonth(month) + str(year) + '.csv'
+	print('fileName', fileName)
+	input_directory = 'prd/' + aggregator_FileName + '/input/' + str(year) + '/' + month
+	print('input_directory', input_directory)
+	output_directory = 'staging/revenue/aggregator/' + aggregator_FileName + '/eBook-' + fileName
+	print('output_directory', output_directory)
+
+
 	input_dict['input_base_path'] = 's3://' + input_bucket_name + '/' + input_directory + '/'
 	input_dict['input_bucket_name'] = input_bucket_name
 	input_dict['input_directory'] = input_directory
@@ -64,7 +91,6 @@ if __name__ == '__main__':
 	app_config['output_params']['output_directory'] = output_directory
 
 	print(app_config)
-	input()
 
 	with open(BASE_PATH+'/AggRulesVal.json') as f:
 		rule_config = json.load(f)
@@ -91,6 +117,10 @@ if __name__ == '__main__':
 		module_path_relative = 'StagingDataGenerators.ProcessDataBarnes'
 	elif aggregator == 'Overdrive':
 		module_path_relative = 'StagingDataGenerators.ProcessDataOverdrive'
+	elif aggregator == 'Google':
+		module_path_relative = 'StagingDataGenerators.ProcessDataGoogle'
+	elif aggregator == 'Redshelf':
+		module_path_relative = 'StagingDataGenerators.ProcessDataRedshelf'
 
 	# Get the module path and start the process
 	module_path = module_path_relative
