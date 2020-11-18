@@ -75,11 +75,8 @@ if __name__ == '__main__':
 	app_config['input_params'], app_config['output_params'] = [], {}
 
 	fileName = processMonth(month) + str(year) + '.csv'
-	print('fileName', fileName)
 	input_directory = 'prd/' + aggregator_FileName + '/input/' + str(year) + '/' + month
-	print('input_directory', input_directory)
 	output_directory = 'staging/revenue/aggregator/' + aggregator_FileName + '/eBook-' + fileName
-	print('output_directory', output_directory)
 
 
 	input_dict['input_base_path'] = 's3://' + input_bucket_name + '/' + input_directory + '/'
@@ -89,8 +86,6 @@ if __name__ == '__main__':
 	app_config['input_params'].append(input_dict)
 	app_config['output_params']['output_bucket_name'] = output_bucket_name
 	app_config['output_params']['output_directory'] = output_directory
-
-	print(app_config)
 
 	with open(BASE_PATH+'/AggRulesVal.json') as f:
 		rule_config = json.load(f)
