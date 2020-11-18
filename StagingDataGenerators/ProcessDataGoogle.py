@@ -75,8 +75,8 @@ class ProcessDataGoogle:
 
         if agg_rules['filters']['convert_percentage'] == 'yes':
             #logger.info('Converting percentages to decimals')
-            fileExtension = filename.split('.')[-1]
-            if(fileExtension == 'csv'):
+            file_extension = filename.split('.')[-1]
+            if(file_extension == 'csv'):
                 try:
                     extracted_data['disc_percentage'] = (extracted_data['disc_percentage']).str.rstrip('%')
                     extracted_data['disc_percentage'] = (pd.to_numeric(extracted_data['disc_percentage']))/100

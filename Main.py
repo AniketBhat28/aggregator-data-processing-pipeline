@@ -22,8 +22,8 @@ BASE_PATH = os.path.dirname(os.path.realpath(__file__))
 sys.path.append('Output/aggregator_data_processing_pipeline-1.0-py3.7.egg')
 
 #Converting Month name to numbers to create output filename
-def processMonth(month):
-	monthMapper={'JAN':'01','FEB':'02',
+def process_month(month):
+	month_mapper={'JAN':'01','FEB':'02',
 				'MAR':'03',
 				'APR':'04',
 				'MAY':'05',
@@ -34,7 +34,7 @@ def processMonth(month):
 				'OCT':'10',
 				'NOV':'11',
 				'DEC':'12'}
-	return monthMapper.get(month,"Invalid month of year")
+	return month_mapper.get(month,"Invalid month of year")
 
 # Main Function
 if __name__ == '__main__':
@@ -74,7 +74,7 @@ if __name__ == '__main__':
 	app_config, input_dict = {}, {}
 	app_config['input_params'], app_config['output_params'] = [], {}
 
-	fileName = processMonth(month) + str(year) + '.csv'
+	fileName = process_month(month) + str(year) + '.csv'
 	input_directory = 'prd/' + aggregator_FileName + '/input/' + str(year) + '/' + month
 	output_directory = 'staging/revenue/aggregator/' + aggregator_FileName + '/eBook-' + fileName
 
