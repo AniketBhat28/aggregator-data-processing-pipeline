@@ -156,7 +156,6 @@ class ProcessDataAmazon:
 																					default_config, extracted_data,
 																					final_staging_data,
 																					agg_reference, obj_pre_process)
-						final_staging_data.to_csv('amazon.final_st_data.csv')
 				except KeyError as err:
 					logger.error(f"KeyError error while processing the file {each_file}. The error message is :  ", err)
 

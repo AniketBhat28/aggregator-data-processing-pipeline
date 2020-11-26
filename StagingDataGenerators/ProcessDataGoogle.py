@@ -149,7 +149,6 @@ class ProcessDataGoogle:
         final_grouped_data = obj_gen_attrs.group_data(logger, final_staging_data,
                                                      default_config[0]['group_staging_data'])
 
-        final_grouped_data.to_csv('test_google.csv')
         # Adding column display sequence logic
         final_grouped_data = final_grouped_data[default_config[0]['group_staging_data']['display_column_sequence']]
 
