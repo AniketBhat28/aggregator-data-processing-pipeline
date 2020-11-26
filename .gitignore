@@ -9,5 +9,4 @@ Output/aggregator_data_processing_pipeline-1.0-py3.7.egg
 .idea/vcs.xml
 .idea/inspectionProfiles/profiles_settings.xml
 .idea/aggregator-data-processing-pipeline.iml
-.idea/*
-*.idea
+**/.idea
