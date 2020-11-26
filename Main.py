@@ -76,7 +76,7 @@ if __name__ == '__main__':
 
 	fileName = process_month(month) + str(year) + '.csv'
 	input_directory = 'prd/' + aggregator_FileName + '/input/' + str(year) + '/' + month
-	output_directory = 'staging/revenue/aggregator/' + aggregator_FileName + '/eBook-' + fileName
+	output_directory = 'staging/revenue/aggregator/' + aggregator_FileName + '/ebook-' + fileName
 
 
 	input_dict['input_base_path'] = 's3://' + input_bucket_name + '/' + input_directory + '/'

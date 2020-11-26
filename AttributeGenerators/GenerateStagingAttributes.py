@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 import re
 import itertools
+from Preprocessing.ProcessCore import ProcessCore
 
 
 
@@ -98,6 +99,9 @@ class GenerateStagingAttributes:
 		groupby_columns = groupby_object['groupby_columns']
 		final_grouped_data = data.groupby(groupby_columns, as_index=False).agg(agg_fn)
 
+		#Adding column display sequence logic
+		final_grouped_data = final_grouped_data[groupby_object['display_column_sequence']]
+
 		logger.info('Staging data grouped')
 		return final_grouped_data
 
@@ -113,6 +117,91 @@ class GenerateStagingAttributes:
 		data['tnf_net_price_per_unit'] = round(((1-data['disc_percentage']) * data['publisher_price']), 2)
 		data['agg_net_price_per_unit'] = round((data[amount_column]/data['net_units']).replace(np.nan, data['tnf_net_price_per_unit']), 2)
 		data['agg_net_price_per_unit'] = data['agg_net_price_per_unit'].replace(np.inf, data['tnf_net_price_per_unit'])
-		
+
 		logger.info('Net units prices computed')
+		return data
+
+	# Function Description :	This function processes staging data for Amazon files
+	# Input Parameters : 		logger - For the logging output file.
+	#							filename - Name of the file
+	#							agg_rules - Rules json
+	#							default_config - Default json
+	#							extracted_data - pr-processed_data
+	#							final_staging_data - final_staging_data
+	# Return Values : 			final_staging_data - final_staging_data
+	def process_staging_data(self, logger, filename, agg_rules, default_config, extracted_data, final_staging_data,
+								 agg_reference, obj_pre_process):
+		if extracted_data.dropna(how='all').empty:
+			logger.info("This file is empty")
+		else:
+			logger.info('Processing amount column')
+			amount_column = agg_rules['filters']['amount_column']
+			extracted_data[amount_column] = (
+				extracted_data[amount_column].replace('[,)]', '', regex=True).replace('[(]', '-', regex=True))
+
+			extracted_data = obj_pre_process.validate_columns(logger, extracted_data, agg_rules['filters']['column_validations'])
+
+			logger.info("Generating Staging Output")
+			extracted_data = agg_reference.generate_staging_output(logger, filename, agg_rules, default_config, extracted_data)
+			logger.info("Staging output generated for given data")
+
+			# Append staging data of current file into final staging dataframe
+			final_staging_data = pd.concat([final_staging_data, extracted_data], ignore_index=True, sort=True)
+		return final_staging_data
+
+
+
+	def applying_aggregator_rules(self,logger, input_list, each_file, rule_config, default_config,
+                                  final_staging_data,obj_read_data,obj_pre_process,
+								  agg_name,agg_reference):
+
+		logger.info('\n+-+-+-+-+-+-+Starting Processing ' + agg_name + ' files\n')
+		try:
+			data = obj_read_data.load_data(logger, input_list, each_file)
+			if not data.empty:
+				logger.info('Get the corresponding rules object for ' + agg_name)
+				if(agg_name == 'CHEGG'):
+					obj_process_core = ProcessCore()
+					agg_rules = obj_process_core.get_rules_object(rule_config, 'rental', 'CHEGG', each_file,
+																  '/Chegg Rental', '/Chegg')
+				else:
+					agg_rules = next((item for item in rule_config if (item['name'] == agg_name)), None)
+
+				data = data.dropna(how='all')
+				data.columns = data.columns.str.strip()
+
+				if(agg_name == 'REDSHELF' or agg_name == 'OVERDRIVE'):
+					data = self.replace_column_names(logger,agg_rules,data)
+
+				mandatory_columns = agg_rules['filters']['mandatory_columns']
+				data[mandatory_columns] = data[mandatory_columns].fillna(value='NA')
+
+				extracted_data = obj_pre_process.extract_relevant_attributes(logger, data,
+																			 agg_rules['relevant_attributes'])
+
+				final_staging_data = self.process_staging_data(logger, each_file, agg_rules,
+																		default_config,
+																		extracted_data, final_staging_data,
+																		agg_reference, obj_pre_process)
+
+		except KeyError as err:
+			logger.error(f"KeyError error while processing the file {each_file}. The error message is :  ", err)
+
+		logger.info('\n+-+-+-+-+-+-+Finished Processing '+ agg_name+' files\n')
+		return final_staging_data
+
+	# Function Description :	This function rename column names to make a common schema
+	# Input Parameters : 		logger - For the logging output file.
+	#							agg_rules - Rules json
+	#							data - input_data
+	# Return Values : 			data - input_data
+	def replace_column_names(self, logger, agg_rules,data):
+		logger.info('\n+-+-+-+-+-+-+Renaming Column Start \n')
+		for each_dict in agg_rules['attribute_mappings']:
+			if list(each_dict.values())[0] not in data.columns.to_list():
+				data = data.rename(columns=each_dict)
+		for each_col in agg_rules['missing_columns']:
+			if each_col not in data.columns.to_list():
+				data[each_col] = 'NA'
+		logger.info('\n+-+-+-+-+-+-+Renaming Column ends \n')
 		return data

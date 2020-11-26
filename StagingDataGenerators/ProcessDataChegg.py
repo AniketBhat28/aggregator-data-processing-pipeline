@@ -68,7 +68,7 @@ class ProcessDataChegg:
 
 		extracted_data['pod'] = 'NA'
 		extracted_data['product_format'] = 'NA'
-		extracted_data['trans_currency'] = 'USD'
+		extracted_data['trans_curr'] = 'USD'
 		extracted_data['vendor_code'] = 'NA'
 		extracted_data['misc_product_ids'] = 'NA'
 		extracted_data['disc_percentage'] = 0.0
@@ -100,38 +100,14 @@ class ProcessDataChegg:
 		extracted_data['total_returns_value'] = extracted_data['total_returns_value'].abs()
 
 		extracted_data = obj_gen_attrs.process_net_unit_prices(logger, extracted_data, amount_column)
+
+		# new attributes addition
+		extracted_data['source'] = "CHEGG EBook"
+		extracted_data['source_id'] = filename.split('.')[0]
+		extracted_data['sub_domain'] = 'NA'
 		
 		return extracted_data
 
-
-	# Function Description :	This function processes staging data for Amazon files
-	# Input Parameters : 		logger - For the logging output file.
-	#							filename - Name of the file
-	#							agg_rules - Rules json
-	#							default_config - Default json
-	#							extracted_data - pr-processed_data
-	#							final_staging_data - final_staging_data
-	# Return Values : 			final_staging_data - final_staging_data
-	def process_staging_data(self, logger, filename, agg_rules, default_config, extracted_data, final_staging_data):
-
-		if extracted_data.dropna(how='all').empty:
-			logger.info("This file is empty")
-		else:
-			logger.info('Processing amount column')
-			amount_column = agg_rules['filters']['amount_column']
-			extracted_data[amount_column] = (
-				extracted_data[amount_column].replace('[,)]', '', regex=True).replace('[(]', '-', regex=True))
-
-			extracted_data = obj_pre_process.validate_columns(logger, extracted_data, agg_rules['filters']['column_validations'])
-
-			logger.info("Generating Staging Output")
-			extracted_data = self.generate_staging_output(logger, filename, agg_rules, default_config, extracted_data)
-			logger.info("Staging output generated for given data")
-
-			# Append staging data of current file into final staging dataframe
-			final_staging_data = pd.concat([final_staging_data, extracted_data], ignore_index=True, sort=True)
-
-		return final_staging_data
 
 
 	# Function Description :	This function processes data for all Chegg files
@@ -143,6 +119,8 @@ class ProcessDataChegg:
 	def initialise_processing(self, logger, app_config, rule_config, default_config):
 
 		# For the final staging output
+		agg_name = 'CHEGG'
+		agg_reference = self
 		final_staging_data = pd.DataFrame()
 		input_list = list(app_config['input_params'])
 		
@@ -154,25 +132,13 @@ class ProcessDataChegg:
 				logger.info('\n+-+-+-+-+-+-+')
 				logger.info(each_file)
 				logger.info('\n+-+-+-+-+-+-+')
-				
-				try:
-					data = obj_read_data.load_data(logger, input_list, each_file)
-					if not data.empty:
-						logger.info('Get the corresponding rules object for Chegg')
-						agg_rules = obj_process_core.get_rules_object(rule_config, 'rental', 'CHEGG', each_file, '/Chegg Rental', '/Chegg')
 
-						data = data.dropna(how='all')
-						data.columns = data.columns.str.strip()
-						mandatory_columns = agg_rules['filters']['mandatory_columns']
-						data[mandatory_columns] = data[mandatory_columns].fillna(value='NA')
+				final_staging_data = obj_gen_attrs.applying_aggregator_rules(logger, input_list, each_file, rule_config,
+																			 default_config, final_staging_data,
+																			 obj_read_data,
+																			 obj_pre_process,
+																			 agg_name, agg_reference)
 
-						extracted_data = obj_pre_process.extract_relevant_attributes(logger, data, agg_rules['relevant_attributes'])
-
-						final_staging_data = self.process_staging_data(logger, each_file, agg_rules, default_config, extracted_data, final_staging_data)
-
-				except KeyError as err:
-					logger.error(f"KeyError error while processing the file {each_file}. The error message is :  ", err)
-					
 		# Grouping and storing data
 		final_grouped_data = obj_gen_attrs.group_data(logger, final_staging_data, default_config[0]['group_staging_data'])
 		obj_s3_connect.store_data(logger, app_config, final_grouped_data)
