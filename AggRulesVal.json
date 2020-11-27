@@ -24,7 +24,7 @@
 									{"input_column_name": "rental_duration", "staging_column_name":"total_rental_duration"},
 
 									{"input_column_name": "list_price", "staging_column_name":"publisher_price"},
-									{"input_column_name": "amount_currency", "staging_column_name":"trans_currency"},
+									{"input_column_name": "amount_currency", "staging_column_name":"trans_curr"},
 									{"input_column_name": "new_discount_percentage", "staging_column_name":"disc_percentage"},
 									{"input_column_name": "payment_amount", "staging_column_name":"revenue_value"},
 									{"input_column_name": "net_units", "staging_column_name":"net_units"},
@@ -94,7 +94,7 @@
 																	}
 												},
 												{
-													"column_name": "trans_currency",
+													"column_name": "trans_curr",
 													"dtype": "str",
 													"missing_data": {
 																		"process_type": "process",
@@ -159,7 +159,7 @@
 									{"input_column_name": "Format", "staging_column_name":"product_format"},
 
 									{"input_column_name": "List Price", "staging_column_name":"publisher_price"},
-									{"input_column_name": "Payment Amount Currency", "staging_column_name":"trans_currency"},
+									{"input_column_name": "Payment Amount Currency", "staging_column_name":"trans_curr"},
 									{"input_column_name": "Discount Percentage", "staging_column_name":"disc_percentage"},
 									{"input_column_name": "Payment Amount", "staging_column_name":"revenue_value"},
 									{"input_column_name": "Net Units", "staging_column_name":"net_units"},
@@ -219,7 +219,7 @@
 																	}
 												},
 												{
-													"column_name": "trans_currency",
+													"column_name": "trans_curr",
 													"dtype": "str",
 													"missing_data": {
 																		"process_type": "process",
@@ -296,7 +296,7 @@
 									{"input_column_name": "SALE TYPE", "staging_column_name":"sale_type"},
 
 									{"input_column_name": "List Price", "staging_column_name":"publisher_price"},
-									{"input_column_name": "Transaction Currency", "staging_column_name":"trans_currency"},
+									{"input_column_name": "Transaction Currency", "staging_column_name":"trans_curr"},
 									{"input_column_name": "DISC RATE", "staging_column_name":"disc_percentage"},
 									{"input_column_name": "ROYALTY DUE", "staging_column_name":"revenue_value"},
 									{"input_column_name": "QTY", "staging_column_name":"net_units"},
@@ -342,7 +342,7 @@
 																	}
 												},
 												{
-													"column_name": "trans_currency",
+													"column_name": "trans_curr",
 													"dtype": "str",
 													"missing_data": {
 																		"process_type": "process",
@@ -408,7 +408,7 @@
 									{"input_column_name": "Publisher", "staging_column_name":"vendor_code"},
 
 									{"input_column_name": "Sales Price", "staging_column_name":"publisher_price"},
-									{"input_column_name": "Currency", "staging_column_name":"trans_currency"},
+									{"input_column_name": "Currency", "staging_column_name":"trans_curr"},
 									{"input_column_name": "Publisher Revenue Share", "staging_column_name":"disc_percentage"},
 									{"input_column_name": "Due to Publisher", "staging_column_name":"revenue_value"},
 									{"input_column_name": "Units Sold", "staging_column_name":"net_units"},
@@ -455,7 +455,7 @@
 																	}
 												},
 												{
-													"column_name": "trans_currency",
+													"column_name": "trans_curr",
 													"dtype": "str",
 													"missing_data": {
 																		"process_type": "process",
@@ -710,7 +710,7 @@
 									{"input_column_name": "PUBLISHER", "staging_column_name":"imprint"},
 									{"input_column_name": "CONTENT_TYPE", "staging_column_name":"product_format"},
 									{"input_column_name": "LIST_PRICE", "staging_column_name":"publisher_price"},
-			                        {"input_column_name": "LIST_PRICE_CURRENCY", "staging_column_name":"trans_currency"},
+			                        {"input_column_name": "LIST_PRICE_CURRENCY", "staging_column_name":"trans_curr"},
 									{"input_column_name": "EFFECTIVE_DISCOUNT", "staging_column_name":"disc_percentage"},
 									{"input_column_name": "COUNTRY", "staging_column_name":"region_of_sale"},
 			                        {"input_column_name": "QUANTITY", "staging_column_name":"net_units"},
@@ -748,7 +748,7 @@
 																	}
 												},
 												{
-													"column_name": "trans_currency",
+													"column_name": "trans_curr",
 													"dtype": "str",
 													"missing_data": {
 																		"process_type": "process",
@@ -808,7 +808,7 @@
 									
 									{"input_column_name": "PURCHASE-DISCOUNT-COMMISSION", "staging_column_name":"disc_percentage"},
 									{"input_column_name": "RRP", "staging_column_name":"publisher_price"},
-									{"input_column_name": "CURRENCY", "staging_column_name":"trans_currency"},
+									{"input_column_name": "CURRENCY", "staging_column_name":"trans_curr"},
 									{"input_column_name": "UNITS", "staging_column_name":"net_units"},
 									{"input_column_name": "TOTAL-NET-LINE-VALUE", "staging_column_name":"revenue_value"},
 									{"input_column_name": "PRICE-LESS-DISCOUNT", "staging_column_name":"discounted_price"},
@@ -856,7 +856,7 @@
 																	}
 												},
 												{
-													"column_name": "trans_currency",
+													"column_name": "trans_curr",
 													"dtype": "str",
 													"missing_data": {
 																		"process_type": "process",
@@ -890,7 +890,7 @@
 											],
 						"convert_percentage": "yes"
 					},
-		"date_formats":	["%Y-%m-%d %H:%M:%S", "%d.%m.%Y"]
+		"date_formats":	["%Y-%m-%d %H:%M:%S", "%d.%m.%Y","%Y-%m-%d %H:%M:%S", "%d.%m.%Y", "%d/%m/%Y"]
 	},
 
 	{
@@ -915,7 +915,7 @@
 									{"input_column_name": "Retail", "staging_column_name":"publisher_price"},
 									{"input_column_name": "Cost", "staging_column_name":"revenue_value"},
 									{"input_column_name": "TransactionType", "staging_column_name":"sale_type"},
-									{"input_column_name": "CurrencyType", "staging_column_name":"trans_currency"}
+									{"input_column_name": "CurrencyType", "staging_column_name":"trans_curr"}
 									
 									
 								],
@@ -948,7 +948,7 @@
 																	}
 												},
 												{
-													"column_name": "trans_currency",
+													"column_name": "trans_curr",
 													"dtype": "str",
 													"missing_data": {
 																		"process_type": "process",
@@ -1008,7 +1008,7 @@
 									
 									{"input_column_name": "DLP Sale Currency Tax Exclusive", "staging_column_name":"publisher_price"},
 									{"input_column_name": "Total Cost Sale Currency", "staging_column_name":"revenue_value"},
-									{"input_column_name": "Payment Currency", "staging_column_name":"trans_currency"},
+									{"input_column_name": "Payment Currency", "staging_column_name":"trans_curr"},
 									{"input_column_name": "Royaly %", "staging_column_name":"disc_percentage"},
 
 									{"input_column_name": "Units Sold", "staging_column_name":"total_sales_count"},
@@ -1043,7 +1043,7 @@
 																	}
 												},
 												{
-													"column_name": "trans_currency",
+													"column_name": "trans_curr",
 													"dtype": "str",
 													"missing_data": {
 																		"process_type": "process",
@@ -1177,5 +1177,226 @@
 						"convert_percentage": "no"
 					},
 		"date_formats":	["%Y-%m-%d","%d.%m.%Y","%m/%d/%Y"]
+	},
+	{
+		"name": "GOOGLE",
+		"filename_pattern": "",
+		"product_type": "EBK",
+		"data_sheet":0,
+		"acceptable_currencies":[],
+		"file_type":"",
+		"header_row": 0,
+		"data_row": 1,
+		"discard_last_rows":0,
+
+		"relevant_attributes":	[
+									{"input_column_name": "Transaction Date", "staging_column_name":"transaction_date"},
+									{"input_column_name": "Primary ISBN", "staging_column_name":"e_product_id"},
+
+									{"input_column_name": "Title", "staging_column_name":"product_title"},
+									{"input_column_name": "Type", "staging_column_name":"sale_type"},
+									{"input_column_name": "Imprint Name", "staging_column_name":"imprint"},
+									{"input_column_name": "Publisher Revenue %", "staging_column_name":"disc_percentage"},
+									{"input_column_name": "List Price [tax exclusive]", "staging_column_name":"publisher_price"},
+									{"input_column_name": "List Price Currency", "staging_column_name":"trans_curr"},
+									{"input_column_name": "Qty", "staging_column_name":"net_units"},
+									{"input_column_name": "Publisher Revenue", "staging_column_name":"revenue_value"},
+									{"input_column_name": "Country of Sale", "staging_column_name":"region_of_sale"},
+									{"input_column_name": "Product", "staging_column_name":"total_rental_duration"}
+								],
+		"filters": {
+						"mandatory_columns": ["Primary ISBN"],
+						"amount_column":"revenue_value",
+						"column_validations": [
+												{
+													"column_name": "revenue_value",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "publisher_price",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "disc_percentage",
+													"dtype": "str",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": "0"
+																	}
+												},
+												{
+													"column_name": "transaction_date",
+													"dtype": "date",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": "current_date"
+																	}
+												},
+												{
+													"column_name": "trans_curr",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "USD"
+																	}
+												},
+												{
+													"column_name": "region_of_sale",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "imprint",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												}
+											],
+						"convert_percentage": "yes"
+					},
+		"date_formats":	["%Y-%d-%m %H:%M:%S","%m/%d/%y", "%Y-%m-%d","%d-%m-%Y","%d.%m.%Y","%d/%m/%Y"]
+	},
+	{
+		"name": "REDSHELF",
+		"filename_pattern": "",
+		"product_type": "EBK",
+		"data_sheet":"all",
+		"acceptable_currencies":[],
+		"file_type":"",
+		"header_row": 0,
+		"data_row": 1,
+		"discard_last_rows":0,
+
+		"attribute_mappings":	[
+									{"Title":"Book"},
+									{"SRP":"Retail Price"},
+									{"Institution Due":"Purchase Price"},
+									{"Bookstore Country":"Country"}
+								],
+		"missing_columns":["Imprint","Publisher Net Credit","Country","Publisher Credit"],
+
+		"relevant_attributes":	[
+									{"input_column_name": "Date", "staging_column_name":"transaction_date"},
+
+									{"input_column_name": "eISBN13", "staging_column_name":"e_product_id"},
+									{"input_column_name": "ISBN13", "staging_column_name":"p_product_id"},
+
+									{"input_column_name": "Book", "staging_column_name":"product_title"},
+									{"input_column_name": "Imprint", "staging_column_name":"imprint"},
+
+									{"input_column_name": "Status", "staging_column_name":"sale_type"},
+
+									{"input_column_name": "Retail Price", "staging_column_name":"publisher_price"},
+									{"input_column_name": "Purchase Price", "staging_column_name":"tnf_net_price_per_unit"},
+									{"input_column_name": "Publisher Credit", "staging_column_name":"agg_net_price_per_unit"},
+									{"input_column_name": "Type", "staging_column_name":"product_format"},
+									{"input_column_name": "Publisher Net Credit", "staging_column_name":"revenue_value"},
+									{"input_column_name": "Period", "staging_column_name":"total_rental_duration"},
+									{"input_column_name": "Country", "staging_column_name":"region_of_sale"}
+
+								],
+
+		"filters":	{
+						"mandatory_columns": ["eISBN13"],
+						"amount_column":"revenue_value",
+						"column_validations": [
+												{
+													"column_name": "revenue_value",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "p_product_id",
+													"dtype": "str",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "publisher_price",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "tnf_net_price_per_unit",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "agg_net_price_per_unit",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "transaction_date",
+													"dtype": "date",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": "current_date"
+																	}
+												},
+												{
+													"column_name": "product_format",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "imprint",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "total_rental_duration",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "region_of_sale",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												}
+
+											],
+						"convert_percentage": "no"
+					},
+		"date_formats":	["%Y-%m-%d","%d/%m/%Y","%d.%m.%Y"]
 	}
 ]
