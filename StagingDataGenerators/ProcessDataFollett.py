@@ -35,6 +35,32 @@ obj_gen_attrs = GenerateStagingAttributes()
 
 class ProcessDataFollett:
 
+	# Function Description :	This function processes sales and returns
+	# Input Parameters : 		logger - For the logging output file.
+	#							extracted_data - pr-processed_data
+	#							amount_column - amount_column
+	# Return Values : 			extracted_data - extracted staging data
+	def process_sales_and_returns(self, logger, extracted_data, amount_column):
+
+		logger.info('Computing Sales and Returns')
+		
+		extracted_data['total_sales_count'] = extracted_data.apply(lambda row: 1 if (row[amount_column] > 0 and row['net_units'] == "NA") else 0, axis=1)
+		extracted_data['total_returns_count'] = extracted_data.apply(lambda row: 1 if (row[amount_column] < 0 and row['net_units'] == "NA") else 0, axis=1)
+		extracted_data['total_sales_count'] = extracted_data.apply(lambda row: 2 if ((row[amount_column] > 0) and (row[amount_column] > row['publisher_price']) and (row['net_units'] == "NA")) else row['total_sales_count'], axis=1)
+		extracted_data['total_returns_count'] = extracted_data.apply(lambda row: 2 if ((row[amount_column] < 0) and (row[amount_column]*-1 > row['publisher_price']) and (row['net_units'] == "NA")) else row['total_returns_count'], axis=1)
+
+		extracted_data['total_sales_count'] = extracted_data.apply(lambda row: 1 if ((row[amount_column] == 0) and (row['publisher_price'] == 0) and (row['sale_type'] in ['Sale','Create']) and (row['net_units'] == "NA")) else row['total_sales_count'], axis=1)
+		extracted_data['total_returns_count'] = extracted_data.apply(lambda row: 1 if ((row[amount_column] == 0) and (row['publisher_price'] == 0) and (row['sale_type'] in ['Refund','Cancel']) and (row['net_units'] == "NA")) else row['total_returns_count'], axis=1)
+		extracted_data['total_sales_count'] = extracted_data.apply(lambda row: row['net_units'] if ((row[amount_column] > 0) and (row['net_units'] != "NA")) else row['total_sales_count'], axis=1)
+		extracted_data['total_returns_count'] = extracted_data.apply(lambda row: row['net_units'] if ((row[amount_column] < 0) and (row['net_units'] != "NA")) else row['total_returns_count'], axis=1)
+		
+		extracted_data['total_returns_value'] = extracted_data['total_returns_value'].abs()
+		extracted_data['total_returns_count'] = extracted_data['total_returns_count'].abs()
+
+		logger.info('Sales and Return Values Computed')
+		return extracted_data
+
+
 	# Function Description :	This function generates staging data for Follett files
 	# Input Parameters : 		logger - For the logging output file.
 	#							filename - Name of the file
@@ -63,25 +89,10 @@ class ProcessDataFollett:
 		extracted_data['region_of_sale'] = extracted_data['trans_curr'].map(agg_rules['filters']['country_iso_values']).fillna('NA')
 		
 		amount_column = agg_rules['filters']['amount_column']
-		
-		logger.info('Computing Sales and Returns')
 		extracted_data['total_sales_value'] = extracted_data.apply(lambda row:row[amount_column] if (row[amount_column] >= 0.0) else 0.0, axis=1)
 		extracted_data['total_returns_value'] = extracted_data.apply(lambda row:row[amount_column] if (row[amount_column] < 0.0) else 0.0, axis=1)
-		extracted_data['total_returns_value'] = extracted_data['total_returns_value'].abs()
-
-		extracted_data['total_sales_count'] = extracted_data.apply(lambda row: 1 if (row[amount_column] > 0 and row['net_units'] == "NA") else 0, axis=1)
-		extracted_data['total_returns_count'] = extracted_data.apply(lambda row: 1 if (row[amount_column] < 0 and row['net_units'] == "NA") else 0, axis=1)
-		extracted_data['total_sales_count'] = extracted_data.apply(lambda row: 2 if ((row[amount_column] > 0) and (row[amount_column] > row['publisher_price']) and (row['net_units'] == "NA")) else row['total_sales_count'], axis=1)
-		extracted_data['total_returns_count'] = extracted_data.apply(lambda row: 2 if ((row[amount_column] < 0) and (row[amount_column]*-1 > row['publisher_price']) and (row['net_units'] == "NA")) else row['total_returns_count'], axis=1)
-
-		extracted_data['total_sales_count'] = extracted_data.apply(lambda row: 1 if ((row[amount_column] == 0) and (row['publisher_price'] == 0) and (row['sale_type'] in ['Sale','Create']) and (row['net_units'] == "NA")) else row['total_sales_count'], axis=1)
-		extracted_data['total_returns_count'] = extracted_data.apply(lambda row: 1 if ((row[amount_column] == 0) and (row['publisher_price'] == 0) and (row['sale_type'] in ['Refund','Cancel']) and (row['net_units'] == "NA")) else row['total_returns_count'], axis=1)
-		extracted_data['total_sales_count'] = extracted_data.apply(lambda row: row['net_units'] if ((row[amount_column] > 0) and (row['net_units'] != "NA")) else row['total_sales_count'], axis=1)
-		extracted_data['total_returns_count'] = extracted_data.apply(lambda row: row['net_units'] if ((row[amount_column] < 0) and (row['net_units'] != "NA")) else row['total_returns_count'], axis=1)
-		extracted_data['total_returns_count'] = extracted_data['total_returns_count'].abs()
-
-		logger.info('Sales and Return Values computed')
-
+		extracted_data = self.process_sales_and_returns(logger, extracted_data, amount_column)
+		
 		if extracted_data['net_units'].all() == 'NA':
 			extracted_data['net_units'] = extracted_data['total_sales_count'] - extracted_data['total_returns_count']
 		if extracted_data['sale_type'].all() == 'NA':
