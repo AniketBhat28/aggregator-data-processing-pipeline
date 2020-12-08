@@ -107,6 +107,8 @@ class ProcessDataRedshelf:
         extracted_data['net_units'] = extracted_data['total_sales_count'] - extracted_data['total_returns_count']
         logger.info('Sales and Return Values computed')
 
+        extracted_data['disc_percentage'] = extracted_data['disc_percentage']*100
+
         # new attributes addition
         extracted_data['source'] = "REDSHELF EBook"
         extracted_data['source_id'] = filename.split('.')[0]

@@ -83,7 +83,8 @@ class ProcessDataBarnes:
 		extracted_data['publisher_price'] = extracted_data['publisher_price'].abs()
 		extracted_data['total_returns_value'] = extracted_data['total_returns_value'].abs()
 		extracted_data = obj_gen_attrs.process_net_unit_prices(logger, extracted_data, amount_column)
-
+		extracted_data['disc_percentage'] = extracted_data['disc_percentage']*100
+		
 		# new attributes addition
 		extracted_data['source'] = "BARNES EBook"
 		extracted_data['source_id'] = filename.split('.')[0]

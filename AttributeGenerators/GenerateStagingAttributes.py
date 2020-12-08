@@ -170,7 +170,7 @@ class GenerateStagingAttributes:
 				data = data.dropna(how='all')
 				data.columns = data.columns.str.strip()
 
-				if(agg_name == 'REDSHELF' or agg_name == 'OVERDRIVE'):
+				if(agg_name == 'REDSHELF' or agg_name == 'OVERDRIVE' or agg_name == 'FOLLETT'):
 					data = self.replace_column_names(logger,agg_rules,data)
 
 				mandatory_columns = agg_rules['filters']['mandatory_columns']
@@ -178,7 +178,7 @@ class GenerateStagingAttributes:
 
 				extracted_data = obj_pre_process.extract_relevant_attributes(logger, data,
 																			 agg_rules['relevant_attributes'])
-
+				
 				final_staging_data = self.process_staging_data(logger, each_file, agg_rules,
 																		default_config,
 																		extracted_data, final_staging_data,

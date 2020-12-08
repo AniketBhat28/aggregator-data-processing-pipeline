@@ -112,6 +112,8 @@ class ProcessDataGoogle:
         extracted_data['total_returns_value'] = extracted_data['total_returns_value'].abs()
         extracted_data['total_returns_count'] = extracted_data['total_returns_count'].abs()
 
+        extracted_data['disc_percentage'] = extracted_data['disc_percentage']*100
+
         # new attributes addition
         extracted_data['source'] = "GOOGLE EBook"
         extracted_data['source_id'] = filename.split('.')[0]

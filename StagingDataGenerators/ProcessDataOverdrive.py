@@ -91,7 +91,8 @@ class ProcessDataOverdrive:
 		extracted_data['publisher_price'] = extracted_data['publisher_price'].abs()
 		extracted_data['total_returns_value'] = extracted_data['total_returns_value'].abs()
 		extracted_data = obj_gen_attrs.process_net_unit_prices(logger, extracted_data, amount_column)
-
+		extracted_data['disc_percentage'] = extracted_data['disc_percentage']*100
+		
 		# new attributes addition
 		extracted_data['source'] = "OVERDRIVE EBook"
 		extracted_data['source_id'] = filename.split('.')[0]
@@ -126,7 +127,7 @@ class ProcessDataOverdrive:
 				final_staging_data = obj_gen_attrs.applying_aggregator_rules(logger, input_list, each_file, rule_config,
 																		 default_config, final_staging_data,
 																		 obj_read_data,
-																		 obj_pre_process,agg_name, agg_reference)
+																		 obj_pre_process, agg_name, agg_reference)
 				
 
 		# Grouping and storing data

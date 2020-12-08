@@ -63,28 +63,40 @@ class ProcessDataFollett:
 		extracted_data['region_of_sale'] = extracted_data['trans_curr'].map(agg_rules['filters']['country_iso_values']).fillna('NA')
 		
 		amount_column = agg_rules['filters']['amount_column']
-		extracted_data['disc_percentage'] = 1 - (round((extracted_data[amount_column] / extracted_data['publisher_price']), 2))
-		extracted_data['disc_percentage'] = extracted_data['disc_percentage'].replace(np.nan, 0)
-
+		
 		logger.info('Computing Sales and Returns')
 		extracted_data['total_sales_value'] = extracted_data.apply(lambda row:row[amount_column] if (row[amount_column] >= 0.0) else 0.0, axis=1)
 		extracted_data['total_returns_value'] = extracted_data.apply(lambda row:row[amount_column] if (row[amount_column] < 0.0) else 0.0, axis=1)
+		extracted_data['total_returns_value'] = extracted_data['total_returns_value'].abs()
 
-		extracted_data['total_sales_count'] = extracted_data.apply(lambda row: 1 if (row[amount_column] > 0) else 0, axis=1)
-		extracted_data['total_returns_count'] = extracted_data.apply(lambda row: 1 if (row[amount_column] < 0) else 0, axis=1)
-		extracted_data['total_sales_count'] = extracted_data.apply(lambda row: 1 if ((row[amount_column] == 0) and (row['publisher_price'] == 0) and (row['sale_type'] in ['Sale','Create'])) else row['total_sales_count'], axis=1)
-		extracted_data['total_returns_count'] = extracted_data.apply(lambda row: 1 if ((row[amount_column] == 0) and (row['publisher_price'] == 0) and (row['sale_type'] in ['Refund','Cancel'])) else row['total_returns_count'], axis=1)
+		extracted_data['total_sales_count'] = extracted_data.apply(lambda row: 1 if (row[amount_column] > 0 and row['net_units'] == "NA") else 0, axis=1)
+		extracted_data['total_returns_count'] = extracted_data.apply(lambda row: 1 if (row[amount_column] < 0 and row['net_units'] == "NA") else 0, axis=1)
+		extracted_data['total_sales_count'] = extracted_data.apply(lambda row: 2 if ((row[amount_column] > 0) and (row[amount_column] > row['publisher_price']) and (row['net_units'] == "NA")) else row['total_sales_count'], axis=1)
+		extracted_data['total_returns_count'] = extracted_data.apply(lambda row: 2 if ((row[amount_column] < 0) and (row[amount_column]*-1 > row['publisher_price']) and (row['net_units'] == "NA")) else row['total_returns_count'], axis=1)
+
+		extracted_data['total_sales_count'] = extracted_data.apply(lambda row: 1 if ((row[amount_column] == 0) and (row['publisher_price'] == 0) and (row['sale_type'] in ['Sale','Create']) and (row['net_units'] == "NA")) else row['total_sales_count'], axis=1)
+		extracted_data['total_returns_count'] = extracted_data.apply(lambda row: 1 if ((row[amount_column] == 0) and (row['publisher_price'] == 0) and (row['sale_type'] in ['Refund','Cancel']) and (row['net_units'] == "NA")) else row['total_returns_count'], axis=1)
+		extracted_data['total_sales_count'] = extracted_data.apply(lambda row: row['net_units'] if ((row[amount_column] > 0) and (row['net_units'] != "NA")) else row['total_sales_count'], axis=1)
+		extracted_data['total_returns_count'] = extracted_data.apply(lambda row: row['net_units'] if ((row[amount_column] < 0) and (row['net_units'] != "NA")) else row['total_returns_count'], axis=1)
+		extracted_data['total_returns_count'] = extracted_data['total_returns_count'].abs()
 
 		logger.info('Sales and Return Values computed')
 
-		logger.info('Converting negative amounts to positives')
-		extracted_data['publisher_price'] = extracted_data['publisher_price'].abs()
-		extracted_data['total_returns_value'] = extracted_data['total_returns_value'].abs()
-		
-		extracted_data['net_units'] = extracted_data['total_sales_count'] - extracted_data['total_returns_count']
+		if extracted_data['net_units'].all() == 'NA':
+			extracted_data['net_units'] = extracted_data['total_sales_count'] - extracted_data['total_returns_count']
+		if extracted_data['sale_type'].all() == 'NA':
+			extracted_data['sale_type'] = extracted_data.apply(lambda row: ('REFUNDS') if(row['net_units'] < 0) else ('PURCHASE'), axis=1)
 		extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units'] < 0) else ('SALE'), axis=1)
+		
+		if extracted_data['disc_percentage'].all() == 'NA':
+			extracted_data['disc_percentage'] = 1 - (round(((extracted_data[amount_column]/extracted_data['net_units']) / extracted_data['publisher_price'].abs()), 2))
+			extracted_data['disc_percentage'] = extracted_data['disc_percentage'].replace(np.nan, 0)
+		
+		extracted_data['publisher_price'] = extracted_data['publisher_price'].abs()
 		extracted_data = obj_gen_attrs.process_net_unit_prices(logger, extracted_data, amount_column)
-
+		extracted_data['disc_percentage'] = extracted_data['disc_percentage']*100
+		extracted_data['disc_percentage'] = extracted_data['disc_percentage'].abs()
+		
 		# new attributes addition
 		extracted_data['source'] = "FOLLETT EBook"
 		extracted_data['source_id'] = filename.split('.')[0]

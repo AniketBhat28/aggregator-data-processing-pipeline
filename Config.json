@@ -1,9 +1,9 @@
 {
-	"aggregator_name": "Google",
+	"aggregator_name": "Amazon",
 	"input_bucket_name": "s3-euw1-ap-pe-orders-worker-agg-storage-etl",
 	"output_bucket_name" : "s3-use1-ap-pe-df-orders-insights-storage-d",
-	"aggregator" : "GOOGLE",
+	"input_folder_name" : "AMAZON",
 	"month" : "OCT",
-	"year" : 2019
+	"year" : 2020
 
 }
