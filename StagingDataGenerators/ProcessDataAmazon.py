@@ -137,6 +137,7 @@ class ProcessDataAmazon:
 			extracted_data['source'] = "Amazon EBook"
 			extracted_data['sub_domain'] = 'NA'
 		extracted_data['source_id'] = filename.split('.')[0]
+		extracted_data['business_model'] = 'B2C'
 
 		return extracted_data
 

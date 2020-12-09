@@ -35,11 +35,25 @@ obj_gen_attrs = GenerateStagingAttributes()
 
 class ProcessDataChegg:
 
-	# Function Description :	This function processes transaction and sales types
+	# Function Description :	This function processes transaction types
 	# Input Parameters : 		logger - For the logging output file.
 	#							extracted_data - pr-processed_data
 	# Return Values : 			extracted_data - extracted staging data
 	def process_trans_type(self, logger, extracted_data):
+
+		extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units']<0) else ('SALE'), axis=1)
+		if extracted_data['term_description'].all() != 'NA':
+			extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RENTAL') if(row['term_description'] != 'Sold Item') else (row['trans_type']), axis=1)
+
+		return extracted_data
+
+
+
+	# Function Description :	This function processes transaction and sales types
+	# Input Parameters : 		logger - For the logging output file.
+	#							extracted_data - pr-processed_data
+	# Return Values : 			extracted_data - extracted staging data
+	def process_trans_and_sale_type(self, logger, extracted_data):
 
 		logger.info("Processing transaction and sales types")
 		if 'trans_type' not in extracted_data.columns.to_list():
@@ -49,14 +63,11 @@ class ProcessDataChegg:
 			if extracted_data['trans_type'].all() == 'NA' and extracted_data['term_description'].all() != 'NA':
 				extracted_data['sale_type'] = extracted_data.apply(lambda row: ('REFUNDS') if(row['net_units']<0) else ('PURCHASE'), axis=1)
 				extracted_data['sale_type'] = extracted_data.apply(lambda row: ('EXTENSION') if("Extension" in row['term_description']) else (row['sale_type']), axis=1)
-				extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units']<0) else ('SALE'), axis=1)
-				extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RENTAL') if(row['term_description'] != 'Sold Item') else (row['trans_type']), axis=1)
+				extracted_data = self.process_trans_type(logger, extracted_data)
 			else:
 				extracted_data['sale_type'] = extracted_data.apply(lambda row: ('REFUNDS') if(row['net_units'] < 0) else ('PURCHASE'), axis=1)
 				extracted_data['sale_type'] = extracted_data.apply(lambda row: ('EXTENSION') if(row['trans_type'] == 'EXTENSION') else (row['sale_type']), axis=1)
-				extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units']<0) else ('SALE'), axis=1)
-				if extracted_data['term_description'].all() != 'NA':
-					extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RENTAL') if(row['term_description'] != 'Sold Item') else (row['trans_type']), axis=1)
+				extracted_data = self.process_trans_type(logger, extracted_data)
 
 		logger.info("Transaction and sales types processed")
 		return extracted_data
@@ -104,7 +115,7 @@ class ProcessDataChegg:
 		logger.info('Sales and Return Values computed')
 
 		extracted_data['net_units'] = extracted_data['total_sales_count'] - extracted_data['total_returns_count']
-		extracted_data = self.process_trans_type(logger, extracted_data)
+		extracted_data = self.process_trans_and_sale_type(logger, extracted_data)
 
 		logger.info('Converting negative amounts to positives')
 		extracted_data['publisher_price'] = extracted_data['publisher_price'].abs()

@@ -118,6 +118,7 @@ class ProcessDataGoogle:
         extracted_data['source'] = "GOOGLE EBook"
         extracted_data['source_id'] = filename.split('.')[0]
         extracted_data['sub_domain'] = 'NA'
+        extracted_data['business_model'] = 'B2C'
 
         return extracted_data
 
