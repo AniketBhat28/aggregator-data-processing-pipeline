@@ -46,9 +46,17 @@ class ProcessDataChegg:
 			extracted_data['sale_type'] = extracted_data.apply(lambda row: ('REFUNDS') if(row['net_units']<0) else ('PURCHASE'), axis=1)
 			extracted_data['trans_type'] = 'SUBSCRIPTION'
 		else:
-			extracted_data['sale_type'] = extracted_data.apply(lambda row: ('REFUNDS') if(row['net_units'] < 0) else ('PURCHASE'), axis=1)
-			extracted_data['sale_type'] = extracted_data.apply(lambda row: ('EXTENSION') if(row['trans_type'] == 'EXTENSION') else (row['sale_type']), axis=1)
-			extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units']<0) else ('SALE'), axis=1)
+			if extracted_data['trans_type'].all() == 'NA' and extracted_data['term_description'].all() != 'NA':
+				extracted_data['sale_type'] = extracted_data.apply(lambda row: ('REFUNDS') if(row['net_units']<0) else ('PURCHASE'), axis=1)
+				extracted_data['sale_type'] = extracted_data.apply(lambda row: ('EXTENSION') if("Extension" in row['term_description']) else (row['sale_type']), axis=1)
+				extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units']<0) else ('SALE'), axis=1)
+				extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RENTAL') if(row['term_description'] != 'Sold Item') else (row['trans_type']), axis=1)
+			else:
+				extracted_data['sale_type'] = extracted_data.apply(lambda row: ('REFUNDS') if(row['net_units'] < 0) else ('PURCHASE'), axis=1)
+				extracted_data['sale_type'] = extracted_data.apply(lambda row: ('EXTENSION') if(row['trans_type'] == 'EXTENSION') else (row['sale_type']), axis=1)
+				extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RETURNS') if(row['net_units']<0) else ('SALE'), axis=1)
+				if extracted_data['term_description'].all() != 'NA':
+					extracted_data['trans_type'] = extracted_data.apply(lambda row: ('RENTAL') if(row['term_description'] != 'Sold Item') else (row['trans_type']), axis=1)
 
 		logger.info("Transaction and sales types processed")
 		return extracted_data
@@ -73,6 +81,9 @@ class ProcessDataChegg:
 		extracted_data['misc_product_ids'] = 'NA'
 		extracted_data['disc_percentage'] = 0.0
 		extracted_data['total_rental_duration'] = 0
+
+		if extracted_data['term_description'].all() != 'NA':
+			extracted_data['total_rental_duration'] = extracted_data['term_description'].map(agg_rules['filters']['rental_values']).fillna(0)
 		
 		if 'p_product_id' not in extracted_data.columns.to_list():
 			extracted_data['p_product_id'] = 'NA'
@@ -99,15 +110,22 @@ class ProcessDataChegg:
 		extracted_data['publisher_price'] = extracted_data['publisher_price'].abs()
 		extracted_data['total_returns_value'] = extracted_data['total_returns_value'].abs()
 
-		extracted_data = obj_gen_attrs.process_net_unit_prices(logger, extracted_data, amount_column)
+		extracted_data['disc_percentage'] = round((extracted_data[amount_column] / extracted_data['publisher_price']), 2)
+		extracted_data['disc_percentage'] = 1 - extracted_data['disc_percentage'].abs()
+		extracted_data['disc_percentage'] = extracted_data['disc_percentage'].replace(np.nan, 0)
+		extracted_data['disc_percentage'] = extracted_data['disc_percentage'].replace(np.inf, 0)
+		extracted_data['disc_percentage'] = extracted_data['disc_percentage'].replace(-np.inf, 0)
 
+		extracted_data = obj_gen_attrs.process_net_unit_prices(logger, extracted_data, amount_column)
+		extracted_data['disc_percentage'] = extracted_data['disc_percentage']*100
+		
 		# new attributes addition
 		extracted_data['source'] = "CHEGG EBook"
 		extracted_data['source_id'] = filename.split('.')[0]
 		extracted_data['sub_domain'] = 'NA'
+		extracted_data['business_model'] = 'B2C'
 		
 		return extracted_data
-
 
 
 	# Function Description :	This function processes data for all Chegg files

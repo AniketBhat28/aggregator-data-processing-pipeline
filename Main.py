@@ -19,7 +19,7 @@ import logging
 
 
 BASE_PATH = os.path.dirname(os.path.realpath(__file__))
-#sys.path.append('Output/aggregator_data_processing_pipeline-1.0-py3.7.egg')
+sys.path.append('Output/aggregator_data_processing_pipeline-1.0-py3.7.egg')
 
 #Converting Month name to numbers to create output filename
 def process_month(month):

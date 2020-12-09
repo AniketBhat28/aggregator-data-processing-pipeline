@@ -530,7 +530,22 @@
 		"header_row": 0,
 		"data_row": 1,
 		"discard_last_rows":0,
-		
+
+		"attribute_mappings":	[
+									{"order_date":"transaction date"},
+									{"Date":"transaction date"},
+									{"digital_isbn":"digital isbn"},
+									{"digital_ean":"digital ean"},
+									{"print_isbn":"print isbn"},
+									{"print_ean":"print ean"},
+									{"EISBN to Use":"digital ean"},
+									
+									{"publisher_name":"publisher name"},
+									{"list price (USD)":"list price"},
+									{"publisher_fee (USD)":"publisher fee"},
+									{"discount_code":"discount code"}
+								],
+		"missing_columns":["trans type","term_description","discount code","publisher name"],		
 		"relevant_attributes":	[
 									{"input_column_name": "transaction date", "staging_column_name":"transaction_date"},
 									{"input_column_name": "digital ean", "staging_column_name":"e_product_id"},
@@ -546,7 +561,8 @@
 									{"input_column_name": "publisher fee", "staging_column_name":"revenue_value"},
 									{"input_column_name": "discount code", "staging_column_name":"disc_code"},
 									
-									{"input_column_name": "country_of_sale", "staging_column_name":"region_of_sale"}
+									{"input_column_name": "country_of_sale", "staging_column_name":"region_of_sale"},
+									{"input_column_name": "term_description", "staging_column_name":"term_description"}
 								],
 		"filters": {	
 						"mandatory_columns": ["digital isbn", "digital ean"],
@@ -615,11 +631,24 @@
 																		"process_type": "process",
 																		"value": "NA"
 																	}
+												},
+												{
+													"column_name": "term_description",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
 												}
 											],
-						"convert_percentage": "no"
+						"convert_percentage": "no",
+						"rental_values" : {"180-day Rental": 180, "120-day Rental": 120,
+											"90-day Rental": 90, "60-day Rental": 60,
+											"30-day Rental": 30, "Extension- 180-day Rental": 180,
+											"Extension- 120-day Rental": 120, "Extension- 90-day Rental": 90,
+										"Extension- 60-day Rental": 60, "Extension- 30-day Rental": 30	}
 					},
-		"date_formats":	["%Y-%m-%d"]
+		"date_formats":	["%Y-%m-%d","%d/%m/%Y","%m/%d/%Y","%m/%d/%y","%d.%m.%Y"]
 	},
 
 	{
@@ -632,11 +661,21 @@
 		"header_row": 0,
 		"data_row": 1,
 		"discard_last_rows":0,
-		
+
+
+		"attribute_mappings":	[
+									{"digital_isbn":"digital isbn"},
+									{"digital_ean":"digital ean"},
+									{"print_isbn":"print isbn"},
+									{"print_ean":"print ean"}
+									
+								],
+		"missing_columns":["print ean", "term_description"],		
 		"relevant_attributes":	[
 									{"input_column_name": "transaction date", "staging_column_name":"transaction_date"},
 									{"input_column_name": "digital ean", "staging_column_name":"e_product_id"},
 									{"input_column_name": "digital isbn", "staging_column_name":"e_backup_product_id"},
+									{"input_column_name": "print ean", "staging_column_name":"p_product_id"},
 									
 									{"input_column_name": "title", "staging_column_name":"product_title"},
 									{"input_column_name": "Publisher name", "staging_column_name":"imprint"},
@@ -645,7 +684,8 @@
 									{"input_column_name": "publisher fee", "staging_column_name":"revenue_value"},
 									{"input_column_name": "discount code", "staging_column_name":"disc_code"},
 									
-									{"input_column_name": "country_of_sale", "staging_column_name":"region_of_sale"}
+									{"input_column_name": "country_of_sale", "staging_column_name":"region_of_sale"},
+									{"input_column_name": "term_description", "staging_column_name":"term_description"}
 								],
 		"filters": {	
 						"mandatory_columns": ["digital ean", "digital isbn"],
@@ -698,11 +738,19 @@
 																		"process_type": "process",
 																		"value": "NA"
 																	}
+												},
+												{
+													"column_name": "term_description",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
 												}
 											],
 						"convert_percentage": "no"
 					},
-		"date_formats":	["%Y-%m-%d"] 
+		"date_formats":	["%Y-%m-%d","%d/%m/%Y","%m/%d/%Y","%m/%d/%y","%d.%m.%Y"] 
 	},
 	{
 		"name": "INGRAM(VS)",
