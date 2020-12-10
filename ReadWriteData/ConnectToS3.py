@@ -38,7 +38,7 @@ class ConnectToS3:
         # Listing files in s3 bucket
         files_in_s3 = [f.key.split(dir_path + "/")[1] for f in s3_bucket.objects.filter(Prefix=dir_path).all()]
         for file in files_in_s3:
-            if (file[-1]=='/'):
+            if file != '' and (file[-1]=='/'):
                 files_in_s3.remove(file)
         return files_in_s3
 

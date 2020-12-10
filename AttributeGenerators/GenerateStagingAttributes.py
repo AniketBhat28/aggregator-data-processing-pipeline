@@ -121,6 +121,7 @@ class GenerateStagingAttributes:
 		logger.info('Net units prices computed')
 		return data
 
+	
 	# Function Description :	This function processes staging data for Amazon files
 	# Input Parameters : 		logger - For the logging output file.
 	#							filename - Name of the file
@@ -170,7 +171,7 @@ class GenerateStagingAttributes:
 				data = data.dropna(how='all')
 				data.columns = data.columns.str.strip()
 
-				if(agg_name == 'REDSHELF' or agg_name == 'OVERDRIVE'):
+				if(agg_name == 'REDSHELF' or agg_name == 'OVERDRIVE' or agg_name == 'FOLLETT' or agg_name == 'CHEGG'):
 					data = self.replace_column_names(logger,agg_rules,data)
 
 				mandatory_columns = agg_rules['filters']['mandatory_columns']
@@ -178,7 +179,7 @@ class GenerateStagingAttributes:
 
 				extracted_data = obj_pre_process.extract_relevant_attributes(logger, data,
 																			 agg_rules['relevant_attributes'])
-
+				
 				final_staging_data = self.process_staging_data(logger, each_file, agg_rules,
 																		default_config,
 																		extracted_data, final_staging_data,
@@ -190,12 +191,14 @@ class GenerateStagingAttributes:
 		logger.info('\n+-+-+-+-+-+-+Finished Processing '+ agg_name+' files\n')
 		return final_staging_data
 
+
 	# Function Description :	This function rename column names to make a common schema
 	# Input Parameters : 		logger - For the logging output file.
 	#							agg_rules - Rules json
 	#							data - input_data
 	# Return Values : 			data - input_data
 	def replace_column_names(self, logger, agg_rules,data):
+		
 		logger.info('\n+-+-+-+-+-+-+Renaming Column Start \n')
 		for each_dict in agg_rules['attribute_mappings']:
 			if list(each_dict.values())[0] not in data.columns.to_list():

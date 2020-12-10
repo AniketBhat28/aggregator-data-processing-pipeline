@@ -97,11 +97,13 @@ class ProcessDataGardners:
 		extracted_data['publisher_price'] = extracted_data['publisher_price'].abs()
 		extracted_data['total_returns_value'] = extracted_data['total_returns_value'].abs()
 		extracted_data['total_returns_count'] = extracted_data['total_returns_count'].abs()
-
+		extracted_data['disc_percentage'] = extracted_data['disc_percentage']*100
+		
 		# new attributes addition
 		extracted_data['source'] = "GARDNERS EBook"
 		extracted_data['source_id'] = filename.split('.')[0]
 		extracted_data['sub_domain'] = 'NA'
+		extracted_data['business_model'] = 'B2C'
 
 		return extracted_data
 

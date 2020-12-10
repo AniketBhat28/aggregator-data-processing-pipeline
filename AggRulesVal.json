@@ -9,6 +9,18 @@
 		"header_row": 0,
 		"data_row": 1,
 		"discard_last_rows":0,
+
+		"attribute_mappings":	[
+									{"Invoice Date":"invoice_date"},
+									{"Payment Amount Currency":"amount_currency"},
+									{"Payment Amount":"payment_amount"},
+									{"Digital ISBN":"digital_isbn"},
+									{"Physical ISBN-13":"physical_isbn_13"},
+									{"Net Units":"net_units"},
+									{"format":"format_00001"}									
+
+								],
+		"missing_columns":[],
 		"relevant_attributes":	[
 									{"input_column_name": "invoice_date", "staging_column_name":"transaction_date"},
 									{"input_column_name": "digital_isbn", "staging_column_name":"e_product_id"},
@@ -17,7 +29,7 @@
 
 									{"input_column_name": "title", "staging_column_name":"product_title"},
 									{"input_column_name": "imprint", "staging_column_name":"imprint"},
-									{"input_column_name": "FORMAT_00001", "staging_column_name":"product_format"},
+									{"input_column_name": "format_00001", "staging_column_name":"product_format"},
 
 									{"input_column_name": "vendor_code", "staging_column_name":"vendor_code"},
 									{"input_column_name": "rental_type", "staging_column_name":"sale_type"},
@@ -118,15 +130,16 @@
 																	}
 												}
 											],
-						"convert_percentage": "no"
+						"convert_percentage": "no",
+						"country_iso_values" : {"Brazil": "BR", "France": "FR", "Canada": "CA", "Italy": "IT", "India": "IN", "Japan": "JP", "Mexico": "MX", "Spain": "ES"}
 					},
 		"date_formats":	[
-							{"country":"US","format":["%m%d%Y"]}
+							{"country":"US","format":["%m%d%Y","%d.%m.%Y","%d/%m/%Y"]}
 
 						],
 		"pattern_extractions":	[
 									{
-										"regex":"AU|Brazil|Canada|DE|France|GB|India|Italy|Japan|Mexico|NL|Spain|US",
+										"regex":"AU|Brazil|Canada|DE|France|GB|India|Italy|Japan|Mexico|NL|Spain|US|UK",
 										"staging_column_name":"region_of_sale"
 									},
 									{
@@ -244,27 +257,28 @@
 												}
 											],
 						"convert_percentage": "yes",
-						"country_iso_values" : {"Brazil": "BR", "France": "FR", "Canada": "CA", "Italy": "IT", "India": "IN", "Japan": "JP", "Mexico": "MX", "Spain": "ES"}
+						"country_iso_values" : {"Brazil": "BR", "France": "FR", "Canada": "CA", "Italy": "IT", "India": "IN", "Japan": "JP", "Mexico": "MX", "Spain": "ES", "Germany": "DE"}
 					},
 		"date_formats":	[
-							{"country":"AU","format":["%Y-%m-%d"]},
-							{"country":"Brazil","format":["%d/%m/%Y"]},
-							{"country":"Canada","format":["%Y-%m-%d", "%d/%m/%Y"]},
-							{"country":"DE","format":["%d/%m/%Y"]},
-							{"country":"France","format":["%d/%m/%Y"]},
-							{"country":"GB","format":["%d/%m/%Y"]},
-							{"country":"India","format":["%d/%m/%Y"]},
-							{"country":"Italy","format":["%d/%m/%Y"]},
-							{"country":"Japan","format":["%Y/%m/%d"]},
-							{"country":"Mexico","format":["%d/%m/%Y"]},
-							{"country":"NL","format":["%d/%m/%Y"]},
-							{"country":"Spain","format":["%d/%m/%Y"]},
-							{"country":"US","format":["%m/%d/%Y"]}
+							{"country":"AU","format":["%Y-%m-%d","%d.%m.%Y","%d/%m/%Y"]},
+							{"country":"BR","format":["%d/%m/%Y","%d.%m.%Y"]},
+							{"country":"CA","format":["%Y-%m-%d", "%d/%m/%Y","%d.%m.%Y"]},
+							{"country":"DE","format":["%d/%m/%Y","%d.%m.%Y"]},
+							{"country":"FR","format":["%d/%m/%Y","%d.%m.%Y"]},
+							{"country":"GB","format":["%d/%m/%Y","%d.%m.%Y"]},
+							{"country":"IN","format":["%d/%m/%Y","%d.%m.%Y","%d/%m.%Y"]},
+							{"country":"IT","format":["%d/%m/%Y","%d.%m.%Y"]},
+							{"country":"JP","format":["%Y/%m/%d","%d.%m.%Y","%d/%m/%Y"]},
+							{"country":"MX","format":["%d/%m/%Y","%d.%m.%Y"]},
+							{"country":"NL","format":["%d/%m/%Y","%d.%m.%Y"]},
+							{"country":"ES","format":["%d/%m/%Y","%d.%m.%Y"]},
+							{"country":"US","format":["%m/%d/%Y","%d.%m.%Y","%d/%m/%Y"]},
+							{"country":"UK","format":["%m/%d/%Y","%d.%m.%Y","%d/%m/%Y"]}
 
 						],
 		"pattern_extractions":	[
 									{
-										"regex":"AU|Brazil|Canada|DE|France|GB|India|Italy|Japan|Mexico|NL|Spain|US",
+										"regex":"AU|Brazil|Canada|DE|France|GB|India|Italy|Japan|Mexico|NL|Spain|US|UK|IN|BR|CA|FR|IT|JP|MX|Germany",
 										"staging_column_name":"region_of_sale"
 									},
 									{
@@ -516,7 +530,22 @@
 		"header_row": 0,
 		"data_row": 1,
 		"discard_last_rows":0,
-		
+
+		"attribute_mappings":	[
+									{"order_date":"transaction date"},
+									{"Date":"transaction date"},
+									{"digital_isbn":"digital isbn"},
+									{"digital_ean":"digital ean"},
+									{"print_isbn":"print isbn"},
+									{"print_ean":"print ean"},
+									{"EISBN to Use":"digital ean"},
+									
+									{"publisher_name":"publisher name"},
+									{"list price (USD)":"list price"},
+									{"publisher_fee (USD)":"publisher fee"},
+									{"discount_code":"discount code"}
+								],
+		"missing_columns":["trans type","term_description","discount code","publisher name"],		
 		"relevant_attributes":	[
 									{"input_column_name": "transaction date", "staging_column_name":"transaction_date"},
 									{"input_column_name": "digital ean", "staging_column_name":"e_product_id"},
@@ -532,7 +561,8 @@
 									{"input_column_name": "publisher fee", "staging_column_name":"revenue_value"},
 									{"input_column_name": "discount code", "staging_column_name":"disc_code"},
 									
-									{"input_column_name": "country_of_sale", "staging_column_name":"region_of_sale"}
+									{"input_column_name": "country_of_sale", "staging_column_name":"region_of_sale"},
+									{"input_column_name": "term_description", "staging_column_name":"term_description"}
 								],
 		"filters": {	
 						"mandatory_columns": ["digital isbn", "digital ean"],
@@ -601,11 +631,24 @@
 																		"process_type": "process",
 																		"value": "NA"
 																	}
+												},
+												{
+													"column_name": "term_description",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
 												}
 											],
-						"convert_percentage": "no"
+						"convert_percentage": "no",
+						"rental_values" : {"180-day Rental": 180, "120-day Rental": 120,
+											"90-day Rental": 90, "60-day Rental": 60,
+											"30-day Rental": 30, "Extension- 180-day Rental": 180,
+											"Extension- 120-day Rental": 120, "Extension- 90-day Rental": 90,
+										"Extension- 60-day Rental": 60, "Extension- 30-day Rental": 30	}
 					},
-		"date_formats":	["%Y-%m-%d"]
+		"date_formats":	["%Y-%m-%d","%d/%m/%Y","%m/%d/%Y","%m/%d/%y","%d.%m.%Y"]
 	},
 
 	{
@@ -618,11 +661,21 @@
 		"header_row": 0,
 		"data_row": 1,
 		"discard_last_rows":0,
-		
+
+
+		"attribute_mappings":	[
+									{"digital_isbn":"digital isbn"},
+									{"digital_ean":"digital ean"},
+									{"print_isbn":"print isbn"},
+									{"print_ean":"print ean"}
+									
+								],
+		"missing_columns":["print ean", "term_description"],		
 		"relevant_attributes":	[
 									{"input_column_name": "transaction date", "staging_column_name":"transaction_date"},
 									{"input_column_name": "digital ean", "staging_column_name":"e_product_id"},
 									{"input_column_name": "digital isbn", "staging_column_name":"e_backup_product_id"},
+									{"input_column_name": "print ean", "staging_column_name":"p_product_id"},
 									
 									{"input_column_name": "title", "staging_column_name":"product_title"},
 									{"input_column_name": "Publisher name", "staging_column_name":"imprint"},
@@ -631,7 +684,8 @@
 									{"input_column_name": "publisher fee", "staging_column_name":"revenue_value"},
 									{"input_column_name": "discount code", "staging_column_name":"disc_code"},
 									
-									{"input_column_name": "country_of_sale", "staging_column_name":"region_of_sale"}
+									{"input_column_name": "country_of_sale", "staging_column_name":"region_of_sale"},
+									{"input_column_name": "term_description", "staging_column_name":"term_description"}
 								],
 		"filters": {	
 						"mandatory_columns": ["digital ean", "digital isbn"],
@@ -684,11 +738,19 @@
 																		"process_type": "process",
 																		"value": "NA"
 																	}
+												},
+												{
+													"column_name": "term_description",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
 												}
 											],
 						"convert_percentage": "no"
 					},
-		"date_formats":	["%Y-%m-%d"] 
+		"date_formats":	["%Y-%m-%d","%d/%m/%Y","%m/%d/%Y","%m/%d/%y","%d.%m.%Y"] 
 	},
 	{
 		"name": "INGRAM(VS)",
@@ -890,7 +952,7 @@
 											],
 						"convert_percentage": "yes"
 					},
-		"date_formats":	["%Y-%m-%d %H:%M:%S", "%d.%m.%Y","%Y-%m-%d %H:%M:%S", "%d.%m.%Y", "%d/%m/%Y"]
+		"date_formats":	["%Y-%m-%d %H:%M:%S", "%d.%m.%Y", "%d/%m/%Y"]
 	},
 
 	{
@@ -904,6 +966,15 @@
 		"data_row": 1,
 		"discard_last_rows":0,
 		
+		"attribute_mappings":	[
+									{"eISBN":"Digital ISBN13"},
+									{"ISBN":"Digital ISBN13"},
+									{"TransactionDateTime":"Date"},
+									{"Title":"Description"},
+									{"SRP":"Retail"},
+									{"Payable Amount":"Cost"}
+								],
+		"missing_columns":["Digital ISBN10","VendorName","Description","Publisher","TransactionType","CurrencyType","Dscnt","Units"],
 		"relevant_attributes":	[
 									{"input_column_name": "Date", "staging_column_name":"transaction_date"},
 									{"input_column_name": "Digital ISBN13", "staging_column_name":"e_product_id"},
@@ -915,8 +986,9 @@
 									{"input_column_name": "Retail", "staging_column_name":"publisher_price"},
 									{"input_column_name": "Cost", "staging_column_name":"revenue_value"},
 									{"input_column_name": "TransactionType", "staging_column_name":"sale_type"},
-									{"input_column_name": "CurrencyType", "staging_column_name":"trans_curr"}
-									
+									{"input_column_name": "CurrencyType", "staging_column_name":"trans_curr"},
+									{"input_column_name": "Dscnt", "staging_column_name":"disc_percentage"},
+									{"input_column_name": "Units", "staging_column_name":"net_units"}
 									
 								],
 		"filters": {	
@@ -983,7 +1055,7 @@
 						"convert_percentage": "no",
 						"country_iso_values" : {"USD": "US", "CAD": "CA"}
 					},
-		"date_formats":	["%Y-%m-%d", "%d/%m/%Y"]
+		"date_formats":	["%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y"]
 	},
 
 	{
@@ -1086,7 +1158,7 @@
 						"convert_percentage": "no",
 						"country_iso_values" : {"USD": "US", "CAD": "CA"}
 					},
-		"date_formats":	["%m/%d/%Y", "%Y-%d-%m %H:%M:%S","%d.%m.%Y"]
+		"date_formats":	["%m/%d/%Y", "%Y-%d-%m %H:%M:%S","%d.%m.%Y","%d/%m/%Y"]
 	},
 
 	{
@@ -1176,7 +1248,7 @@
 											],
 						"convert_percentage": "no"
 					},
-		"date_formats":	["%Y-%m-%d","%d.%m.%Y","%m/%d/%Y"]
+		"date_formats":	["%Y-%m-%d","%d.%m.%Y","%m/%d/%Y","%d/%m/%Y"]
 	},
 	{
 		"name": "GOOGLE",

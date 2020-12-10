@@ -34,7 +34,18 @@ def process_month(month):
 				'OCT':'10',
 				'NOV':'11',
 				'DEC':'12'}
-	return month_mapper.get(month,"Invalid month of year")
+	month_mapper2={'Jan':'01','Feb':'02',
+				'Mar':'03',
+				'Apr':'04',
+				'May':'05',
+				'Jun':'06',
+				'July':'07',
+				'Aug':'08',
+				'Sep':'09',
+				'Oct':'10',
+				'Nov':'11',
+				'Dec':'12'}
+	return month_mapper.get(month,month_mapper2.get(month,"Invalid Month"))
 
 # Main Function
 if __name__ == '__main__':
@@ -64,20 +75,17 @@ if __name__ == '__main__':
 	input_bucket_name = config_json['input_bucket_name']
 	output_bucket_name = config_json['output_bucket_name']
 	aggregator = config_json['aggregator_name']
+	input_folder_name = config_json['input_folder_name']
 
-	aggregator_FileName = config_json['aggregator']
 	month = config_json['month']
 	year = config_json['year']
-
-
 
 	app_config, input_dict = {}, {}
 	app_config['input_params'], app_config['output_params'] = [], {}
 
 	fileName = process_month(month) + str(year) + '.csv'
-	input_directory = 'prd/' + aggregator_FileName + '/input/' + str(year) + '/' + month
-	output_directory = 'staging/revenue/aggregator/' + aggregator_FileName + '/ebook-' + fileName
-
+	input_directory = 'prd/' + input_folder_name + '/input/' + str(year) + '/' + month
+	output_directory = 'staging/revenue/aggregator/' + aggregator.upper() + '/ebook-' + fileName
 
 	input_dict['input_base_path'] = 's3://' + input_bucket_name + '/' + input_directory + '/'
 	input_dict['input_bucket_name'] = input_bucket_name
@@ -98,7 +106,7 @@ if __name__ == '__main__':
 		module_path_relative = 'StagingDataGenerators.ProcessDataAmazon'
 	elif aggregator == 'Ebsco':
 		module_path_relative = 'StagingDataGenerators.ProcessDataEbsco'
-	elif aggregator == 'PQ':
+	elif aggregator == 'PQ_Central':
 		module_path_relative = 'StagingDataGenerators.ProcessDataPqCentral'
 	elif aggregator == 'Chegg':
 		module_path_relative = 'StagingDataGenerators.ProcessDataChegg'
