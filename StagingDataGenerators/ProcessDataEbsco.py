@@ -95,6 +95,8 @@ class ProcessDataEbsco :
         extracted_data[amount_column] = extracted_data[amount_column].astype('str')
         extracted_data[amount_column] = (extracted_data[amount_column]).str.rstrip()
         extracted_data[amount_column] = pd.to_numeric(extracted_data[amount_column])
+        extracted_data[amount_column] = extracted_data.apply(
+            lambda row : (-row[amount_column]) if (row['net_units'] < 0) else row[amount_column],axis=1)
 
 
         extracted_data['disc_percentage'] = (extracted_data['disc_percentage']).replace('%', '', regex=True)
@@ -260,7 +262,7 @@ class ProcessDataEbsco :
                 extracted_data['publisher_price'] = (extracted_data['publisher_price']).replace(currency_suffix, '',
                                                                                                regex=True).astype(float)
 
-            extracted_data['publisher_price'] = extracted_data['publisher_price'] * extracted_data['lpm']
+            extracted_data['publisher_price'] = round((extracted_data['publisher_price'] * extracted_data['lpm']),2)
 
 
         else :
@@ -286,7 +288,7 @@ class ProcessDataEbsco :
                      axis=1)
 
 
-            extracted_data['publisher_price'] = extracted_data['publisher_price'] * extracted_data['lpm']
+            extracted_data['publisher_price'] =round((extracted_data['publisher_price'] * extracted_data['lpm']),2)
 
         return extracted_data
 
