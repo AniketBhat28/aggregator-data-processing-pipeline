@@ -293,30 +293,24 @@
 		"filename_pattern": "/Ebsco",
 		"product_type": "EBK",
 		"data_sheet":"all",
-		"acceptable_currencies":["USD","GBP"],
+		"acceptable_currencies":[],
 		"file_type":"",
 		"header_row": 0,
 		"data_row": 2,
 		"discard_last_rows":0,
 
 		"attribute_mappings":[
-
-									{"eisbn to use": "eisbn"},
 									{"country":"ctry"},
-									{"contract pub.":"imprint"},
-									{"imprint pub.":"imprint"},
-									{"pub list price (non-usd)":"list price"},
 									{"trans currency":"transaction currency"},
 									{"cdr":"disc rate"},
 									{"royalty": "royalty due"},
-									{"date": "transaction date"},
 									{"pub. list mult.": "lpm"},
 									{"consortia discount":"list disc"},
-									{"trans date" :  "transaction date"},
-									{"royalty currency" :  "transaction currency"}
+									{"royalty currency" :  "transaction currency"},
+									{"publisher name" : "imprint"}
 								],
 
-		"missing_columns":["isbn","pub list price (usd)","sale type","list price","transaction currency"],
+		"missing_columns":["imprint","isbn","sale type","list price","transaction currency","transaction date","date","disc rate","qty","ctry","list disc","lpm"],
 
 		"relevant_attributes":	[
 									{"input_column_name": "transaction date", "staging_column_name":"transaction_date"},
@@ -335,7 +329,7 @@
 									{"input_column_name": "qty", "staging_column_name":"net_units"},
 									{"input_column_name": "ctry", "staging_column_name":"region_of_sale"},
 									{"input_column_name": "list disc", "staging_column_name":"consortia"},
-									{"input_column_name": "pub list price (usd)", "staging_column_name":"list_price_usd"},
+									{"input_column_name": "date", "staging_column_name":"alternate_date"},
 									{"input_column_name": "lpm", "staging_column_name":"lpm"}
 								],
 
@@ -403,20 +397,7 @@
 											],
 						"convert_percentage": "no"
 					},
-		"date_formats":	["%Y-%m-%d %H:%M:%S","%d/%m/%Y","%d.%m.%Y"]
-	},
-
-	{
-		"name": "EBSCO",
-		"filename_pattern": "/Ebsco Subscription",
-		"product_type": "EBK",
-		"data_sheet":"all",
-		"acceptable_currencies":[],
-		"file_type":"xlsx",
-		"header_row": 0,
-		"data_row": 0,
-		"discard_last_rows":0
-		
+		"date_formats":	["%Y-%m-%d %H:%M:%S","%d/%m/%Y","%d.%m.%Y","%Y-%m-%d","%d-%m-%Y"]
 	},
 
 	{
