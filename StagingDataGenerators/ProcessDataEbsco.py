@@ -172,7 +172,7 @@ class ProcessDataEbsco :
     def initialise_processing(self, logger, app_config, rule_config, default_config) :
 
         # For the final staging output
-        agg_reference = self
+       # agg_reference = self
         final_staging_data = pd.DataFrame()
         input_list = list(app_config['input_params'])
 
