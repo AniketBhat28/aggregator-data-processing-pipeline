@@ -289,43 +289,57 @@
 	},
 
 	{
-		"name": "EBSCO_HOST",
+		"name": "EBSCO",
 		"filename_pattern": "/Ebsco",
 		"product_type": "EBK",
 		"data_sheet":"all",
-		"acceptable_currencies":["USD","GBP"],
-		"file_type":"xlsx",
+		"acceptable_currencies":[],
+		"file_type":"",
 		"header_row": 0,
 		"data_row": 2,
 		"discard_last_rows":0,
-		"relevant_attributes":	[
-									{"input_column_name": "Transaction Date", "staging_column_name":"transaction_date"},
-									
-									{"input_column_name": "EISBN", "staging_column_name":"digital_isbn"},
-									{"input_column_name": "ISBN", "staging_column_name":"physical_isbn"},
 
-									{"input_column_name": "TITLE", "staging_column_name":"product_title"},
-									{"input_column_name": "IMPRINT", "staging_column_name":"imprint"},
-									
-									{"input_column_name": "SALE TYPE", "staging_column_name":"sale_type"},
-
-									{"input_column_name": "List Price", "staging_column_name":"publisher_price"},
-									{"input_column_name": "Transaction Currency", "staging_column_name":"trans_curr"},
-									{"input_column_name": "DISC RATE", "staging_column_name":"disc_percentage"},
-									{"input_column_name": "ROYALTY DUE", "staging_column_name":"revenue_value"},
-									{"input_column_name": "QTY", "staging_column_name":"net_units"},
-
-									{"input_column_name": "CTRY", "staging_column_name":"region_of_sale"}
-								
+		"attribute_mappings":[
+									{"country":"ctry"},
+									{"trans currency":"transaction currency"},
+									{"cdr":"disc rate"},
+									{"royalty": "royalty due"},
+									{"pub. list mult.": "lpm"},
+									{"consortia discount":"list disc"},
+									{"royalty currency" :  "transaction currency"},
+									{"publisher name" : "imprint"}
 								],
 
-		"filters":	{	
-						"mandatory_columns": ["ORDER ID"],
+		"missing_columns":["imprint","isbn","sale type","list price","transaction currency","transaction date","date","disc rate","qty","ctry","list disc","lpm"],
+
+		"relevant_attributes":	[
+									{"input_column_name": "transaction date", "staging_column_name":"transaction_date"},
+
+									{"input_column_name": "eisbn", "staging_column_name":"digital_isbn"},
+									{"input_column_name": "isbn", "staging_column_name":"physical_isbn"},
+
+									{"input_column_name": "title", "staging_column_name":"product_title"},
+									{"input_column_name": "imprint", "staging_column_name":"imprint"},
+
+									{"input_column_name": "sale type", "staging_column_name":"sale_type"},
+									{"input_column_name": "list price", "staging_column_name":"publisher_price"},
+									{"input_column_name": "transaction currency", "staging_column_name":"trans_curr"},
+									{"input_column_name": "disc rate", "staging_column_name":"disc_percentage"},
+									{"input_column_name": "royalty due", "staging_column_name":"revenue_value"},
+									{"input_column_name": "qty", "staging_column_name":"net_units"},
+									{"input_column_name": "ctry", "staging_column_name":"region_of_sale"},
+									{"input_column_name": "list disc", "staging_column_name":"consortia"},
+									{"input_column_name": "date", "staging_column_name":"alternate_date"},
+									{"input_column_name": "lpm", "staging_column_name":"lpm"}
+								],
+
+		"filters":	{
+						"mandatory_columns": ["order id"],
 						"amount_column":"revenue_value",
 						"column_validations": [
 												{
 													"column_name": "revenue_value",
-													"dtype": "float",
+													"dtype": "str",
 													"missing_data":	{
 																		"process_type": "process",
 																		"value": 0.0
@@ -333,7 +347,7 @@
 												},
 												{
 													"column_name": "publisher_price",
-													"dtype": "float",
+													"dtype": "str",
 													"missing_data":	{
 																		"process_type": "process",
 																		"value": 0.0
@@ -341,7 +355,7 @@
 												},
 												{
 													"column_name": "disc_percentage",
-													"dtype": "float",
+													"dtype": "str",
 													"missing_data":	{
 																		"process_type": "process",
 																		"value": 0.0
@@ -379,24 +393,11 @@
 																		"value": "NA"
 																	}
 												}
-												
+
 											],
 						"convert_percentage": "no"
 					},
-		"date_formats":	["%Y-%m-%d %H:%M:%S"]
-	},
-
-	{
-		"name": "EBSCO_HOST",
-		"filename_pattern": "/Ebsco Subscription",
-		"product_type": "EBK",
-		"data_sheet":"all",
-		"acceptable_currencies":[],
-		"file_type":"xlsx",
-		"header_row": 0,
-		"data_row": 0,
-		"discard_last_rows":0
-		
+		"date_formats":	["%Y-%m-%d %H:%M:%S","%d/%m/%Y","%d.%m.%Y","%Y-%m-%d","%d-%m-%Y"]
 	},
 
 	{
@@ -1358,7 +1359,7 @@
 									{"Institution Due":"Purchase Price"},
 									{"Bookstore Country":"Country"}
 								],
-		"missing_columns":["Imprint","Publisher Net Credit","Country","Publisher Credit"],
+		"missing_columns":["Imprint","Publisher Net Credit","Country","Publisher Credit","Retail Price"],
 
 		"relevant_attributes":	[
 									{"input_column_name": "Date", "staging_column_name":"transaction_date"},
