@@ -289,7 +289,7 @@
 	},
 
 	{
-		"name": "EBSCO_HOST",
+		"name": "EBSCO",
 		"filename_pattern": "/Ebsco",
 		"product_type": "EBK",
 		"data_sheet":"all",

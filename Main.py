@@ -87,7 +87,7 @@ if __name__ == '__main__':
     input_directory = 'prd/' + input_folder_name + '/input/' + str(year) + '/' + month
     # output_directory = 'staging/revenue/aggregator/' + aggregator.upper() + '/ebook-' + fileName
     output_directory = 'staging/revenue/temp/' + aggregator.upper() + '/ebook-' + fileName
-    #output_directory = 'C:\\Users\\manoj.das\\Desktop\\output\\'
+
 
     input_dict['input_base_path'] = 's3://' + input_bucket_name + '/' + input_directory + '/'
     input_dict['input_bucket_name'] = input_bucket_name
@@ -108,7 +108,7 @@ if __name__ == '__main__':
         module_path_relative = 'StagingDataGenerators.ProcessDataAmazon'
     elif aggregator == 'Ebsco':
         module_path_relative = 'StagingDataGenerators.ProcessDataEbsco'
-    elif aggregator == 'PQ_Central':
+    elif aggregator == 'PROQUEST':
         module_path_relative = 'StagingDataGenerators.ProcessDataPqCentral'
     elif aggregator == 'Chegg':
         module_path_relative = 'StagingDataGenerators.ProcessDataChegg'

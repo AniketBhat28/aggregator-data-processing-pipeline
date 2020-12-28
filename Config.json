@@ -1,5 +1,5 @@
 {
-	"aggregator_name": "PQ_Central",
+	"aggregator_name": "PROQUEST",
 	"input_bucket_name": "s3-euw1-ap-pe-orders-worker-agg-storage-etl",
 	"output_bucket_name" : "s3-use1-ap-pe-df-orders-insights-storage-d",
 	"input_folder_name" : "PQ_EBOOK_CENTRAL",

@@ -66,11 +66,6 @@ class ProcessDataPqCentral:
 
         logger.info("Processing transaction and sales types")
         extracted_data['sale_type'] = extracted_data.apply(lambda row: ('REFUNDS') if(row['net_units']<0) else ('PURCHASE'), axis=1)
-        # extracted_data['STL_UNITS'] = pd.to_numeric(extracted_data['STL_UNITS'], errors='coerce')
-        # extracted_data['NONLINEAR_UNITS'] = pd.to_numeric(extracted_data['NONLINEAR_UNITS'], errors='coerce')
-        # extracted_data['ATO_LOAN_UNITS'] = pd.to_numeric(extracted_data['ATO_LOAN_UNITS'], errors='coerce')
-        # extracted_data['THREE_USER_UNITS'] = pd.to_numeric(extracted_data['THREE_USER_UNITS'], errors='coerce')
-        # extracted_data['SINGLE_USER_UNITS'] = pd.to_numeric(extracted_data['SINGLE_USER_UNITS'], errors='coerce')
         extracted_data['sale_type'] = extracted_data.apply(lambda row: self.saletype_selection(row), axis=1)
         extracted_data['trans_type'] = extracted_data.apply(
             lambda row: ('RETURNS') if (row['STL_UNITS'] < 0) else ('SUBSCRIPTION'), axis=1)
