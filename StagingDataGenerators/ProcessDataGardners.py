@@ -95,6 +95,7 @@ class ProcessDataGardners:
 
 		logger.info('Converting negative amounts to positives')
 		extracted_data['publisher_price'] = extracted_data['publisher_price'].abs()
+		extracted_data['tnf_net_price_per_unit'] = extracted_data['tnf_net_price_per_unit'].abs()
 		extracted_data['total_returns_value'] = extracted_data['total_returns_value'].abs()
 		extracted_data['total_returns_count'] = extracted_data['total_returns_count'].abs()
 		extracted_data['disc_percentage'] = extracted_data['disc_percentage']*100

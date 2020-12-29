@@ -129,7 +129,7 @@ class ProcessDataFollett:
 		extracted_data['source'] = "FOLLETT EBook"
 		extracted_data['source_id'] = filename.split('.')[0]
 		extracted_data['sub_domain'] = 'NA'
-		extracted_data['business_model'] = 'B2C'
+		extracted_data['business_model'] = 'B2B'
 
 		return extracted_data
 
