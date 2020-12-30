@@ -7,13 +7,15 @@ rules in AggRulesVal.json.The corresponding aggregator files will be read from s
  The input and output locations along with the file name are controlled by the project Config.json file. 
 
 # Application Objectives
-Using this application we are generating the common staging data as described in https://taylorfrancis.atlassian.net/wiki/spaces/DF/pages/1212579853/Staging+data+entity+-+Post+processing+eBook+sales+files 
+Using this application we are generating the common staging data as described in https://taylorfrancis.atlassian.net/wiki/spaces/DF/pages/1459650565/Common+staging+data+model+for+both+ebook+and+pbook 
 for all the available aggregators which helps us on report generation.
 We are reading the aggregator data from given s3 location using boto3 aws Python library and processing it with the help of Python Pandas
 library .
 The application is fully config driven and controlled by AggRulesVal.json which gives us the privileges to add, modify or delete 
 any rules thereby processing data with different complex formats without any direct changes in the code.
-The input file location and output location are handled by Config.json which makes the application a fully dynamic one .
+The input file location and output location are handled by Config.json which makes the application a fully dynamic one.
+Currently the application reads input data from following AWS S3 location - https://s3.console.aws.amazon.com/s3/buckets/s3-euw1-ap-pe-orders-worker-agg-storage-etl?region=eu-west-1&prefix=prd/ and stores output at following output location - https://s3.console.aws.amazon.com/s3/buckets/s3-use1-ap-pe-df-orders-insights-storage-d?region=us-east-1&prefix=pre_staging/revenue/ebook/&showversions=false
+It stores the output in following format for each month - pre_staging/revenue/ebook/aggregator_name/ebook-mmyyyy.csv
 
 # Prerequisites
 python3
@@ -33,21 +35,25 @@ Replace your own IAM credentials here :
         aws_credentials['SECRET_KEY'] = '' #Add aws secret key for IAM user
 
 ## How to setup
+
 #### step-1: Repository Setup - Clone.
+
         git clone https://github.com/tandfgroup/aggregator-data-processing-pipeline.git <your local path>
 for example :
 
         git clone https://github.com/tandfgroup/aggregator-data-processing-pipeline.git C:/\Users/\Desktop/\codebase/\git_code/\ingram_vital_source
 
 #### step-2: Config Setup
+
 Change your Config.json file like below as per the aggregator you want to process. You can control your input and output location for the application here.
 
         {
 	        "aggregator_name": "Amazon",
 	        "input_bucket_name": "s3-euw1-ap-pe-orders-worker-agg-storage-etl",
-	        "input_directory" : "prd/AMAZON/input/2020/JUN",
 	        "output_bucket_name" : "s3-use1-ap-pe-df-orders-insights-storage-d",
-	        "output_directory" : "staging/revenue/aggregator/AMAZON/eBook-062020.csv"
+	        "input_folder_name" : "AMAZON",
+	        "month" : "JAN",
+	        "year" : 2020
 	    }
 
 
@@ -67,6 +73,7 @@ It supports,
 		"header_row": 0,   :To handle corrupt rows in header part
 		"data_row": 1      :Start of the data rows 
 		"discard_last_rows":0 :To handle corrupt rows in Trailer part
+
 2.  Input column to staging column mapping.
 
         {"input_column_name": "EISBN", "staging_column_name":"e_product_id"},
@@ -90,11 +97,26 @@ It supports,
 			"%m/%d/%Y", "%Y-%d-%m %H:%M:%S", "%d.%m.%Y"
 		],
 
+5.  Rename the columns and process the missing columns
+
+        [	
+			{"DATE":"TRANSACTION_DATE"},
+			{"EBOOK_ISBN":"EISBN"},
+			{"DISCOUNT":"EFFECTIVE_DISCOUNT"},
+			{"PUBLISHER_DISCOUNT":"EFFECTIVE_DISCOUNT"},
+			{"CURRENCY":"LIST_PRICE_CURRENCY"},
+			{"SOLD_TO_COUNTRY":"COUNTRY"},
+			{"QTY":"QUANTITY"},
+			{"TOTAL":"PUB_COMP_TOTAL"}
+		],
+		"missing_columns":["CONTENT_TYPE", "DURATION", "CUSTOM_ISBN", "COUNTRY", "PUBLISHER"],
+
 # Packaging and Deployment
 Create an egg file for the given code base
 
 ## How to package
 #### step-1: Edit the CreateEgg.py
+
 1.  Name the ouput directory in given repository.
 
         OUTPUT_DIR = 'Output'
@@ -112,11 +134,11 @@ Create an egg file for the given code base
 
         python CreateEgg.py
 
-This egg file can be used as an external code package to any server-based services such as AWS Glue to automate job runs
+This egg file can be used as an external code package to any server-based services such as AWS Glue to automate job runs.
+Currently the egg file, AggRulesVal.json and Default.json are stored at https://s3.console.aws.amazon.com/s3/buckets/s3-use1-ap-pe-df-orders-insights-storage-d?region=us-east-1&prefix=ebook_sales_order_processor_src/&showversions=false
 
 
 # Developer note
 You can also run the script locally using following command 
 
         python Main.py
-

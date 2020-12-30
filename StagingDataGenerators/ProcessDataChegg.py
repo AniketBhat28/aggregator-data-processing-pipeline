@@ -101,7 +101,8 @@ class ProcessDataChegg:
 		extracted_data['total_rental_duration'] = 0
 
 		if extracted_data['term_description'].all() != 'NA':
-			extracted_data['total_rental_duration'] = extracted_data['term_description'].map(agg_rules['filters']['rental_values']).fillna(0)
+			rental_values = {k.replace(' ', ''): v for k, v in agg_rules['filters']['rental_values'].items()}
+			extracted_data['total_rental_duration'] = extracted_data['term_description'].str.replace(" ","").map(rental_values).fillna(0)
 		
 		if 'p_product_id' not in extracted_data.columns.to_list():
 			extracted_data['p_product_id'] = 'NA'

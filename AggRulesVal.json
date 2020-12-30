@@ -11,12 +11,12 @@
 		"discard_last_rows":0,
 
 		"attribute_mappings":	[
-									{"Invoice Date":"invoice_date"},
-									{"Payment Amount Currency":"amount_currency"},
-									{"Payment Amount":"payment_amount"},
-									{"Digital ISBN":"digital_isbn"},
-									{"Physical ISBN-13":"physical_isbn_13"},
-									{"Net Units":"net_units"},
+									{"invoice date":"invoice_date"},
+									{"payment amount currency":"amount_currency"},
+									{"payment amount":"payment_amount"},
+									{"digital isbn":"digital_isbn"},
+									{"physical isbn-13":"physical_isbn_13"},
+									{"net units":"net_units"},
 									{"format":"format_00001"}									
 
 								],
@@ -278,7 +278,7 @@
 						],
 		"pattern_extractions":	[
 									{
-										"regex":"AU|Brazil|Canada|DE|France|GB|India|Italy|Japan|Mexico|NL|Spain|US|UK|IN|BR|CA|FR|IT|JP|MX|Germany",
+										"regex":"AU|Brazil|Canada|DE|France|GB|India|Italy|Japan|Mexico|NL|Spain|US|UK|BR|CA|IT|JP|MX|Germany",
 										"staging_column_name":"region_of_sale"
 									},
 									{
@@ -577,6 +577,7 @@
 									{"publisher_name":"publisher name"},
 									{"list price (USD)":"list price"},
 									{"publisher_fee (USD)":"publisher fee"},
+									{"term description":"term_description"},
 									{"discount_code":"discount code"}
 								],
 		"missing_columns":["trans type","term_description","discount code","publisher name"],		
@@ -679,10 +680,12 @@
 						"rental_values" : {"180-day Rental": 180, "120-day Rental": 120,
 											"90-day Rental": 90, "60-day Rental": 60,
 											"30-day Rental": 30, "Extension- 180-day Rental": 180,
-											"Extension- 120-day Rental": 120, "Extension- 90-day Rental": 90,
-										"Extension- 60-day Rental": 60, "Extension- 30-day Rental": 30	}
+											"Extension- 160-day Rental": 160, "Extension- 120-day Rental": 120, 
+											"Extension- 90-day Rental": 90, "Extension- 85-day Rental": 85,
+											"Extension- 60-day Rental": 60, "Extension- 45-day Rental": 45,
+										"Extension- 30-day Rental": 30, "Extension- 14-day Rental": 14	}
 					},
-		"date_formats":	["%Y-%m-%d","%d/%m/%Y","%m/%d/%Y","%m/%d/%y","%d.%m.%Y"]
+		"date_formats":	["%Y-%m-%d","%d/%m/%Y","%m/%d/%Y","%m/%d/%y","%d.%m.%Y","%d-%m-%Y"]
 	},
 
 	{
@@ -787,7 +790,7 @@
 		"date_formats":	["%Y-%m-%d","%d/%m/%Y","%m/%d/%Y","%m/%d/%y","%d.%m.%Y"] 
 	},
 	{
-		"name": "INGRAM(VS)",
+		"name": "INGRAM",
 		"filename_pattern": "",
 		"product_type": "EBK",
 		"data_sheet":"all",
@@ -796,14 +799,32 @@
 		"header_row": 0,
 		"data_row": 1,
 		"discard_last_rows":0,
+
+		"attribute_mappings":	[	
+									{"DATE":"TRANSACTION_DATE"},
+									{"PUBLISHER_ISBN":"EISBN"},
+									{"EBOOK_ISBN":"EISBN"},
+									{"SOFT_COVER_ISBN":"VBID"},
+									{"HARD_COVER_ISBN":"CUSTOM_ISBN"},
+									{"ISBN":"VBID"},
+									{"VBID_ISBN":"VBID"},
+									{"DISCOUNT":"EFFECTIVE_DISCOUNT"},
+									{"PUBLISHER_DISCOUNT":"EFFECTIVE_DISCOUNT"},
+									{"CURRENCY":"LIST_PRICE_CURRENCY"},
+									{"SOLD_TO_COUNTRY":"COUNTRY"},
+									{"QTY":"QUANTITY"},
+									{"ROYALTY":"PUB_COMP_TOTAL"},
+									{"TOTAL":"PUB_COMP_TOTAL"}
+									
+								],
+		"missing_columns":["CONTENT_TYPE", "DURATION", "CUSTOM_ISBN", "COUNTRY", "PUBLISHER"],
 		"relevant_attributes":	[
 									{"input_column_name": "TRANSACTION_DATE", "staging_column_name":"transaction_date"},
 									{"input_column_name": "EISBN", "staging_column_name":"e_product_id"},
 									{"input_column_name": "CUSTOM_ISBN", "staging_column_name":"p_backup_product_id"},
 									{"input_column_name": "VBID", "staging_column_name":"p_product_id"},
 									{"input_column_name": "TITLE", "staging_column_name":"product_title"},
-			            			{"input_column_name": "PRODUCT_TYPE", "staging_column_name":"product_type"},
-									{"input_column_name": "PUBLISHER", "staging_column_name":"imprint"},
+			            			{"input_column_name": "PUBLISHER", "staging_column_name":"imprint"},
 									{"input_column_name": "CONTENT_TYPE", "staging_column_name":"product_format"},
 									{"input_column_name": "LIST_PRICE", "staging_column_name":"publisher_price"},
 			                        {"input_column_name": "LIST_PRICE_CURRENCY", "staging_column_name":"trans_curr"},
@@ -867,7 +888,14 @@
 																		"value": "NA"
 																	}
 												},
-
+												{
+													"column_name": "product_format",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
 												{
 													"column_name": "p_backup_product_id",
 													"dtype": "str",
@@ -879,9 +907,9 @@
 
 											],
 						"convert_percentage": "no",
-						"country_iso_values" : {"Australia": "AU", "United States": "US", "Canada": "CA", "United Kingdom": "GB", "South Africa": "ZA", "Saudi Arabia": "SA", "New Zealand": "NZ", "Ireland": "IE"}
+						"country_iso_values" : {"Australia": "AU", "United States": "US", "USD": "US", "Canada": "CA", "United Kingdom": "GB", "GBP": "GB", "South Africa": "ZA", "Saudi Arabia": "SA", "New Zealand": "NZ", "Ireland": "IE", "Spain":"ES", "Germany":"DE"}
 					},
-		"date_formats":	["%d-%b-%y"]
+		"date_formats":	["%d-%b-%y","%d/%m/%Y","%b-%y","%d-%m-%Y","%d.%m.%Y"]
 	},
 
 	{
