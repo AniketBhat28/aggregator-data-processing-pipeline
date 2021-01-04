@@ -61,6 +61,8 @@ class ProcessDataPqCentral:
             return 'THREE_USER'
         elif x["SINGLE_USER_UNITS"] >= 0:
             return 'SINGLE_USER'
+        else:
+            return 'DIRECT'
 
     def process_prelim_trans_type(self, logger, extracted_data):
 
@@ -202,14 +204,27 @@ class ProcessDataPqCentral:
                 logger.info('\n+-+-+-+-+-+-+')
 
                 input_file_extn = each_file.split('.')[-1]
-                if (input_file_extn.lower() == 'xlsx') or (input_file_extn.lower() == 'xls'):
+                if ('Q1' in each_file) or ('Q2' in each_file) or ('Q3' in each_file) or ('Q4' in each_file):
+                    logger.info('Ignoring subscription file')
 
-                    # To get the sheet names
-                    excel_frame = ExcelFile(input_list[0]['input_base_path'] + each_file)
-                    sheets = excel_frame.sheet_names
-                    for each_sheet in sheets:
-                        logger.info('Processing sheet: %s', each_sheet)
-                        input_list[0]['input_sheet_name'] = each_sheet
+                else:
+
+                    if (input_file_extn.lower() == 'xlsx') or (input_file_extn.lower() == 'xls'):
+
+                        # To get the sheet names
+                        excel_frame = ExcelFile(input_list[0]['input_base_path'] + each_file)
+                        sheets = excel_frame.sheet_names
+                        for each_sheet in sheets:
+                            logger.info('Processing sheet: %s', each_sheet)
+                            input_list[0]['input_sheet_name'] = each_sheet
+                            final_staging_data = obj_gen_attrs.applying_aggregator_rules(logger, input_list, each_file,
+                                                                                         rule_config,
+                                                                                         default_config, final_staging_data,
+                                                                                         obj_read_data,
+                                                                                         obj_pre_process, agg_name,
+                                                                                         agg_reference)
+
+                    elif input_file_extn.lower() == 'csv':
                         final_staging_data = obj_gen_attrs.applying_aggregator_rules(logger, input_list, each_file,
                                                                                      rule_config,
                                                                                      default_config, final_staging_data,
@@ -217,16 +232,9 @@ class ProcessDataPqCentral:
                                                                                      obj_pre_process, agg_name,
                                                                                      agg_reference)
 
-                else:
-                    final_staging_data = obj_gen_attrs.applying_aggregator_rules(logger, input_list, each_file,
-                                                                                 rule_config,
-                                                                                 default_config, final_staging_data,
-                                                                                 obj_read_data,
-                                                                                 obj_pre_process, agg_name,
-                                                                                 agg_reference)
-
-        # Grouping and storing data
-        final_grouped_data = obj_gen_attrs.group_data(logger, final_staging_data,
-                                                      default_config[0]['group_staging_data'])
-        obj_s3_connect.store_data(logger, app_config, final_grouped_data)
-        logger.info('\n+-+-+-+-+-+-+Finished Processing PQCentral files\n')
+                    # Grouping and storing data
+                    if input_file_extn.lower() != 'txt':
+                        final_grouped_data = obj_gen_attrs.group_data(logger, final_staging_data,
+                                                                      default_config[0]['group_staging_data'])
+                        obj_s3_connect.store_data(logger, app_config, final_grouped_data)
+                        logger.info('\n+-+-+-+-+-+-+Finished Processing PQCentral files\n')

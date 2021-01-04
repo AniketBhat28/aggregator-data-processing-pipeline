@@ -423,7 +423,8 @@
 									{"PUBLISHER REVENUE SHARE":"Publisher Revenue Share"}
 
 								],
-		"missing_columns":["SaleType","Promotional Discount Percent","Region"],
+		"missing_columns":["SaleType","Promotional Discount Percent","Region","AUTO PURCHASE UNITS SOLD","STL UNITS SOLD","ATO LOAN UNITS SOLD",
+									"SINGLE USER UNITS SOLD","THREE USER UNITS SOLD","NONLINEAR UNITS SOLD"],
 		"relevant_attributes":	[
 									{"input_column_name": "Transaction Date", "staging_column_name":"transaction_date"},
 									
