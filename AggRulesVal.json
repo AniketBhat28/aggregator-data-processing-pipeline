@@ -293,39 +293,53 @@
 		"filename_pattern": "/Ebsco",
 		"product_type": "EBK",
 		"data_sheet":"all",
-		"acceptable_currencies":["USD","GBP"],
-		"file_type":"xlsx",
+		"acceptable_currencies":[],
+		"file_type":"",
 		"header_row": 0,
 		"data_row": 2,
 		"discard_last_rows":0,
-		"relevant_attributes":	[
-									{"input_column_name": "Transaction Date", "staging_column_name":"transaction_date"},
-									
-									{"input_column_name": "EISBN", "staging_column_name":"digital_isbn"},
-									{"input_column_name": "ISBN", "staging_column_name":"physical_isbn"},
 
-									{"input_column_name": "TITLE", "staging_column_name":"product_title"},
-									{"input_column_name": "IMPRINT", "staging_column_name":"imprint"},
-									
-									{"input_column_name": "SALE TYPE", "staging_column_name":"sale_type"},
-
-									{"input_column_name": "List Price", "staging_column_name":"publisher_price"},
-									{"input_column_name": "Transaction Currency", "staging_column_name":"trans_curr"},
-									{"input_column_name": "DISC RATE", "staging_column_name":"disc_percentage"},
-									{"input_column_name": "ROYALTY DUE", "staging_column_name":"revenue_value"},
-									{"input_column_name": "QTY", "staging_column_name":"net_units"},
-
-									{"input_column_name": "CTRY", "staging_column_name":"region_of_sale"}
-								
+		"attribute_mappings":[
+									{"country":"ctry"},
+									{"trans currency":"transaction currency"},
+									{"cdr":"disc rate"},
+									{"royalty": "royalty due"},
+									{"pub. list mult.": "lpm"},
+									{"consortia discount":"list disc"},
+									{"royalty currency" :  "transaction currency"},
+									{"publisher name" : "imprint"}
 								],
 
-		"filters":	{	
-						"mandatory_columns": ["ORDER ID"],
+		"missing_columns":["imprint","isbn","sale type","list price","transaction currency","transaction date","date","disc rate","qty","ctry","list disc","lpm"],
+
+		"relevant_attributes":	[
+									{"input_column_name": "transaction date", "staging_column_name":"transaction_date"},
+
+									{"input_column_name": "eisbn", "staging_column_name":"digital_isbn"},
+									{"input_column_name": "isbn", "staging_column_name":"physical_isbn"},
+
+									{"input_column_name": "title", "staging_column_name":"product_title"},
+									{"input_column_name": "imprint", "staging_column_name":"imprint"},
+
+									{"input_column_name": "sale type", "staging_column_name":"sale_type"},
+									{"input_column_name": "list price", "staging_column_name":"publisher_price"},
+									{"input_column_name": "transaction currency", "staging_column_name":"trans_curr"},
+									{"input_column_name": "disc rate", "staging_column_name":"disc_percentage"},
+									{"input_column_name": "royalty due", "staging_column_name":"revenue_value"},
+									{"input_column_name": "qty", "staging_column_name":"net_units"},
+									{"input_column_name": "ctry", "staging_column_name":"region_of_sale"},
+									{"input_column_name": "list disc", "staging_column_name":"consortia"},
+									{"input_column_name": "date", "staging_column_name":"alternate_date"},
+									{"input_column_name": "lpm", "staging_column_name":"lpm"}
+								],
+
+		"filters":	{
+						"mandatory_columns": ["order id"],
 						"amount_column":"revenue_value",
 						"column_validations": [
 												{
 													"column_name": "revenue_value",
-													"dtype": "float",
+													"dtype": "str",
 													"missing_data":	{
 																		"process_type": "process",
 																		"value": 0.0
@@ -333,7 +347,7 @@
 												},
 												{
 													"column_name": "publisher_price",
-													"dtype": "float",
+													"dtype": "str",
 													"missing_data":	{
 																		"process_type": "process",
 																		"value": 0.0
@@ -341,7 +355,7 @@
 												},
 												{
 													"column_name": "disc_percentage",
-													"dtype": "float",
+													"dtype": "str",
 													"missing_data":	{
 																		"process_type": "process",
 																		"value": 0.0
@@ -379,24 +393,11 @@
 																		"value": "NA"
 																	}
 												}
-												
+
 											],
 						"convert_percentage": "no"
 					},
-		"date_formats":	["%Y-%m-%d %H:%M:%S"]
-	},
-
-	{
-		"name": "EBSCO_HOST",
-		"filename_pattern": "/Ebsco Subscription",
-		"product_type": "EBK",
-		"data_sheet":"all",
-		"acceptable_currencies":[],
-		"file_type":"xlsx",
-		"header_row": 0,
-		"data_row": 0,
-		"discard_last_rows":0
-		
+		"date_formats":	["%Y-%m-%d %H:%M:%S","%d/%m/%Y","%d.%m.%Y","%Y-%m-%d","%d-%m-%Y"]
 	},
 
 	{
@@ -543,15 +544,139 @@
 	},
 
 	{
-		"name": "PQ_CENTRAL",
-		"filename_pattern": "/PqCentral Subscription",
+		"name": "PQ_Subscription",
+		"filename_pattern": "",
 		"product_type": "EBK",
 		"data_sheet":"all",
 		"acceptable_currencies":[],
-		"file_type":"xlsx",
+		"file_type":"[]",
 		"header_row": 0,
 		"data_row": 0,
-		"discard_last_rows":0
+		"discard_last_rows":0,
+
+		"attribute_mappings":[
+									{"transaction date":"date"},
+									{"sales_date" :  "date"},
+									{"electronic isbn" : "ebookisbn"},
+									{"ebook isbn" : "ebookisbn"},
+									{"e isbn" : "ebookisbn"},
+									{"p isbn" : "printisbn"},
+									{"print_isbn" : "printisbn"},
+									{"print isbn" : "printisbn"},
+									{"imprint" : "publisher"},
+									{"publisher name" : "publisher"},
+									{"priceperunit" : "list price"},
+									{"sale price per unit" : "list price"},
+									{"pub discount":"disc rate"},
+									{"publishermargin":"disc rate"},
+									{"publisher revenue share":"disc rate"},
+									{"totalsold":"qty"},
+									{"units sold":"qty"},
+									{"total units sold":"qty"},
+									{"currency" :  "transaction currency"},
+									{"due to publisher" : "total revenue all types"},
+									{"publisherdue" : "total revenue all types"},
+									{"total revenue due" : "total revenue all types"},
+									{"total publisher revenue" : "total revenue all types"},
+									{"ebrary ID" : "book id"},
+									{"saletype" : "sale type"}
+
+								],
+
+		"missing_columns":["other isbn","sale type","list price","disc rate","qty","country code","currency","date","book id"],
+
+		"relevant_attributes":	[
+									{"input_column_name": "date", "staging_column_name":"transaction_date"},
+
+									{"input_column_name": "ebookisbn", "staging_column_name":"e_product_id"},
+									{"input_column_name": "printisbn", "staging_column_name":"p_product_id"},
+
+									{"input_column_name": "title", "staging_column_name":"product_title"},
+									{"input_column_name": "publisher", "staging_column_name":"imprint"},
+
+									{"input_column_name": "sale type", "staging_column_name":"sale_type"},
+									{"input_column_name": "list price", "staging_column_name":"publisher_price"},
+									{"input_column_name": "currency", "staging_column_name":"trans_curr"},
+									{"input_column_name": "disc rate", "staging_column_name":"disc_percentage"},
+									{"input_column_name": "total revenue all types", "staging_column_name":"revenue_value"},
+									{"input_column_name": "qty", "staging_column_name":"net_units"},
+									{"input_column_name": "country code", "staging_column_name":"region_of_sale"},
+									{"input_column_name": "other isbn", "staging_column_name":"misc_product_ids"}
+								],
+
+		"filters":	{
+						"mandatory_columns": ["Book ID"],
+						"amount_column":"revenue_value",
+						"column_validations": [
+												{
+													"column_name": "revenue_value",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "publisher_price",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "disc_percentage",
+													"dtype": "str",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "transaction_date",
+													"dtype": "date",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": "current_date"
+																	}
+												},
+												{
+													"column_name": "trans_curr",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "imprint",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "region_of_sale",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "misc_product_ids",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												}
+
+											],
+						"convert_percentage": "no"
+					},
+		"date_formats":	["%Y-%m-%d %H:%M:%S","%d/%m/%Y","%d.%m.%Y","%Y-%m-%d"]
 		
 	},
 
@@ -803,22 +928,30 @@
 
 		"attribute_mappings":	[	
 									{"DATE":"TRANSACTION_DATE"},
+									{"Date":"TRANSACTION_DATE"},
+									{"Transaction Date":"TRANSACTION_DATE"},
 									{"PUBLISHER_ISBN":"EISBN"},
 									{"EBOOK_ISBN":"EISBN"},
+									{"eISBN":"EISBN"},
 									{"SOFT_COVER_ISBN":"VBID"},
 									{"HARD_COVER_ISBN":"CUSTOM_ISBN"},
 									{"ISBN":"VBID"},
 									{"VBID_ISBN":"VBID"},
+									{"VBID/ISBN":"VBID"},
 									{"DISCOUNT":"EFFECTIVE_DISCOUNT"},
+									{"Discount":"EFFECTIVE_DISCOUNT"},
 									{"PUBLISHER_DISCOUNT":"EFFECTIVE_DISCOUNT"},
 									{"CURRENCY":"LIST_PRICE_CURRENCY"},
+									{"Payment Currency":"LIST_PRICE_CURRENCY"},
 									{"SOLD_TO_COUNTRY":"COUNTRY"},
 									{"QTY":"QUANTITY"},
+									{"List Price USD":"LIST_PRICE"},
 									{"ROYALTY":"PUB_COMP_TOTAL"},
-									{"TOTAL":"PUB_COMP_TOTAL"}
+									{"TOTAL":"PUB_COMP_TOTAL"},
+									{"Total":"PUB_COMP_TOTAL"}
 									
 								],
-		"missing_columns":["CONTENT_TYPE", "DURATION", "CUSTOM_ISBN", "COUNTRY", "PUBLISHER"],
+		"missing_columns":["CONTENT_TYPE", "DURATION", "CUSTOM_ISBN", "COUNTRY", "PUBLISHER","VBID"],
 		"relevant_attributes":	[
 									{"input_column_name": "TRANSACTION_DATE", "staging_column_name":"transaction_date"},
 									{"input_column_name": "EISBN", "staging_column_name":"e_product_id"},
@@ -908,7 +1041,7 @@
 
 											],
 						"convert_percentage": "no",
-						"country_iso_values" : {"Australia": "AU", "United States": "US", "USD": "US", "Canada": "CA", "United Kingdom": "GB", "GBP": "GB", "South Africa": "ZA", "Saudi Arabia": "SA", "New Zealand": "NZ", "Ireland": "IE", "Spain":"ES", "Germany":"DE"}
+						"country_iso_values" : {"Australia": "AU", "AUD": "AU", "AUS": "AU", "United States": "US", "USD": "US", "Canada": "CA", "CAD": "CA", "United Kingdom": "GB", "GBP": "GB", "EUR": "GB", "South Africa": "ZA", "ZAR": "ZA", "Saudi Arabia": "SA", "New Zealand": "NZ", "Ireland": "IE", "Spain":"ES", "Germany":"DE", "Denmark":"DK"}
 					},
 		"date_formats":	["%d-%b-%y","%d/%m/%Y","%b-%y","%d-%m-%Y","%d.%m.%Y"]
 	},
