@@ -124,6 +124,8 @@ if __name__ == '__main__':
         module_path_relative = 'StagingDataGenerators.ProcessDataGoogle'
     elif aggregator == 'Redshelf':
         module_path_relative = 'StagingDataGenerators.ProcessDataRedshelf'
+    elif aggregator == 'PQ_Subscription' :
+        module_path_relative = 'StagingDataGenerators.ProcessDataPqSubscription'
 
     # Get the module path and start the process
     module_path = module_path_relative
