@@ -74,7 +74,7 @@ class ProcessDataPqSubscription :
         extracted_data['e_backup_product_id'] = 'NA'
         extracted_data['p_backup_product_id'] = 'NA'
 
-        extracted_data['pod'] = 'NA'
+        extracted_data['pod'] = 'N'
         extracted_data['vendor_code'] = 'NA'
         extracted_data['product_format'] = 'NA'
         extracted_data['disc_code'] = 'NA'

@@ -97,7 +97,7 @@ class ProcessDataPqCentral:
         extracted_data['aggregator_name'] = agg_rules['name']
         extracted_data['product_type'] = agg_rules['product_type']
 
-        extracted_data['pod'] = 'NA'
+        extracted_data['pod'] = 'N'
         extracted_data['product_format'] = 'NA'
         extracted_data['disc_code'] = 'NA'
         extracted_data['e_backup_product_id'] = 'NA'

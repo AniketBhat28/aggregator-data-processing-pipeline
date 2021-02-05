@@ -92,7 +92,7 @@ class ProcessDataChegg:
 		extracted_data['aggregator_name'] = agg_rules['name']
 		extracted_data['product_type'] = agg_rules['product_type']
 
-		extracted_data['pod'] = 'NA'
+		extracted_data['pod'] = 'N'
 		extracted_data['product_format'] = 'NA'
 		extracted_data['trans_curr'] = 'USD'
 		extracted_data['vendor_code'] = 'NA'

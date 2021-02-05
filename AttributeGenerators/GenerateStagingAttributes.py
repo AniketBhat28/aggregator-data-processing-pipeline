@@ -119,6 +119,7 @@ class GenerateStagingAttributes:
         data['agg_net_price_per_unit'] = round((data[amount_column] / data['net_units']), 2)
         data['agg_net_price_per_unit'] = data['agg_net_price_per_unit'].replace(np.nan, data['tnf_net_price_per_unit'])
         data['agg_net_price_per_unit'] = data['agg_net_price_per_unit'].replace(np.inf, data['tnf_net_price_per_unit'])
+        data['agg_net_price_per_unit'] = data['agg_net_price_per_unit'].replace(-np.inf, data['tnf_net_price_per_unit'])
 
         logger.info('Net units prices computed')
         return data
