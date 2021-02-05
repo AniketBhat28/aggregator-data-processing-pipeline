@@ -157,9 +157,8 @@ class ProcessDataEbsco :
         logger.info('Sales and Return Values computed')
 
         # Fixing amount for refunds
-        if 'trans_type' in extracted_data.columns.to_list():
-            extracted_data[amount_column] = extracted_data.apply(
-                lambda row : row[amount_column]*-1 if (row['trans_type'] == 'RETURNS' and row[amount_column] > 0) else (row[amount_column]), axis=1)
+        extracted_data[amount_column] = extracted_data.apply(
+            lambda row : row[amount_column]*-1 if (row['trans_type'] == 'RETURNS' and row[amount_column] > 0) else (row[amount_column]), axis=1)
 
         # new attributes addition
         extracted_data['source'] = "EBSCO EBook"
