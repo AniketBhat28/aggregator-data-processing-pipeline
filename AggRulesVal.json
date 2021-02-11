@@ -1549,29 +1549,36 @@
 		"discard_last_rows":0,
 
 		"attribute_mappings":	[
+									{"Product Title":"Book"},
 									{"Title":"Book"},
+									{"National Base Price":"Retail Price"},
+									{"Amount Due to RedShelf":"Purchase Price"},
+									{"Amount Due to Publisher":"Publisher Credit"},
 									{"SRP":"Retail Price"},
 									{"Institution Due":"Purchase Price"},
+									{"National ISBN":"eISBN13"},
+									{"Publisher":"Imprint"},
+									{"Course Member Status":"Status"},
+									{"Duration":"Period"},
 									{"Bookstore Country":"Country"}
 								],
-		"missing_columns":["Imprint","Publisher Net Credit","Country","Publisher Credit"],
+		"missing_columns":["Imprint", "Country", "Publisher Net Credit", "Publisher Credit", "Retail Price", "Purchase Price", "ISBN13", "Type"],
 
 		"relevant_attributes":	[
 									{"input_column_name": "Date", "staging_column_name":"transaction_date"},
-
 									{"input_column_name": "eISBN13", "staging_column_name":"e_product_id"},
 									{"input_column_name": "ISBN13", "staging_column_name":"p_product_id"},
 
 									{"input_column_name": "Book", "staging_column_name":"product_title"},
 									{"input_column_name": "Imprint", "staging_column_name":"imprint"},
-
+									{"input_column_name": "Type", "staging_column_name":"product_format"},
 									{"input_column_name": "Status", "staging_column_name":"sale_type"},
 
 									{"input_column_name": "Retail Price", "staging_column_name":"publisher_price"},
 									{"input_column_name": "Purchase Price", "staging_column_name":"tnf_net_price_per_unit"},
 									{"input_column_name": "Publisher Credit", "staging_column_name":"agg_net_price_per_unit"},
-									{"input_column_name": "Type", "staging_column_name":"product_format"},
 									{"input_column_name": "Publisher Net Credit", "staging_column_name":"revenue_value"},
+									
 									{"input_column_name": "Period", "staging_column_name":"total_rental_duration"},
 									{"input_column_name": "Country", "staging_column_name":"region_of_sale"}
 
@@ -1663,7 +1670,8 @@
 												}
 
 											],
-						"convert_percentage": "no"
+						"convert_percentage": "no",
+						"country_iso_values" : {"USA": "US", "USD": "US", "us": "US", "U": "US", "nc": "NC", "Colorado":"CO", "272":"NA"}
 					},
 		"date_formats":	["%Y-%m-%d","%d/%m/%Y","%d.%m.%Y"]
 	}

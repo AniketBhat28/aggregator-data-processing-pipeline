@@ -51,7 +51,7 @@ class ProcessDataBarnes:
 		extracted_data['p_product_id'] = 'NA'
 		extracted_data['p_backup_product_id'] = 'NA'
 
-		extracted_data['pod'] = 'NA'
+		extracted_data['pod'] = 'N'
 		extracted_data['vendor_code'] = 'NA'
 		extracted_data['disc_code'] = 'NA'
 		extracted_data['misc_product_ids'] = 'NA'

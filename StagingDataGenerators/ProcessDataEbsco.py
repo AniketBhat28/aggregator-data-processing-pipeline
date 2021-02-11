@@ -81,7 +81,7 @@ class ProcessDataEbsco :
         extracted_data['aggregator_name'] = agg_rules['name']
         extracted_data['product_type'] = agg_rules['product_type']
 
-        extracted_data['pod'] = 'NA'
+        extracted_data['pod'] = 'N'
         extracted_data['vendor_code'] = 'NA'
         extracted_data['product_format'] = 'NA'
         extracted_data['disc_code'] = 'NA'
@@ -155,6 +155,10 @@ class ProcessDataEbsco :
             lambda row : row['net_units'] if (row['net_units'] < 0) else 0, axis=1)
         extracted_data['total_returns_count'] = extracted_data['total_returns_count'].abs()
         logger.info('Sales and Return Values computed')
+
+        # Fixing amount for refunds
+        extracted_data[amount_column] = extracted_data.apply(
+            lambda row : row[amount_column]*-1 if (row['trans_type'] == 'RETURNS' and row[amount_column] > 0) else (row[amount_column]), axis=1)
 
         # new attributes addition
         extracted_data['source'] = "EBSCO EBook"
@@ -271,10 +275,11 @@ class ProcessDataEbsco :
 
 
         extracted_data['publisher_price'] = (extracted_data['publisher_price']).replace(currency_suffix, '', regex=True)
-        extracted_data['publisher_price'] =extracted_data['publisher_price'].astype('str')
+        extracted_data['publisher_price'] = extracted_data['publisher_price'].astype('str')
         extracted_data['publisher_price'] = (extracted_data['publisher_price']).str.rstrip()
         extracted_data['publisher_price'] = pd.to_numeric(extracted_data['publisher_price'])
-        extracted_data['publisher_price'] =abs(round((extracted_data['publisher_price'] * extracted_data['lpm']),2))
+        extracted_data['publisher_price'] = round((extracted_data['publisher_price'] * extracted_data['lpm']),2)
+        extracted_data['publisher_price'] = extracted_data['publisher_price'].abs()
 
         return extracted_data
 
