@@ -47,16 +47,21 @@ class ProcessDataEbsco :
         if(file_type =='subs'):
             if extracted_data['sale_type'].all() == 'NA' :
                 extracted_data['sale_type'] = extracted_data.apply(
-                lambda row : ('REFUNDS') if (row['net_units'] < 0) else ('PURCHASE'), axis=1)
+                lambda row : ('REFUNDS') if (row['net_units'] < 0 or row['revenue_value']<0) else ('PURCHASE'), axis=1)
                 extracted_data['trans_type'] = 'SUBSCRIPTION'
 
         else:
-            extracted_data.loc[(extracted_data['net_units'] < 0), 'sale_type'] = extracted_data.loc[
-                (extracted_data['net_units'] < 0), 'sale_type'].fillna('REFUNDS')
-            extracted_data.loc[(extracted_data['net_units'] >= 0), 'sale_type'] = extracted_data.loc[
-                (extracted_data['net_units'] >= 0), 'sale_type'].fillna('PURCHASE')
             extracted_data['trans_type'] = extracted_data.apply(
-                lambda row : ('RETURNS') if (row['net_units'] < 0) else ('SALE'), axis=1)
+                lambda row : ('RETURNS') if (row['net_units'] < 0 or row['revenue_value'] < 0 or row['sale_type'] == 'ADJ' or
+                                             row['sale_type'] == 'Cancellation') else ('SALE'), axis=1)
+
+            extracted_data.loc[(extracted_data['trans_type']=='RETURNS'), 'sale_type'] = extracted_data.loc[
+                (extracted_data['trans_type']=='RETURNS'), 'sale_type'].fillna('REFUNDS')
+            extracted_data.loc[(extracted_data['trans_type']=='RETURNS'), 'sale_type'] = extracted_data.loc[
+                extracted_data['trans_type']=='RETURNS', 'sale_type'].fillna('PURCHASE')
+
+
+
 
         logger.info("Transaction and sales types processed")
         return extracted_data
@@ -93,6 +98,10 @@ class ProcessDataEbsco :
         current_date_format = agg_rules['date_formats']
 
         extracted_data = self.check_csv_transaction_date(ext,extracted_data)
+
+
+        if extracted_data['transaction_date'].isnull().all():
+            extracted_data = self.process_subscription_transaction_date(logger, filename, extracted_data)
 
         extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'transaction_date',
                                                        default_config)
@@ -210,7 +219,6 @@ class ProcessDataEbsco :
 
 
         # Grouping and storing data
-
         final_grouped_data = obj_gen_attrs.group_data(logger, final_staging_data,
                                                       default_config[0]['group_staging_data'])
 
@@ -310,10 +318,10 @@ class ProcessDataEbsco :
 
     def process_subscription_transaction_date(self,logger,filename,extracted_data):
         logger.info('Processing transaction_dates for subscription')
-        q1 = ["jan", "feb", "mar"]
-        q2 = ["apr", "may", "jun"]
-        q3 = ["jul", "aug", "sep"]
-        q4 = ["oct", "nov", "dec"]
+        q1 = ["jan", "feb", "mar", "q1"]
+        q2 = ["apr", "may", "jun","q2"]
+        q3 = ["jul", "aug", "sep","q3"]
+        q4 = ["oct", "nov", "dec","q4"]
         if any(x in filename.lower() for x in q1) :
             extracted_data['transaction_date'] = '31-03-'+ filename.split('.')[0][-4:]
         elif any(x in filename.lower() for x in q2) :
