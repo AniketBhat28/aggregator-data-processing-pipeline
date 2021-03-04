@@ -178,6 +178,8 @@ class ProcessDataPqSubscription :
                                                                                                    rule_config,
                                                                                                    final_staging_data,
                                                                                                    default_config)
+        # future date issue resolution
+        final_staging_data = obj_pre_process.process_default_transaction_date(logger, app_config, final_staging_data)
 
         # Grouping and storing data
         final_grouped_data = obj_gen_attrs.group_data(logger, final_staging_data,

@@ -113,3 +113,28 @@ class PreProcess:
 
 		logger.info("Dates converted to given common format")
 		return extracted_data
+
+	# Function Description :	This function is to generate default dates and convert them to a common format
+	# Input Parameters : 		logger - For the logging output file.
+	#							extracted data: final staging output data
+	#							app_config - app config for output directory location
+	# Return Values : 			data
+	def process_default_transaction_date(self, logger, app_config, extracted_data) :
+		logger.info('resolving future date issue')
+		output_directory = app_config['output_params']['output_directory']
+		year = output_directory[-8:-4]
+		month = output_directory[-10:-8]
+		default_transaction_date =''
+		m1 = ["01", "03", "05", "07","08","10","12"]
+		m2 = ["11", "04", "06", "09",]
+		m3 = ["02"]
+		if any(x in month for x in m1) :
+			default_transaction_date = '31-' + month+'-' + year
+		elif any(x in month for x in m2) :
+			default_transaction_date = '30-' + month+'-' + year
+		elif any(x in month for x in m3) :
+			default_transaction_date = '28-' + month+'-' + year
+		extracted_data['transaction_date'] = extracted_data.apply(
+			lambda row : row['transaction_date'].replace(row['transaction_date'], default_transaction_date) if row['transaction_date'][-4 :] > year or
+																			row['transaction_date'][-7 :-5] > month else row['transaction_date'], axis=1)
+		return extracted_data

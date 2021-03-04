@@ -106,9 +106,7 @@ class ProcessDataAmazon:
 		current_country = extracted_data['region_of_sale'][0]
 		current_date_format = next(item for item in agg_rules['date_formats'] if item["country"] == current_country)['format']
 		extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'transaction_date', default_config)
-		
-		extracted_data = self.process_trans_type(logger, extracted_data)
-		
+
 		if 'total_rental_duration' not in extracted_data.columns.to_list():
 			extracted_data['total_rental_duration'] = 0
 		else:
@@ -120,14 +118,33 @@ class ProcessDataAmazon:
 			logger.info('Converting percentages to decimals')
 			extracted_data['disc_percentage'] = extracted_data['disc_percentage']/100
 
+		#Rental dsicount percentage calculation start
+		if 'old_disc_percentage' in extracted_data.columns:
+			extracted_data['disc_percentage'] = extracted_data.apply(
+				lambda row : row['disc_percentage'] if (row['old_disc_percentage'] == 0.0) else (1-(row['old_disc_percentage']-row['disc_percentage'])), axis=1)
+		# Rental dsicount percentage calculation end
+
 		extracted_data = obj_gen_attrs.process_net_unit_prices(logger, extracted_data, amount_column)
 
+		# split retrun and sale rows
+		extracted_data = self.split_sale_return_rows(logger, extracted_data)
+
 		logger.info('Computing Sales and Returns')
-		extracted_data['total_sales_value'] = round((extracted_data['total_sales_count'] * (1-extracted_data['disc_percentage']) * extracted_data['publisher_price']), 2)
-		extracted_data['total_returns_value'] = round((extracted_data['total_returns_count'] * (1-extracted_data['disc_percentage']) * extracted_data['publisher_price']), 2)
+		extracted_data['total_sales_value'] = extracted_data['total_sales_count'] * extracted_data[
+			'agg_net_price_per_unit']
+
+		extracted_data['total_returns_value'] = extracted_data['total_returns_count'] * extracted_data[
+			'agg_net_price_per_unit']
 		logger.info('Sales and Return Values computed')
 
+		#updating revenue value post split of the rows start
+		extracted_data['revenue_value'] = extracted_data.apply(
+			lambda row : (row['total_returns_value']*-1) if (row['net_units'] < 0) else row['total_sales_value'], axis=1)
+		# updating revenue value post split of the rows end
+
 		extracted_data['disc_percentage'] = extracted_data['disc_percentage']*100
+
+		extracted_data = self.process_trans_type(logger, extracted_data)
 		
 		# new attributes addition
 		if 'rental' in filename.lower():
@@ -176,7 +193,7 @@ class ProcessDataAmazon:
 						data[agg_rules['filters']['mandatory_columns']] = data[agg_rules['filters']['mandatory_columns']].fillna(value='NA')
 						
 						extracted_data = obj_pre_process.extract_relevant_attributes(logger, data, agg_rules['relevant_attributes'])
-						
+
 						agg_reference = self
 						final_staging_data = obj_gen_attrs.process_staging_data(logger, each_file, agg_rules,
 																					default_config, extracted_data,
@@ -185,7 +202,29 @@ class ProcessDataAmazon:
 				except KeyError as err:
 					logger.error(f"KeyError error while processing the file {each_file}. The error message is :  ", err)
 
+		# future date issue resolution
+		final_staging_data = obj_pre_process.process_default_transaction_date(logger, app_config, final_staging_data)
+
 		# Grouping and storing data
 		final_grouped_data = obj_gen_attrs.group_data(logger, final_staging_data, default_config[0]['group_staging_data'])
+
 		obj_s3_connect.store_data(logger, app_config, final_grouped_data)
 		logger.info('\n+-+-+-+-+-+-+Finished Processing Amazon files\n')
+
+	# Function Description :	This function splits rows into sales and return for all Amazon files
+	# Input Parameters : 		logger - For the logging output file.
+	#							extracted data - dataframe
+	# Return Values : 			None
+	def split_sale_return_rows(self,logger, extracted_data):
+		logger.info("spliting of rows into sales and return start")
+		filter_df = (extracted_data['total_sales_count']!=0) & (extracted_data['total_returns_count']!=0)
+		extracted_data_new = extracted_data[filter_df].reindex(extracted_data[filter_df].index.repeat(2)).reset_index(
+			drop=True)
+		idx_duplicate = extracted_data_new.duplicated(keep="first")
+		extracted_data_new.loc[~idx_duplicate, "total_returns_count"] = 0
+		extracted_data_new.loc[~idx_duplicate, "net_units"] = extracted_data_new.loc[~idx_duplicate, "total_sales_count"]
+		extracted_data_new.loc[idx_duplicate, "total_sales_count"] = 0
+		extracted_data_new.loc[idx_duplicate, "net_units"] = extracted_data_new.loc[idx_duplicate, "total_returns_count"]*-1
+		extracted_data = pd.concat([extracted_data_new, extracted_data[~filter_df]]).reset_index(drop=True)
+		logger.info("spliting of rows into sales and return end")
+		return extracted_data
