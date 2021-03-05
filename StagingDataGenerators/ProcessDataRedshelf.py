@@ -173,6 +173,8 @@ class ProcessDataRedshelf:
                     final_staging_data = obj_gen_attrs.applying_aggregator_rules(logger, input_list, each_file, rule_config,
                                                         default_config,final_staging_data, obj_read_data,
                                                         obj_pre_process,agg_name, agg_reference)
+        # future date issue resolution
+        final_staging_data = obj_pre_process.process_default_transaction_date(logger, app_config, final_staging_data)
 
         # Grouping and storing data
         final_grouped_data = obj_gen_attrs.group_data(logger, final_staging_data,

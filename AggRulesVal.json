@@ -37,7 +37,9 @@
 
 									{"input_column_name": "list_price", "staging_column_name":"publisher_price"},
 									{"input_column_name": "amount_currency", "staging_column_name":"trans_curr"},
+									{"input_column_name": "old_discount_percentage", "staging_column_name":"old_disc_percentage"},
 									{"input_column_name": "new_discount_percentage", "staging_column_name":"disc_percentage"},
+
 									{"input_column_name": "payment_amount", "staging_column_name":"revenue_value"},
 									{"input_column_name": "net_units", "staging_column_name":"net_units"},
 
@@ -128,8 +130,16 @@
 																		"process_type": "process",
 																		"value": "NA"
 																	}
+												},
+												{
+													"column_name": "old_disc_percentage",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
 												}
-											],
+						],
 						"convert_percentage": "no",
 						"country_iso_values" : {"Brazil": "BR", "France": "FR", "Canada": "CA", "Italy": "IT", "India": "IN", "Japan": "JP", "Mexico": "MX", "Spain": "ES"}
 					},
@@ -179,6 +189,7 @@
 									{"input_column_name": "Units Purchased", "staging_column_name":"total_sales_count"},
 									{"input_column_name": "Units Refunded", "staging_column_name":"total_returns_count"}
 								],
+		"missing_columns":[],
 		"filters": {	
 						"mandatory_columns": ["Digital ISBN", "Physical ISBN-10", "Physical ISBN-13"],
 						"amount_column":"revenue_value",
