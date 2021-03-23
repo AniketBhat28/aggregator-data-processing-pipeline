@@ -1,0 +1,9 @@
+{
+	"aggregator_name": "AMAZON",
+	"input_bucket_name": "s3-use1-ap-pe-df-orders-insights-storage-d",
+	"output_bucket_name" : "s3-use1-ap-pe-df-orders-insights-storage-d",
+	"aggregator_folder_name" : "AMAZON",
+	"year" : 2020,
+	"month": "01"
+
+}
