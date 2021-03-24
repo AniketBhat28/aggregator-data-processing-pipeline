@@ -8,10 +8,11 @@ import io
 # from OrderDataValidations.AggregatorDataValidations import AmazonAggregatorValidations
 from OrderDataValidations.GenericAggregatorValidations import GenericAggregatorValidations
 from OrderDataValidations.ReadStagingData import ReadStagingData
+from OrderDataValidations.AggregatorDataValidations.AmazonAggregatorValidations import AmazonAggregatorValidations
 
 # Global variables
 obj_read_data = ReadStagingData()
-# obj_amazon_agg_val = AmazonAggregatorValidations()
+obj_amazon_agg_val = AmazonAggregatorValidations()
 obj_generic_agg_val = GenericAggregatorValidations()
 s3 = boto3.resource("s3")
 
@@ -44,7 +45,7 @@ def OrderDataValidations():
         extracted_data = pd_read_s3_parquet(aggFile, bucket=input_bucket_name)
         print("\n------FileName: " + aggFile + "---------\n")
         obj_generic_agg_val.validate_isbn(test_data=extracted_data)
-
+        obj_amazon_agg_val.validate_reporting_date(test_data=extracted_data)
     return pd.concat(extracted_data, ignore_index=True)
 
 OrderDataValidations()
