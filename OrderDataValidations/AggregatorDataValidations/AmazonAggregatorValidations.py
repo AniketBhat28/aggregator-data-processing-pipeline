@@ -12,4 +12,4 @@ class AmazonAggregatorValidations:
         print("\n-------Starting ISBN Validations on the data file-----\n")
         load_data = test_data
         extracted_data = load_data['reporting_date']
-        print(extracted_data, "\n------This is Reporting date validation----------")
+        print(extracted_data, "\n------This is Reporting date validation--------")
