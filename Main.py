@@ -17,6 +17,7 @@ import logging
 
 
 BASE_PATH = os.path.dirname(os.path.realpath(__file__))
+print('Base_path',BASE_PATH)
 sys.path.append('Output/aggregator_data_processing_pipeline-1.0-py3.7.egg')
 
 
@@ -69,7 +70,8 @@ if __name__ == '__main__':
     logger.info("             INITIALISING             ")
     logger.info("######################################")
 
-    with open(BASE_PATH + '/Config.json') as f:
+
+    with open(BASE_PATH + '/MDAConfig.json') as f:
         config_json = json.load(f)
 
     input_bucket_name = config_json['input_bucket_name']
@@ -79,13 +81,25 @@ if __name__ == '__main__':
 
     month = config_json['month']
     year = config_json['year']
+    layer = config_json['layer']
 
     app_config, input_dict = {}, {}
     app_config['input_params'], app_config['output_params'] = [], {}
 
-    fileName = process_month(month) + str(year) + '.csv'
-    input_directory = 'prd/' + input_folder_name + '/input/' + str(year) + '/' + month
-    output_directory = 'pre_staging/revenue/ebook/' + aggregator.upper() + '/ebook-' + fileName
+    mapped_layer_path = 'mapped_layer/revenue/aggregator/'
+
+    if layer !='staging':
+        if month == '' :
+            input_directory = 'prod/' + input_folder_name + '/input/' + str(year)
+            output_directory = mapped_layer_path + aggregator.upper()
+        else :
+            input_directory = 'prod/' + input_folder_name + '/input/' + str(year) + '/' + month
+            output_directory = mapped_layer_path + aggregator.upper()
+
+    else:
+        input_directory = mapped_layer_path + aggregator.upper()+'/year=' + str(year)
+        output_directory = 'staging_layer/revenue/aggregator/' + aggregator.upper()
+
 
     input_dict['input_base_path'] = 's3://' + input_bucket_name + '/' + input_directory + '/'
     input_dict['input_bucket_name'] = input_bucket_name
@@ -94,18 +108,25 @@ if __name__ == '__main__':
     app_config['input_params'].append(input_dict)
     app_config['output_params']['output_bucket_name'] = output_bucket_name
     app_config['output_params']['output_directory'] = output_directory
+    app_config['output_params']['year']= str(year)
+    app_config['output_params']['layer'] = layer
 
-    with open(BASE_PATH + '/AggRulesVal.json') as f:
+    with open(BASE_PATH +'/MDA/'+aggregator+ '/MDAAggRulesVal.json') as f :
         rule_config = json.load(f)
 
-    with open(BASE_PATH + '/Default.json') as f:
+    with open(BASE_PATH +'/MDA/'+aggregator + '/MDADefault.json') as f:
         default_config = json.load(f)
+
 
     # Check the aggregator to initialise appropriate module
     if aggregator == 'Amazon':
         module_path_relative = 'StagingDataGenerators.ProcessDataAmazon'
     elif aggregator == 'Ebsco':
-        module_path_relative = 'StagingDataGenerators.ProcessDataEbsco'
+        if layer=='staging':
+            module_path_relative = 'MDA.Ebsco.MDAStagingProcessDataEbsco'
+        else:
+            module_path_relative = 'MDA.Ebsco.MDAMappedProcessDataEbsco'
+
     elif aggregator == 'PROQUEST':
         module_path_relative = 'StagingDataGenerators.ProcessDataPqCentral'
     elif aggregator == 'Chegg':
@@ -115,7 +136,11 @@ if __name__ == '__main__':
     elif aggregator == 'Gardners':
         module_path_relative = 'StagingDataGenerators.ProcessDataGardners'
     elif aggregator == 'Follett':
-        module_path_relative = 'StagingDataGenerators.ProcessDataFollett'
+        if layer == 'staging' :
+            module_path_relative = 'MDA.Follett.MDAStagingProcessDataFollett'
+        else :
+            module_path_relative = 'MDA.Follett.MDAMappedProcessDataFollett'
+
     elif aggregator == 'Barnes':
         module_path_relative = 'StagingDataGenerators.ProcessDataBarnes'
     elif aggregator == 'Overdrive':
@@ -130,7 +155,9 @@ if __name__ == '__main__':
     # Get the module path and start the process
     module_path = module_path_relative
     module = importlib.import_module(module_path)
+    print(module)
     className = getattr(module, module_path_relative.split('.')[-1])
+    print(className)
     classObj = className()
     classObj.initialise_processing(logger, app_config, rule_config, default_config)
 

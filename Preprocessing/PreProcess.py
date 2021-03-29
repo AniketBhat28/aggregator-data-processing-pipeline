@@ -7,7 +7,9 @@ import ast
 import pandas as pd
 import numpy as np
 import time
+from datetime import datetime
 from Preprocessing.ProcessCore import ProcessCore
+
 
 
 
@@ -36,6 +38,9 @@ class PreProcess:
 		
 		logger.info('Removing metadata and blanks')
 		raw_data = data
+		print(data.columns)
+		print(mandatory_columns)
+		input()
 		for i, row in raw_data.iterrows():
 			if row.notnull().all():
 				data = raw_data.iloc[(i+1):].reset_index(drop=True)
@@ -109,7 +114,7 @@ class PreProcess:
 			extracted_data['temp_transaction_date'] = date_rows
 			extracted_data['temp_transaction_date'] = extracted_data['temp_transaction_date'].dt.strftime(output_date_format)
 
-		extracted_data[date_column_name] = extracted_data['temp_transaction_date']
+		extracted_data[date_column_name]= extracted_data['temp_transaction_date']
 
 		logger.info("Dates converted to given common format")
 		return extracted_data
@@ -134,7 +139,7 @@ class PreProcess:
 			default_transaction_date = '30-' + month+'-' + year
 		elif any(x in month for x in m3) :
 			default_transaction_date = '28-' + month+'-' + year
-		extracted_data['transaction_date'] = extracted_data.apply(
-			lambda row : row['transaction_date'].replace(row['transaction_date'], default_transaction_date) if row['transaction_date'][-4 :] > year or
-																			row['transaction_date'][-7 :-5] > month else row['transaction_date'], axis=1)
+		extracted_data['reporting_date'] = extracted_data.apply(
+			lambda row : row['reporting_date'].replace(row['reporting_date'], default_transaction_date) if row['reporting_date'][-4 :] > year or
+																			row['reporting_date'][-7 :-5] > month else row['reporting_date'], axis=1)
 		return extracted_data
