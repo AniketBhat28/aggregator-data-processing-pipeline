@@ -1,0 +1,30 @@
+{
+  "aggregator_list": [
+                       "AMAZON",
+                       "BARNES",
+                       "FOLLETT",
+                       "REDSHELF",
+                       "GARDNERS",
+                       "PROQUEST",
+                       "EBSCO"
+                      ],
+
+  "backup_isbn_agg_list": [
+                                        "CHEGG",
+                                        "FOLLETT",
+                                        "EBSCO"
+                          ],
+
+  "isbn_columns_with_backup_product_id": [
+                          "e_product_id",
+                          "p_product_id",
+                          "e_backup_product_id",
+                          "p_backup_product_id"
+                        ],
+
+  "isbn_columns_without_backup_product_id": [
+                          "e_product_id",
+                          "p_product_id",
+                          "p_backup_product_id"
+                        ]
+}

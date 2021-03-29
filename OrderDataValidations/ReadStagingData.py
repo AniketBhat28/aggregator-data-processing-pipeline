@@ -46,26 +46,4 @@ class ReadStagingData:
         # app_config['output_params']['output_bucket_name'] = output_bucket_name
         # app_config['output_params']['output_directory'] = output_directory
 
-
-
-        # # Connect to s3 bucket
-        # s3_bucket = s3.Bucket(input_bucket_name)
-        #
-        # # Function to read Parquet Aggregator files from S3 Bucket
-        # def pd_read_s3_parquet(key, bucket, s3_client=None):
-        #     if s3_client is None:
-        #         s3_client = boto3.client('s3')
-        #     obj = s3_client.get_object(Bucket=input_bucket_name, Key=key)
-        #     return pd.read_parquet(io.BytesIO(obj['Body'].read()))
-        #
-        # s3_keys = [item.key for item in s3_bucket.objects.filter(Prefix=dir_path) if item.key.endswith('.parquet')]
-        # if not s3_keys:
-        #     print('No parquet file found in S3 bucket path', input_bucket_name, dir_path)
-        # for aggFile in s3_keys:
-        #     print(aggFile)
-        #     extracted_data = pd_read_s3_parquet(aggFile, bucket=input_bucket_name)
-        #     print(extracted_data)
-        #
-        # return pd.concat(extracted_data, ignore_index=True)
-
         return app_config
