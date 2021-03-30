@@ -38,16 +38,16 @@ def OrderDataValidations():
     if not s3_keys:
         print('No parquet file found in S3 bucket path', input_bucket_name, dir_path + '------')
     else:
-        print("\n------Connected to S3 Bucket:  " + input_bucket_name)
+        print("\n-+-+-+-+-Connected to S3 Bucket:  " + input_bucket_name + '-+-+-+-+-')
 
-    print("\n------Following is the list of parquet files found in s3 bucket------")
+    print("\n-+-+-+-+-Following is the list of parquet files found in s3 bucket-+-+-+-+-")
     print(s3_keys)
 
     for aggFile in s3_keys:
         extracted_data = pd_read_s3_parquet(aggFile, bucket=input_bucket_name)
         print("\n------FileName: " + aggFile + "------")
         obj_generic_agg_val.generic_data_validations(test_data=extracted_data)
-        obj_amazon_agg_val.validate_reporting_date(test_data=extracted_data)
+        # obj_amazon_agg_val.validate_reporting_date(test_data=extracted_data)
 
 
 OrderDataValidations()

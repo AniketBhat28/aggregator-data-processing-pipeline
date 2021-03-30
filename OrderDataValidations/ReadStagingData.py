@@ -63,6 +63,9 @@ class ReadStagingData:
 
         logger.info('Writing the output at the given S3 location')
         csv_buffer = StringIO()
+        print(final_data.columns)
+        print(final_data)
         final_data.to_csv(csv_buffer, index=False)
         s3.Object(output_bucket_name, output_directory).put(Body=csv_buffer.getvalue())
         logger.info('Order validation script successfully stored at the given S3 location')
+        print("\n---------Data Validation Report has been successfully created in S3 bucket-------")
