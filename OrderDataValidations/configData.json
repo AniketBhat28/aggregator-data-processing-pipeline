@@ -1,9 +1,11 @@
 {
-	"aggregator_name": "AMAZON",
+	"aggregator_name": "EBSCO",
 	"input_bucket_name": "s3-use1-ap-pe-df-orders-insights-storage-d",
 	"output_bucket_name" : "s3-use1-ap-pe-df-orders-insights-storage-d",
-	"aggregator_folder_name" : "AMAZON",
-	"year" : 2020,
-	"month": "01"
-
+	"aggregator_folder_name" : "EBSCO",
+	"year" : 2017,
+	"month": "01",
+	"product_type": "Electronic",
+	"trans_type": "Sales",
+	"isEnabled": "Y"
 }
