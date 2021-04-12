@@ -16,12 +16,12 @@ import pandas as pd
 ##################
 
 s3 = boto3.resource("s3")
-BASE_PATH = os.path.dirname(os.path.realpath(__file__))
+BASE_PATH = os.path.dirname('/Users/aniketbhatt/Desktop/GitHub Repo/Order Insights/aggregator-data-processing-pipeline/OrderDataValidations/Json/')
 
 class ReadStagingData:
 
     # Function to connect to S3 Bucket#
-    def navigate_staging_bucket(self):
+    def read_staging_bucket(self):
         with open(BASE_PATH + '/configData.json') as f:
             config_json = json.load(f)
 
@@ -33,7 +33,7 @@ class ReadStagingData:
         year = config_json['year']
         product_type = config_json['product_type']
         trans_type = config_json['trans_type']
-
+        file_extension = config_json['file_extension']
         app_config, input_dict = {}, {}
         app_config['input_params'], app_config['output_params'] = [], {}
 
@@ -46,6 +46,7 @@ class ReadStagingData:
         input_dict['input_bucket_name'] = input_bucket_name
         input_dict['input_directory'] = input_directory
         input_dict['input_sheet_name'] = fileName
+        input_dict['input_file_extension'] = file_extension
         app_config['input_params'].append(input_dict)
         app_config['output_params']['output_bucket_name'] = output_bucket_name
         app_config['output_params']['output_directory'] = output_directory

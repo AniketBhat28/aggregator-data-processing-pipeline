@@ -34,5 +34,11 @@
                                                   "aggregator_name",
                                                   "source",
                                                   "source_id"
-                                              ]
+                                              ],
+      "reporting_date_format": ["%d/%m/%Y"],
+
+  "schema": {
+            "aggregator_name":{"type": "string"}
+        }
 }
+

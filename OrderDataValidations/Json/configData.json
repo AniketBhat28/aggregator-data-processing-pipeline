@@ -7,5 +7,6 @@
 	"month": "01",
 	"product_type": "Electronic",
 	"trans_type": "Sales",
+	"file_extension": ".parquet",
 	"isEnabled": "Y"
 }
