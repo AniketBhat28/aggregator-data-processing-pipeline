@@ -76,13 +76,13 @@ class GenericAggregatorValidations:
         for item in cerberus_schema_val_df:
             success = validator.validate(item, schema_val_rules)
             if (success):
-                print("Schema validation is successful and entire data file is with correct Schema")
+                print("Schema validation is successful and no issues are found for this data row")
             else:
                 print(validator.errors)
                 # Storing the failed values in a dataframe for Reporting purpose
-                failed_schema_val = pd.DataFrame.from_dict(item)
-                schema_val_results = schema_val_results.append(failed_schema_val)
-                schema_val_results['Validation Result'] = str(validator.errors)
+                # failed_schema_val = pd.DataFrame.from_dict(item)
+                # schema_val_results = schema_val_results.append(failed_schema_val)
+                # schema_val_results['Validation Result'] = str(validator.errors)
 
         # # Validation 3: Running generic validations on the dataframe
         cerberus_rule_val_df = load_data.to_dict('records')
@@ -97,9 +97,9 @@ class GenericAggregatorValidations:
                 print(item)
                 print("\n")
                 # Storing the failed values in a dataframe for Reporting purpose
-                failed_generic_val = pd.DataFrame.from_dict(item)
-                generic_val_results = generic_val_results.append(failed_generic_val)
-                generic_val_results['Validation Result'] = str(validator.errors)
+                # failed_generic_val = pd.DataFrame.from_dict(item)
+                # generic_val_results = generic_val_results.append(failed_generic_val)
+                # generic_val_results['Validation Result'] = str(validator.errors)
 
         # Validation 4: Added a validation to check for Invalid ISBN's having trailing Zero's as part of POF-6917
         for item in load_data['p_product_id']:
@@ -111,13 +111,13 @@ class GenericAggregatorValidations:
                 invalid_isbn_format = load_data[load_data['p_product_id'] == item]
                 print(invalid_isbn_format[['source_id']])
 
-        # Creating a final dataframe with failed order validation results
-        final_generic_val_results = pd.concat([schema_val_results, generic_val_results, invalid_isbn_format], ignore_index=True, sort=True)
+        # # Creating a final dataframe with failed order validation results
+        # final_generic_val_results = pd.concat([schema_val_results, generic_val_results, invalid_isbn_format], ignore_index=True, sort=True)
+        #
+        # # Storing this final data to S3 location as part of Data validation Results Report
+        # app_config = obj_read_data.navigate_staging_bucket()
+        # obj_read_data.store_data_validation_report(logger=logger,
+        #                                            app_config=app_config,
+        #                                            final_data=final_generic_val_results)
 
-        # Storing this final data to S3 location as part of Data validation Results Report
-        app_config = obj_read_data.navigate_staging_bucket()
-        obj_read_data.store_data_validation_report(logger=logger,
-                                                   app_config=app_config,
-                                                   final_data=final_generic_val_results)
-
-        return final_generic_val_results
+        # return final_generic_val_results

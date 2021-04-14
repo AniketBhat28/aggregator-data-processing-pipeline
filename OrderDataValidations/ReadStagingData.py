@@ -34,12 +34,16 @@ class ReadStagingData:
         product_type = config_json['product_type']
         trans_type = config_json['trans_type']
         file_extension = config_json['file_extension']
+        is_aggregator_enabled = config_json['isEnabled']
         app_config, input_dict = {}, {}
         app_config['input_params'], app_config['output_params'] = [], {}
 
         fileName = 'data-validation-report-' + aggregator + '-' + str(year) + '.csv'
-        # input_directory = 'mapped_layer/revenue/aggregator/' + input_folder_name + '/' + 'year=' + str(year) + '/' + 'product_type=' + product_type + '/' + 'trans_type=' + trans_type
+
+        # For EBSCO Aggregator
         input_directory = 'mapped_layer/revenue/aggregator/' + input_folder_name + '/' + 'year=' + str(year) + '/'
+        # # For Amazon Aggregator
+        # input_directory = 'mapped_layer/revenue/aggregator/' + input_folder_name + '/' + str(year) + '/'
         output_directory = 'data_validation_scripts/revenue/aggregator/' + aggregator.upper() + '/' + 'year=' + str(year) + '/' + fileName
 
         input_dict['input_base_path'] = 's3://' + input_bucket_name + '/' + input_directory + '/'
@@ -47,6 +51,9 @@ class ReadStagingData:
         input_dict['input_directory'] = input_directory
         input_dict['input_sheet_name'] = fileName
         input_dict['input_file_extension'] = file_extension
+        input_dict['aggregator_name'] = aggregator
+        input_dict['is_aggregator_enabled'] = is_aggregator_enabled
+
         app_config['input_params'].append(input_dict)
         app_config['output_params']['output_bucket_name'] = output_bucket_name
         app_config['output_params']['output_directory'] = output_directory
