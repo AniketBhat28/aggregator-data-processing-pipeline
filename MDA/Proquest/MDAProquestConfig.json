@@ -1,0 +1,15 @@
+{
+	"aggregator_name": "PROQUEST",
+	"aggregator_file_type": "PROQUEST-EBRARY-SUB",
+	"EBL_FC": "each_file != '' and 'Do not process' not in each_file and 'Admin Files' in each_file and ('QRD' in each_file or 'MRD' in each_file)",
+	"SUB_FC": "each_file != '' and 'Do not process' not in each_file and 'SUB' in each_file and 'Corporate' not in each_file",
+	"COR_FC": "each_file != '' and 'Do not process' not in each_file and 'Corporate' in each_file",
+	"input_bucket_name": "s3-euw1-ap-pe-orders-worker-agg-storage-etl",
+	"output_bucket_name" : "s3-use1-ap-pe-df-orders-insights-storage-d",
+	"input_folder_name" :"",
+	"aggregator" : "PQ_EBOOK_CENTRAL",
+	"layer" : "staging",
+	"month" : "Admin Files",
+	"year" : 2018
+
+}

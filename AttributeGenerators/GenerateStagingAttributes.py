@@ -128,7 +128,7 @@ class GenerateStagingAttributes:
     #							final_staging_data - final_staging_data
     # Return Values : 			final_staging_data - final_staging_data
     def process_staging_data(self, logger, filename, agg_rules, default_config, extracted_data, final_staging_data,
-                             agg_reference, obj_pre_process):
+                             agg_reference, obj_pre_process,data):
         if extracted_data.dropna(how='all').empty:
             logger.info("This file is empty")
         else:
@@ -142,7 +142,7 @@ class GenerateStagingAttributes:
 
             logger.info("Generating Staging Output")
             extracted_data = agg_reference.generate_staging_output(logger, filename, agg_rules, default_config,
-                                                                   extracted_data)
+                                                                   extracted_data,data)
             logger.info("Staging output generated for given data")
 
             # Append staging data of current file into final staging dataframe
@@ -165,7 +165,7 @@ class GenerateStagingAttributes:
                 else:
                     agg_rules = next((item for item in rule_config if (item['name'] == agg_name)), None)
 
-                mandatory_columns = agg_rules['filters']['mandatory_columns']
+
 
                 data = data.dropna(how='all')
                 data.columns = data.columns.str.strip()
@@ -173,8 +173,7 @@ class GenerateStagingAttributes:
                 if agg_name in ['REDSHELF','OVERDRIVE','FOLLETT','CHEGG','PROQUEST','INGRAM']:
                     data = self.replace_column_names(logger, agg_rules, data)
 
-
-
+                mandatory_columns = agg_rules['filters']['mandatory_columns']
                 data[mandatory_columns] = data[mandatory_columns].fillna(value='NA')
 
 
@@ -192,6 +191,47 @@ class GenerateStagingAttributes:
         logger.info('\n+-+-+-+-+-+-+Finished Processing ' + agg_name + ' files\n')
         return final_staging_data
 
+    def applying_mapped_aggregator_rules(self, logger, input_list, each_file, rule_config, default_config,
+                                         final_staging_data, obj_read_data, obj_pre_process,
+                                         agg_name, agg_reference):
+
+        logger.info('\n+-+-+-+-+-+-+Starting Processing ' + agg_name + ' files\n')
+        try:
+            data = obj_read_data.load_data(logger, input_list, each_file)
+            if not data.empty:
+                logger.info('Get the corresponding rules object for ' + agg_name)
+
+                agg_rules = next((item for item in rule_config if (item['name'] == agg_name)), None)
+                if agg_rules['name'] != 'PROQUEST-EBL':
+                    data.columns = data.iloc[agg_rules['header_row']].str.strip()
+                    if agg_rules['discard_last_rows'] == 0:
+                        data = data[agg_rules['data_row']:]
+                    else:
+                        data = data[agg_rules['data_row']:-agg_rules['discard_last_rows']]
+                else:
+                    data = data[:-agg_rules['discard_last_rows']]
+                # data = data.dropna(how='all')
+                # data.columns = data.columns.str.strip()
+                extracted_data = self.replace_column_names(logger, agg_rules, data)
+                extracted_data = obj_pre_process.extract_relevant_attributes(logger, extracted_data,
+                                                                             agg_rules['relevant_attributes'])
+                extracted_data = self.replace_column_names(logger, agg_rules, extracted_data)
+                extracted_data = obj_pre_process.validate_columns(logger, extracted_data,
+                                                                  agg_rules['filters']['column_validations'])
+                logger.info("Generating Staging Output")
+
+                extracted_data = agg_reference.generate_staging_output(logger, each_file, agg_rules, default_config,
+                                                                       extracted_data)
+                logger.info("Staging output generated for given data")
+                extracted_data['source_id'] = each_file.replace('/', '_').replace('.xlsx', '')
+                # Append staging data of current file into final staging dataframe
+                final_staging_data = pd.concat([final_staging_data, extracted_data], ignore_index=True, sort=True)
+
+        except KeyError as err:
+            logger.error(f"KeyError error while processing the file {each_file}. The error message is :  ", err)
+
+        logger.info('\n+-+-+-+-+-+-+Finished Processing ' + agg_name + ' files\n')
+        return final_staging_data
     # Function Description :	This function rename column names to make a common schema
     # Input Parameters : 		logger - For the logging output file.
     #							agg_rules - Rules json
