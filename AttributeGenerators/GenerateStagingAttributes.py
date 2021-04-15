@@ -97,12 +97,7 @@ class GenerateStagingAttributes:
     def group_data(self, logger, data, groupby_object):
 
         logger.info('Grouping staging data')
-        agg_fn = groupby_object['aggregation_function']
-        groupby_columns = groupby_object['groupby_columns']
-        final_grouped_data = data.groupby(groupby_columns, as_index=False).agg(agg_fn)
-
-        # Adding column display sequence logic
-        final_grouped_data = final_grouped_data[groupby_object['display_column_sequence']]
+        final_grouped_data =  data[groupby_object['display_column_sequence']]
 
         logger.info('Staging data grouped')
         return final_grouped_data
@@ -170,14 +165,18 @@ class GenerateStagingAttributes:
                 else:
                     agg_rules = next((item for item in rule_config if (item['name'] == agg_name)), None)
 
+                mandatory_columns = agg_rules['filters']['mandatory_columns']
+
                 data = data.dropna(how='all')
                 data.columns = data.columns.str.strip()
 
                 if agg_name in ['REDSHELF','OVERDRIVE','FOLLETT','CHEGG','PROQUEST','INGRAM']:
                     data = self.replace_column_names(logger, agg_rules, data)
 
-                mandatory_columns = agg_rules['filters']['mandatory_columns']
+
+
                 data[mandatory_columns] = data[mandatory_columns].fillna(value='NA')
+
 
                 extracted_data = obj_pre_process.extract_relevant_attributes(logger, data,
                                                                              agg_rules['relevant_attributes'])
