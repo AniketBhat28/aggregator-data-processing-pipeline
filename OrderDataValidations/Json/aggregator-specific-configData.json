@@ -1,0 +1,44 @@
+{
+      "aggregator_list":                  [
+                                               "AMAZON",
+                                               "BARNES",
+                                               "FOLLETT",
+                                               "REDSHELF",
+                                               "GARDNERS",
+                                               "PROQUEST"
+                                            ],
+
+      "backup_isbn_agg_list":              [
+                                                "CHEGG",
+                                                "FOLLETT",
+                                                "EBSCO"
+                                            ],
+
+      "isbn_columns_with_backup_product_id":[
+                                                "e_product_id",
+                                                "p_product_id",
+                                                "e_backup_product_id",
+                                                "p_backup_product_id",
+                                                "source",
+                                                "source_id"
+                                            ],
+
+      "isbn_columns_without_backup_product_id": [
+                                                  "e_product_id",
+                                                  "p_product_id",
+                                                  "p_backup_product_id",
+                                                  "source",
+                                                  "source_id"
+                                             ],
+      "aggregator_validation_columns":        [
+                                                  "aggregator_name",
+                                                  "source",
+                                                  "source_id"
+                                              ],
+      "reporting_date_format": ["%d/%m/%Y"],
+
+  "schema": {
+            "aggregator_name":{"type": "string"}
+        }
+}
+

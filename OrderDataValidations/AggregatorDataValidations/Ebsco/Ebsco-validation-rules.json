@@ -1,0 +1,29 @@
+{
+   "schema": {
+      "product_type": {
+         "type": "string",
+         "allowed": [
+            "Electronic"
+         ]
+      },
+      "trans_type": {
+         "type": "string",
+         "allowed": [
+            "Sales",
+            "Subscription"
+         ]
+      },
+      "price_type": {
+         "type": "string",
+         "allowed": [
+            "Adjusted Retail Price"
+         ]
+      },
+      "source": {
+         "type": "string",
+         "allowed": [
+            "EBSCO"
+         ]
+      }
+   }
+}

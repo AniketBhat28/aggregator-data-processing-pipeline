@@ -1,0 +1,30 @@
+{
+   "schema": {
+      "aggregator_name": {
+         "type": "string",
+         "allowed": [
+            "PROQUEST"
+         ]
+      },
+      "product_type": {
+         "type": "string",
+         "allowed": [
+            "Electronic"
+         ]
+      },
+      "trans_type": {
+         "type": "string",
+         "allowed": [
+            "Sales",
+            "Rental",
+            "subscription"
+         ]
+      },
+      "source": {
+         "type": "string",
+         "allowed": [
+            "PROQUEST"
+         ]
+      }
+   }
+}
