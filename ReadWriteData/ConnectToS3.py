@@ -7,6 +7,7 @@ import pandas as pd
 import numpy as np
 import boto3
 from io import StringIO
+import awswrangler as wr
 
 #################################
 #		GLOBAL VARIABLES		#
@@ -81,6 +82,29 @@ class ConnectToS3:
         logger.info('Writing the output at the given S3 location')
         final_data.to_parquet('s3://' + output_bucket_name + '/' + output_directory, compression='snappy',engine='pyarrow'
                              ,partition_cols=['year', 'product_type', 'trans_type'])
+
+
+        logger.info('master model data successfully stored at the given S3 location')
+
+    def wrangle_data_as_parquet(self, logger, app_config, final_data) :
+        logger.info('\n+-+-+-+-+-+-+*')
+        logger.info("Storing the master model data output at the given S3 location")
+        logger.info('\n+-+-+-+-+-+-+**')
+
+        output_bucket_name = app_config['output_params']['output_bucket_name']
+        output_directory = app_config['output_params']['output_directory']
+        year=app_config['output_params']['year']
+        final_data['year'] = year
+        logger.info('Writing the output at the given S3 location')
+        wr.s3.to_parquet(  # Storing the data and metadata to Data Lake
+            df=final_data,
+            path='s3://' + output_bucket_name + '/' + output_directory,
+            compression = 'snappy',
+            partition_cols=['year', 'product_type', 'trans_type'],
+            mode='append',
+            dataset=True
+        )
+
         logger.info('master model data successfully stored at the given S3 location')
 
 

@@ -39,7 +39,7 @@ class MDAMappedProcessDataFollett :
     #							default_config - Default json
     #							extracted_data - pr-processed_data
     # Return Values : 			extracted_data - extracted staging data
-    def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data) :
+    def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data,data) :
 
 
 
@@ -57,7 +57,7 @@ class MDAMappedProcessDataFollett :
 
 
         # new attributes addition
-        extracted_data['source'] = "FOLLETT"
+        extracted_data['source'] = "FOLLET"
         extracted_data['source_id'] = filename.split('.')[0]
         extracted_data['sub_domain'] = 'NA'
 
@@ -72,7 +72,7 @@ class MDAMappedProcessDataFollett :
     def initialise_processing(self, logger, app_config, rule_config, default_config) :
 
         # For the final staging output
-        agg_name = 'FOLLETT'
+        agg_name = 'FOLLET'
         agg_reference = self
         final_staging_data = pd.DataFrame()
         input_list = list(app_config['input_params'])
@@ -86,8 +86,6 @@ class MDAMappedProcessDataFollett :
                 logger.info(each_file)
                 logger.info('\n+-+-+-+-+-+-+')
 
-
-
                 final_staging_data = obj_gen_attrs.applying_aggregator_rules(logger, input_list, each_file, rule_config,
                                                                              default_config, final_staging_data,
                                                                              obj_read_data,
@@ -99,6 +97,6 @@ class MDAMappedProcessDataFollett :
 
 
         final_mapped_data = final_mapped_data.applymap(str)
-        obj_s3_connect.store_data_as_parquet(logger, app_config, final_mapped_data)
+        obj_s3_connect.wrangle_data_as_parquet(logger, app_config, final_mapped_data)
 
         logger.info('\n+-+-+-+-+-+-+Finished Processing Follett files\n')

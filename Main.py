@@ -17,8 +17,8 @@ import logging
 
 
 BASE_PATH = os.path.dirname(os.path.realpath(__file__))
-print('Base_path',BASE_PATH)
-sys.path.append('Output/aggregator_data_processing_pipeline-1.0-py3.7.egg')
+print('Base_path', BASE_PATH)
+sys.path.append('Output/aggregator_data_processing_pipeline_pq_historical-1.0-py3.7.egg')
 
 
 # Converting Month name to numbers to create output filename
@@ -70,7 +70,6 @@ if __name__ == '__main__':
     logger.info("             INITIALISING             ")
     logger.info("######################################")
 
-
     with open(BASE_PATH + '/MDAConfig.json') as f:
         config_json = json.load(f)
 
@@ -88,18 +87,17 @@ if __name__ == '__main__':
 
     mapped_layer_path = 'mapped_layer/revenue/aggregator/'
 
-    if layer !='staging':
-        if month == '' :
+    if layer != 'staging':
+        if month == '':
             input_directory = 'prod/' + input_folder_name + '/input/' + str(year)
             output_directory = mapped_layer_path + aggregator.upper()
-        else :
+        else:
             input_directory = 'prod/' + input_folder_name + '/input/' + str(year) + '/' + month
             output_directory = mapped_layer_path + aggregator.upper()
 
     else:
-        input_directory = mapped_layer_path + aggregator.upper()+'/year=' + str(year)
+        input_directory = mapped_layer_path + aggregator.upper() + '/year=' + str(year)
         output_directory = 'staging_layer/revenue/aggregator/' + aggregator.upper()
-
 
     input_dict['input_base_path'] = 's3://' + input_bucket_name + '/' + input_directory + '/'
     input_dict['input_bucket_name'] = input_bucket_name
@@ -108,38 +106,40 @@ if __name__ == '__main__':
     app_config['input_params'].append(input_dict)
     app_config['output_params']['output_bucket_name'] = output_bucket_name
     app_config['output_params']['output_directory'] = output_directory
-    app_config['output_params']['year']= str(year)
+    app_config['output_params']['year'] = str(year)
     app_config['output_params']['layer'] = layer
 
-    with open(BASE_PATH +'/MDA/'+aggregator+ '/MDAAggRulesVal.json') as f :
+    with open(BASE_PATH + '/MDA' + aggregator + '/MDAAggRulesVal.json') as f:
         rule_config = json.load(f)
 
-    with open(BASE_PATH +'/MDA/'+aggregator + '/MDADefault.json') as f:
+    with open(BASE_PATH + '/MDA' + aggregator + '/MDADefault.json') as f:
         default_config = json.load(f)
-
 
     # Check the aggregator to initialise appropriate module
     if aggregator == 'Amazon':
         module_path_relative = 'StagingDataGenerators.ProcessDataAmazon'
     elif aggregator == 'Ebsco':
-        if layer=='staging':
-            module_path_relative = 'MDA.Ebsco.MDAStagingProcessDataEbsco'
+        if layer == 'staging':
+            module_path_relative = 'MDA_f.Ebsco.MDAStagingProcessDataEbsco'
         else:
-            module_path_relative = 'MDA.Ebsco.MDAMappedProcessDataEbsco'
+            module_path_relative = 'MDA_f.Ebsco.MDAMappedProcessDataEbsco'
 
     elif aggregator == 'PROQUEST':
-        module_path_relative = 'StagingDataGenerators.ProcessDataPqCentral'
+        if layer == 'staging':
+            module_path_relative = 'MDAProquest.MDAStagingProcessDataProquest'
+        else:
+            module_path_relative = 'MDAProquest.MDAMappedProcessDataProquestLive'
     elif aggregator == 'Chegg':
         module_path_relative = 'StagingDataGenerators.ProcessDataChegg'
     elif aggregator == 'Ingram':
         module_path_relative = 'StagingDataGenerators.ProcessDataIngram'
     elif aggregator == 'Gardners':
         module_path_relative = 'StagingDataGenerators.ProcessDataGardners'
-    elif aggregator == 'Follett':
-        if layer == 'staging' :
-            module_path_relative = 'MDA.Follett.MDAStagingProcessDataFollett'
-        else :
-            module_path_relative = 'MDA.Follett.MDAMappedProcessDataFollett'
+    elif aggregator == 'Follet':
+        if layer == 'staging':
+            module_path_relative = 'MDAFollet.MDAStagingProcessDataFollett'
+        else:
+            module_path_relative = 'MDAFollet.MDAMappedProcessDataFollett'
 
     elif aggregator == 'Barnes':
         module_path_relative = 'StagingDataGenerators.ProcessDataBarnes'
@@ -149,7 +149,7 @@ if __name__ == '__main__':
         module_path_relative = 'StagingDataGenerators.ProcessDataGoogle'
     elif aggregator == 'Redshelf':
         module_path_relative = 'StagingDataGenerators.ProcessDataRedshelf'
-    elif aggregator == 'PQ_Subscription' :
+    elif aggregator == 'PQ_Subscription':
         module_path_relative = 'StagingDataGenerators.ProcessDataPqSubscription'
 
     # Get the module path and start the process

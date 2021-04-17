@@ -11,3 +11,5 @@ Output/aggregator_data_processing_pipeline-1.0-py3.7.egg
 .idea/aggregator-data-processing-pipeline.iml
 .idea/
 
+venv/
+Output/a.py

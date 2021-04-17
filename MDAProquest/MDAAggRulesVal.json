@@ -1,0 +1,271 @@
+[{
+    "name": "PROQUEST-EBL",
+    "file_type":"xlsx",
+    "header_row": 0,
+    "data_row": 1,
+    "discard_last_rows":1,
+    "attribute_mappings":	[
+                              { "Sale Price Per Unit":"PricePerUnit",
+                                "Promotional Discount Name":"DiscountName",
+                                "Promotional Discount Percent":"DiscountPercent",
+                                "Units Sold":"TotalSold",
+								"Sales Price":"TotalPaid",
+                                "Due to Publisher":"PublisherDue"
+
+                              }
+
+    ],
+    "missing_columns":["external_invoice_number", "internal_invoice_number", "internal_order_number", "external_transaction_number", "billing_customer_id",
+		               "External_Purchase_Order","e_backup_product_id","misc_product_ids","External_Product_ID_type","Transaction Date","Base List Price at time of transaction","Model Multiplier"],
+    "relevant_attributes":	[
+                                {"input_column_name": "Transaction Date", "staging_column_name":"repo_date"},
+                                {"input_column_name": "EbookIsbn", "staging_column_name":"e_product_id"},
+                                {"input_column_name": "PrintIsbn", "staging_column_name":"p_product_id"},
+                                {"input_column_name": "ItemId", "staging_column_name":"External_Product_ID"},
+                                {"input_column_name": "Title", "staging_column_name":"product_title"},
+                                {"input_column_name": "Imprint", "staging_column_name":"imprint"},
+                                {"input_column_name": "PricePerUnit", "staging_column_name":"Price"},
+                                {"input_column_name": "Currency", "staging_column_name":"Price_currency"},
+                                {"input_column_name": "PublisherDue", "staging_column_name":"Payment_Amount"},
+                                {"input_column_name": "DiscountPercent", "staging_column_name":"current_discount_percentage"},
+                                {"input_column_name": "DiscountName", "staging_column_name":"disc_code"},
+                                {"input_column_name": "TotalSold", "staging_column_name":"units"},
+                                {"input_column_name": "Region", "staging_column_name":"region"},
+                                {"input_column_name": "Country Code", "staging_column_name":"country"},
+                                {"input_column_name": "License Type", "staging_column_name":"DRM_model"},
+                                {"input_column_name": "SaleType", "staging_column_name":"sale_type"},
+								{"input_column_name": "TotalPaid", "staging_column_name":"adjusted_publisher_price_ori"},
+                                {"input_column_name": "Base List Price at time of transaction", "staging_column_name":"publisher_price_ori"},
+                                {"input_column_name": "Model Multiplier", "staging_column_name":"list_price_multiplier"}
+
+
+    ],
+  "filters":	{
+						"column_validations": [
+												{
+													"column_name": "units",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 1.0
+																	}
+												},
+												{
+													"column_name": "current_discount_percentage",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+                                                {
+													"column_name": "Payment_Amount",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+                                                {
+													"column_name": "Price",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												}
+
+
+
+
+											]
+
+					}
+
+},
+
+{
+    "name": "PROQUEST-EBRARY-PERPETUAL",
+    "file_type":"xlsx",
+    "header_row": 3,
+    "data_row": 4,
+    "discard_last_rows":2,
+    "attribute_mappings":	[],
+    "missing_columns":["adjusted_publisher_price_ori","publisher_price_ori","list_price_multiplier","price_type","External_Product_ID","Price_currency","country","DRM_model","sale_type","trans_type","current_discount_percentage","disc_code","units","region","e_backup_product_id","misc_product_ids","External_Product_ID_type","external_invoice_number", "internal_invoice_number", "internal_order_number", "external_transaction_number", "billing_customer_id"],
+    "relevant_attributes":	[
+                                {"input_column_name": "ebrary ID", "staging_column_name":"External_Purchase_Order"},
+                                {"input_column_name": "Electronic ISBN", "staging_column_name":"e_product_id"},
+                                {"input_column_name": "Print ISBN", "staging_column_name":"p_product_id"},
+                                {"input_column_name": "Title", "staging_column_name":"product_title"},
+                                {"input_column_name": "Publisher Name", "staging_column_name":"imprint"},
+                                {"input_column_name": "List Price", "staging_column_name":"Price"},
+                                {"input_column_name": "Total Revenue All Types", "staging_column_name":"Payment_Amount"}
+
+
+
+    ],
+    "filters":	{
+						"column_validations": [
+												{
+													"column_name": "units",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 1.0
+																	}
+												},
+												{
+													"column_name": "current_discount_percentage",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												}
+
+											]
+
+					}
+},
+{
+    "name": "PROQUEST-EBRARY-CORPORATE",
+    "file_type":"xlsx",
+    "header_row": 1,
+    "data_row": 2,
+    "discard_last_rows":0,
+    "attribute_mappings":	[],
+    "missing_columns":["external_invoice_number", "internal_invoice_number", "internal_order_number", "external_transaction_number", "billing_customer_id",
+						"adjusted_publisher_price_ori","publisher_price_ori","list_price_multiplier","price_type","External_Product_ID","Price_currency","country","DRM_model","sale_type","trans_type","Price","disc_code","units","region","e_backup_product_id","misc_product_ids","External_Product_ID_type"],
+    "relevant_attributes":	[
+                                {"input_column_name": "Doc ID", "staging_column_name":"External_Purchase_Order"},
+                                {"input_column_name": "e ISBN", "staging_column_name":"e_product_id"},
+                                {"input_column_name": "p ISBN", "staging_column_name":"p_product_id"},
+                                {"input_column_name": "Title", "staging_column_name":"product_title"},
+                                {"input_column_name": "Publisher", "staging_column_name":"imprint"},
+                                {"input_column_name": "Pub Discount", "staging_column_name":"current_discount_percentage"},
+                                {"input_column_name": "Total Revenue Due", "staging_column_name":"Payment_Amount"}
+    ],
+  "filters":	{
+						"column_validations": [
+												{
+													"column_name": "units",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 1.0
+																	}
+												},
+												{
+													"column_name": "current_discount_percentage",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												}
+
+											]
+
+					}
+
+
+},
+{
+    "name": "PROQUEST-EBRARY-STL",
+    "file_type":"xlsx",
+    "header_row": 3,
+    "data_row": 4,
+    "discard_last_rows":2,
+    "attribute_mappings":	[],
+    "missing_columns":["external_invoice_number", "internal_invoice_number", "internal_order_number", "external_transaction_number", "billing_customer_id",
+						"adjusted_publisher_price_ori","publisher_price_ori","list_price_multiplier","price_type","External_Product_ID","Price_currency","country","DRM_model","sale_type","trans_type","current_discount_percentage","disc_code","units","region","e_backup_product_id","misc_product_ids","External_Product_ID_type"],
+    "relevant_attributes":	[
+                                {"input_column_name": "ebrary ID", "staging_column_name":"External_Purchase_Order"},
+                                {"input_column_name": "Electronic ISBN", "staging_column_name":"e_product_id"},
+                                {"input_column_name": "Print ISBN", "staging_column_name":"p_product_id"},
+                                {"input_column_name": "Title", "staging_column_name":"product_title"},
+                                {"input_column_name": "Publisher Name", "staging_column_name":"imprint"},
+                                {"input_column_name": "List Price", "staging_column_name":"Price"},
+                                {"input_column_name": "Total Net Revenue All: Short -term Loans", "staging_column_name":"Payment_Amount"}
+
+
+
+    ],
+    "filters":	{
+						"column_validations": [
+												{
+													"column_name": "units",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 1.0
+																	}
+												},
+												{
+													"column_name": "current_discount_percentage",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												}
+
+											]
+
+					}
+
+},
+{
+    "name": "PROQUEST-EBRARY-SUB",
+    "file_type":"xlsx",
+    "header_row": 3,
+    "data_row": 4,
+    "discard_last_rows":2,
+    "attribute_mappings":	[{"ebrary ID": "Book ID",
+                              "Publisher Name": "Publisher"}],
+    "missing_columns":["external_invoice_number", "internal_invoice_number", "internal_order_number", "external_transaction_number", "billing_customer_id",
+						"adjusted_publisher_price_ori","publisher_price_ori","list_price_multiplier","price_type","External_Purchase_Order","Price","External_Product_ID","Price_currency","country","DRM_model","sale_type","trans_type","current_discount_percentage","disc_code","units","region"],
+    "relevant_attributes":	[
+                                {"input_column_name": "Other ISBN", "staging_column_name":"e_backup_product_id"},
+                                {"input_column_name": "Electronic ISBN", "staging_column_name":"e_product_id"},
+                                {"input_column_name": "Print ISBN", "staging_column_name":"p_product_id"},
+                                {"input_column_name": "ISSN", "staging_column_name":"misc_product_ids"},
+                                {"input_column_name": "Book ID", "staging_column_name":"External Product ID"},
+                                {"input_column_name": "Title", "staging_column_name":"product_title"},
+                                {"input_column_name": "Publisher", "staging_column_name":"imprint"},
+                                {"input_column_name": "Total Revenue All Types", "staging_column_name":"Payment_Amount"}
+    ],
+  "filters":	{
+						"column_validations": [
+												{
+													"column_name": "units",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 1.0
+																	}
+												},
+												{
+													"column_name": "current_discount_percentage",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+                                                {
+													"column_name": "Payment_Amount",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												}
+
+
+
+											]
+
+					}
+
+}]
