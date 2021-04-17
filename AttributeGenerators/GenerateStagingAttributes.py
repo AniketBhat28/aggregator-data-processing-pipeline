@@ -168,7 +168,7 @@ class GenerateStagingAttributes:
                 data = data.dropna(how='all')
                 data.columns = data.columns.str.strip()
 
-                if agg_name in ['REDSHELF', 'OVERDRIVE', 'FOLLETT', 'CHEGG', 'PROQUEST', 'INGRAM']:
+                if agg_name in ['REDSHELF', 'OVERDRIVE', 'FOLLET', 'CHEGG', 'PROQUEST', 'INGRAM']:
                     data = self.replace_column_names(logger, agg_rules, data)
 
                 mandatory_columns = agg_rules['filters']['mandatory_columns']
@@ -176,11 +176,12 @@ class GenerateStagingAttributes:
 
                 extracted_data = obj_pre_process.extract_relevant_attributes(logger, data,
                                                                              agg_rules['relevant_attributes'])
+                extracted_data = self.replace_column_names(logger, agg_rules, extracted_data)
 
                 final_staging_data = self.process_staging_data(logger, each_file, agg_rules,
                                                                default_config,
                                                                extracted_data, final_staging_data,
-                                                               agg_reference, obj_pre_process)
+                                                               agg_reference, obj_pre_process,data)
 
         except KeyError as err:
             logger.error(f"KeyError error while processing the file {each_file}. The error message is :  ", err)

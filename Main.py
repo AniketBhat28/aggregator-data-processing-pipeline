@@ -135,11 +135,11 @@ if __name__ == '__main__':
         module_path_relative = 'StagingDataGenerators.ProcessDataIngram'
     elif aggregator == 'Gardners':
         module_path_relative = 'StagingDataGenerators.ProcessDataGardners'
-    elif aggregator == 'Follett':
+    elif aggregator == 'Follet':
         if layer == 'staging':
-            module_path_relative = 'MDA_f.Follett.MDAStagingProcessDataFollett'
+            module_path_relative = 'MDAFollet.MDAStagingProcessDataFollett'
         else:
-            module_path_relative = 'MDA_f.Follett.MDAMappedProcessDataFollett'
+            module_path_relative = 'MDAFollet.MDAMappedProcessDataFollett'
 
     elif aggregator == 'Barnes':
         module_path_relative = 'StagingDataGenerators.ProcessDataBarnes'
