@@ -39,10 +39,10 @@ class GenerateStagingAttributes:
         data[input_column] = data[input_column].astype(str)
 
         data[staging_column] = data.apply(lambda row: (row[input_column].split(',')[0]) if (
-                    (pd.notnull(row[input_column])) and (len(row[input_column].split(',')) >= 1)) else (default_val),
+                (pd.notnull(row[input_column])) and (len(row[input_column].split(',')) >= 1)) else (default_val),
                                           axis=1)
         data[bckp_staging_column] = data.apply(lambda row: (row[input_column].split(',')[0]) if (
-                    (pd.notnull(row[input_column])) and (len(row[input_column].split(',')) >= 2)) else (default_val),
+                (pd.notnull(row[input_column])) and (len(row[input_column].split(',')) >= 2)) else (default_val),
                                                axis=1)
 
         logger.info('ISBN processed')
@@ -62,9 +62,9 @@ class GenerateStagingAttributes:
         logger.info('Processing Miscellaneous ISBN')
 
         data['misc_e_product_id'] = data.apply(lambda row: (row[e_column].split(',')[2:]) if (
-                    (pd.notnull(row[e_column])) and (len(row[e_column].split(',')) > 2)) else [], axis=1)
+                (pd.notnull(row[e_column])) and (len(row[e_column].split(',')) > 2)) else [], axis=1)
         data['misc_p_product_id'] = data.apply(lambda row: (row[p_column].split(',')[2:]) if (
-                    (pd.notnull(row[p_column])) and (len(row[p_column].split(',')) > 2)) else [], axis=1)
+                (pd.notnull(row[p_column])) and (len(row[p_column].split(',')) > 2)) else [], axis=1)
 
         data[staging_column] = data[['misc_e_product_id', 'misc_p_product_id']].values.tolist()
         data[staging_column] = data.apply(lambda row: [] if (row[staging_column] == [[], []]) else list(
@@ -97,7 +97,7 @@ class GenerateStagingAttributes:
     def group_data(self, logger, data, groupby_object):
 
         logger.info('Grouping staging data')
-        final_grouped_data =  data[groupby_object['display_column_sequence']]
+        final_grouped_data = data[groupby_object['display_column_sequence']]
 
         logger.info('Staging data grouped')
         return final_grouped_data
@@ -128,7 +128,7 @@ class GenerateStagingAttributes:
     #							final_staging_data - final_staging_data
     # Return Values : 			final_staging_data - final_staging_data
     def process_staging_data(self, logger, filename, agg_rules, default_config, extracted_data, final_staging_data,
-                             agg_reference, obj_pre_process,data):
+                             agg_reference, obj_pre_process, data):
         if extracted_data.dropna(how='all').empty:
             logger.info("This file is empty")
         else:
@@ -142,7 +142,7 @@ class GenerateStagingAttributes:
 
             logger.info("Generating Staging Output")
             extracted_data = agg_reference.generate_staging_output(logger, filename, agg_rules, default_config,
-                                                                   extracted_data,data)
+                                                                   extracted_data, data)
             logger.info("Staging output generated for given data")
 
             # Append staging data of current file into final staging dataframe
@@ -165,17 +165,14 @@ class GenerateStagingAttributes:
                 else:
                     agg_rules = next((item for item in rule_config if (item['name'] == agg_name)), None)
 
-
-
                 data = data.dropna(how='all')
                 data.columns = data.columns.str.strip()
 
-                if agg_name in ['REDSHELF','OVERDRIVE','FOLLETT','CHEGG','PROQUEST','INGRAM']:
+                if agg_name in ['REDSHELF', 'OVERDRIVE', 'FOLLETT', 'CHEGG', 'PROQUEST', 'INGRAM']:
                     data = self.replace_column_names(logger, agg_rules, data)
 
                 mandatory_columns = agg_rules['filters']['mandatory_columns']
                 data[mandatory_columns] = data[mandatory_columns].fillna(value='NA')
-
 
                 extracted_data = obj_pre_process.extract_relevant_attributes(logger, data,
                                                                              agg_rules['relevant_attributes'])
@@ -200,9 +197,26 @@ class GenerateStagingAttributes:
             data = obj_read_data.load_data(logger, input_list, each_file)
             if not data.empty:
                 logger.info('Get the corresponding rules object for ' + agg_name)
+                if 'Admin Files' in each_file and ('QRD' in each_file or 'MRD' in each_file):
+                    agg_rule_name = 'PROQUEST-EBL'
+                if 'QRD' in each_file or 'MRD' in each_file:
+                    agg_rule_name = 'PROQUEST-EBL'
+                matches = ['Q1', 'Q2', 'Q3', 'Q4', 'SUB']
+                if any(x in each_file for x in matches) and 'Corporate' not in each_file:
+                    agg_rule_name = 'PROQUEST-EBRARY-SUB'
+                if 'Corporate' in each_file:
+                    agg_rule_name = 'PROQUEST-EBRARY-CORPORATE'
+                if 'Admin Files' in each_file and 'STL' in each_file:
+                    agg_rule_name = 'PROQUEST-EBRARY-STL'
+                if 'Admin Files' in each_file and 'Perpetual' in each_file:
+                    agg_rule_name = 'PROQUEST-EBRARY-PERPETUAL'
 
-                agg_rules = next((item for item in rule_config if (item['name'] == agg_name)), None)
-                if agg_rules['name'] != 'PROQUEST-EBL':
+                agg_rules = next((item for item in rule_config if (item['name'] == agg_rule_name)), None)
+                if agg_rules['name'] == 'PROQUEST-EBRARY-SUB' and '2017' in each_file:
+                    data.columns = data.iloc[2].str.strip()
+                    data = data[3:-2]
+
+                elif agg_rules['name'] != 'PROQUEST-EBL':
                     data.columns = data.iloc[agg_rules['header_row']].str.strip()
                     if agg_rules['discard_last_rows'] == 0:
                         data = data[agg_rules['data_row']:]
@@ -232,6 +246,7 @@ class GenerateStagingAttributes:
 
         logger.info('\n+-+-+-+-+-+-+Finished Processing ' + agg_name + ' files\n')
         return final_staging_data
+
     # Function Description :	This function rename column names to make a common schema
     # Input Parameters : 		logger - For the logging output file.
     #							agg_rules - Rules json

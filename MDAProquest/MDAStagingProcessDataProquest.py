@@ -7,7 +7,7 @@ import ast
 import pandas as pd
 import numpy as np
 import requests
-
+import awswrangler as wr
 from ReadWriteData.ReadData import ReadData
 from Preprocessing.ProcessCore import ProcessCore
 from Preprocessing.PreProcess import PreProcess
@@ -77,9 +77,9 @@ class MDAStagingProcessDataProquest:
         final_mapped_data['Price'].replace('None', 0, inplace=True)
         final_mapped_data['Price'] = final_mapped_data['Price'].astype('float')
 
-        final_mapped_data['list_price_multiplier'].replace('None', 0, inplace=True)
-        final_mapped_data['list_price_multiplier'] = final_mapped_data['list_price_multiplier'].astype('float')
-
+        final_mapped_data['list_price_multiplier'].replace('None', 1, inplace=True)
+        final_mapped_data['list_price_multiplier'] = pd.to_numeric(final_mapped_data['list_price_multiplier'],
+                                                                   errors='coerce')
         final_mapped_data['adjusted_publisher_price_ori'].replace('None', 0, inplace=True)
         final_mapped_data['adjusted_publisher_price_ori'] = final_mapped_data['adjusted_publisher_price_ori'].astype(
             'float')
@@ -116,8 +116,8 @@ class MDAStagingProcessDataProquest:
         input_list = list(app_config['input_params'])
         input_base_path = input_list[0]['input_base_path']
         # Processing for each file in the given folder
-        logger.info('\n+-+-+-+-+-+-+Starting Proquest files Processing\n')
-        logger.info('Get the corresponding rules object for Proquest')
+        logger.info('\n+-+-+-+-+-+-+Starting MDAProquest files Processing\n')
+        logger.info('Get the corresponding rules object for MDAProquest')
         # agg_rules = next((item for item in rule_config if (item['name'] == 'PROQUEST')), None)
         files_in_s3 = obj_s3_connect.get_files(logger, input_list)
 
@@ -127,11 +127,12 @@ class MDAStagingProcessDataProquest:
                 logger.info(each_file)
                 logger.info('\n+-+-+-+-+-+-+')
 
-                final_mapped_data = pd.read_parquet(input_base_path + each_file, engine='pyarrow')
+                final_mapped_data = wr.s3.read_parquet(path = input_base_path + each_file)
+                    # pd.read_parquet(input_base_path + each_file, engine='pyarrow')
                 final_staging_data = self.generate_edw_staging_data(logger, final_mapped_data)
-                final_staging_data['year'] = each_file.split('/')[0].split('=')[1]
-                final_staging_data['product_type'] = each_file.split('/')[1].split('=')[1]
-                final_staging_data['trans_type'] = each_file.split('/')[2].split('=')[1]
+                # final_staging_data['year'] =
+                final_staging_data['product_type'] = each_file.split('/')[0].split('=')[1]
+                final_staging_data['trans_type'] = each_file.split('/')[1].split('=')[1]
                 # Append staging data of current file into final staging dataframe
                 final_edw_data = pd.concat([final_edw_data, final_staging_data], ignore_index=True, sort=True)
 
@@ -141,8 +142,8 @@ class MDAStagingProcessDataProquest:
         # print("total no of rows after removing duplicate : ", len(final_edw_data))
         final_edw_data = obj_gen_attrs.group_data(logger, final_edw_data,
                                                   default_config[0]['group_staging_data'])
-        obj_s3_connect.store_data_as_parquet(logger, app_config, final_edw_data)
-        logger.info('\n+-+-+-+-+-+-+Finished Processing Proquest files\n')
+        obj_s3_connect.wrangle_data_as_parquet(logger, app_config, final_edw_data)
+        logger.info('\n+-+-+-+-+-+-+Finished Processing MDAProquest files\n')
 
     def proquest_price_cal(self, extracted_data):
 
@@ -169,14 +170,14 @@ class MDAStagingProcessDataProquest:
             'str')
         extracted_data['list_price_multiplier'] = (extracted_data['list_price_multiplier']).str.rstrip()
         extracted_data['list_price_multiplier'] = extracted_data.apply(
-            lambda row: 0.0 if row['list_price_multiplier'] == 'NA' else row['list_price_multiplier'],
+            lambda row: 1.0 if row['list_price_multiplier'] == 'NA' else row['list_price_multiplier'],
             axis=1)
 
         return extracted_data
 
     def calculate_final_discount_percentage(self, extracted_data, logger):
-        if extracted_data['current_discount_percentage'].all() == 'NA':
-            extracted_data['current_discount_percentage'] = 0.0
+        # if extracted_data['current_discount_percentage'].all() == 'NA':
+        #     extracted_data['current_discount_percentage'] = 0.0
         extracted_data['current_discount_percentage'] = extracted_data.apply(
             lambda row: 0.0 if row['current_discount_percentage'] == 'NA' else row['current_discount_percentage'],
             axis=1)

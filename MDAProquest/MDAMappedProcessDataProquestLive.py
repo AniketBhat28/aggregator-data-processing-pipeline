@@ -31,7 +31,7 @@ obj_gen_attrs = GenerateStagingAttributes()
 #################################
 
 
-class MDAMappedProcessDataProquest:
+class MDAMappedProcessDataProquestLive:
 
     # Function Description :	This function processes transaction and sales types
     # Input Parameters : 		logger - For the logging output file.
@@ -133,8 +133,8 @@ class MDAMappedProcessDataProquest:
         logger.info('\n+-+-+-+-+-+-+Starting PQCentral files Processing\n')
         files_in_s3 = obj_s3_connect.get_files(logger, input_list)
         for each_file in files_in_s3:
-            matches = ['Admin Files', 'SUB', 'Corporate']
-            if each_file != '' and 'Do not process' not in each_file and any(x in each_file for x in matches):
+
+            if each_file != '' and 'Do not process' not in each_file :
                 logger.info('\n+-+-+-+-+-+-+')
                 logger.info(each_file)
                 logger.info('\n+-+-+-+-+-+-+')
@@ -178,5 +178,5 @@ class MDAMappedProcessDataProquest:
         final_grouped_data = obj_gen_attrs.group_data(logger, final_staging_data,
                                                       default_config[0]['group_staging_data'])
         final_grouped_data = final_grouped_data.astype(str)
-        # obj_s3_connect.wrangle_data_as_parquet(logger, app_config, final_grouped_data)
+        obj_s3_connect.wrangle_data_as_parquet(logger, app_config, final_grouped_data)
         logger.info('\n+-+-+-+-+-+-+Finished Processing PQCentral files\n')
