@@ -123,24 +123,18 @@ class MDAMappedProcessDataProquest:
     #							rule_config - Rules json
     #							default_config - Default json
     # Return Values : 			None
-    def initialise_processing(self, logger, app_config, base_path, aggregator):
-
-        # For the final staging output
-        with open(base_path +  '/MDAProquestRulesVal.json') as f:
-            rule_config = json.load(f)
-
-        with open(base_path +  '/MDAProquestDefault.json') as f:
-            default_config = json.load(f)
-
+    def initialise_processing(self, logger, app_config, rule_config, default_config):
+        agg_name = 'PROQUEST'
         agg_reference = self
         final_staging_data = pd.DataFrame()
         input_list = list(app_config['input_params'])
-        agg_name = input_list[0]['aggregator_file_type']
+        # agg_name = input_list[0]['aggregator_file_type']
         # Processing for each file in the fiven folder
         logger.info('\n+-+-+-+-+-+-+Starting PQCentral files Processing\n')
         files_in_s3 = obj_s3_connect.get_files(logger, input_list)
         for each_file in files_in_s3:
-            if each_file == 'OCT/SUB/2018-Q3_3856.xlsx' and 'Do not process' not in each_file and 'SUB' in each_file and 'Corporate' not in each_file:
+            matches = ['Admin Files', 'SUB', 'Corporate']
+            if each_file != '' and 'Do not process' not in each_file and any(x in each_file for x in matches):
                 logger.info('\n+-+-+-+-+-+-+')
                 logger.info(each_file)
                 logger.info('\n+-+-+-+-+-+-+')
@@ -148,9 +142,8 @@ class MDAMappedProcessDataProquest:
                 input_file_extn = each_file.split('.')[-1]
 
                 if (input_file_extn.lower() == 'xlsx') or (input_file_extn.lower() == 'xls'):
-                    app_config['output_params']['output_filename'] = each_file.replace('/', '_').replace('.xlsx',
-                                                                                                         '') + '.snappy.parquet'
-                    # To get the sheet names
+                    # app_config['output_params']['output_filename'] = each_file.replace('/', '_').replace('.xlsx',
+                    # '') + '.snappy.parquet' To get the sheet names
                     excel_frame = ExcelFile(input_list[0]['input_base_path'] + each_file)
                     sheets = excel_frame.sheet_names
                     for each_sheet in sheets:
