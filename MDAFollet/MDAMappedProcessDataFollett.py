@@ -50,7 +50,7 @@ class MDAMappedProcessDataFollett :
 
         print('dictionary',agg_rules['filters']['country_iso_values'])
 
-        extracted_data['aggregator_name'] = agg_rules['name']
+        extracted_data['aggregator_name'] = 'FOLLETT'
         extracted_data['product_type'] = agg_rules['product_type']
 
         extracted_data['price_currency'] = 'NA'
@@ -62,7 +62,7 @@ class MDAMappedProcessDataFollett :
 
 
         # new attributes addition
-        extracted_data['source'] = "FOLLET"
+        extracted_data['source'] = "FOLLETT"
         extracted_data['source_id'] = filename.split('.')[0]
         extracted_data['sub_domain'] = 'NA'
         extracted_data['external_purchase_order'] =  extracted_data['external_purchase_order'].replace('NA', 0)
@@ -88,7 +88,7 @@ class MDAMappedProcessDataFollett :
     def initialise_processing(self, logger, app_config, rule_config, default_config) :
 
         # For the final staging output
-        agg_name = 'FOLLET'
+        agg_name = 'FOLLETT'
         agg_reference = self
         final_staging_data = pd.DataFrame()
         input_list = list(app_config['input_params'])
