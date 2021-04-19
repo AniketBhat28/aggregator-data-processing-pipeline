@@ -69,12 +69,12 @@ class MDAStagingProcessDataFollett :
 
 
         extracted_data['total_returns_count'] = extracted_data.apply(
-            lambda row : 1.0 if (row[amount_column] < 0 and row['units'] == "NA") else 0, axis=1)
-        extracted_data['total_returns_count'] = extracted_data.apply(lambda row : 2.0 if (
+            lambda row : 1 if (row[amount_column] < 0 and row['units'] == "NA") else 0, axis=1)
+        extracted_data['total_returns_count'] = extracted_data.apply(lambda row : 2 if (
                     (row[amount_column] < 0) and (row[amount_column] * -1 > row['price'] * -1) and (
                         row['units'] == "NA")) else row['total_returns_count'], axis=1)
 
-        extracted_data['total_returns_count'] = extracted_data.apply(lambda row : 1.0 if (
+        extracted_data['total_returns_count'] = extracted_data.apply(lambda row : 1 if (
                     (row[amount_column] == 0) and (row['price'] == 0) and (
                         row['sale_type'] in ['Refund', 'Cancel']) and (row['units'] == "NA")) else row[
             'total_returns_count'], axis=1)
@@ -99,9 +99,16 @@ class MDAStagingProcessDataFollett :
     # Return Values : 			extracted_data - extracted staging data
     def generate_edw_staging_data(self, logger, agg_rules, default_config,app_config, extracted_data) :
 
+        extracted_data['external_invoice_number']='NA'
+        extracted_data['internal_invoice_number']='NA'
+        extracted_data['internal_order_number']='NA'
+        extracted_data['billing_customer_id']= 'NA'
+        extracted_data['e_backup_product_id'] = extracted_data.e_backup_product_id.str.split('.',expand=True)
+        extracted_data['e_product_id'] = extracted_data.e_product_id.str.split('.',expand=True)
+
         year=app_config['output_params']['year']
-        default_date = str(year) + '-01-01 00:00:00'
-        #print('default_date',default_date)
+        default_date = '01-01-'+str(year)
+        print('default_date',default_date)
 
         currency_suffix = '[\$£,()-]'
         extracted_data['price'] = (extracted_data['price']).replace(currency_suffix, '', regex=True)
@@ -129,50 +136,60 @@ class MDAStagingProcessDataFollett :
         extracted_data['product_type'] = agg_rules['product_type']
         amount_column = agg_rules['filters']['amount_column']
 
-        extracted_data = self.process_sales(logger, extracted_data, amount_column)
-        extracted_data = self.process_returns(logger, extracted_data, amount_column)
-
         extracted_data['units'] = extracted_data.apply(
-            lambda row : row['total_sales_count'] - row['total_returns_count'] if row['units'] == 'NA' else row['units'],
+            lambda row: 1 if row['units'] == 'NA' else row['units'],
             axis=1)
-        extracted_data['units'] = pd.to_numeric(extracted_data['units'],
-                                                                      errors='coerce')
-        #print('sale',extracted_data['sales_unit'])
 
-        extracted_data['units'] = extracted_data['units'].astype('float')
+        extracted_data['units'] = pd.to_numeric(extracted_data['units'],
+                                                                       errors='coerce')
+        #print('sale',extracted_data['sales_unit'])
+        extracted_data['units'] = extracted_data['units'].fillna(1)
+        extracted_data['units'] = extracted_data['units'].astype('float').astype('int')
+
+
         #print('sale 22', extracted_data['sales_unit'])
         extracted_data['units'] = extracted_data.apply(
-            lambda row : 1.0 if row['units'] == 0.0 else row['units'],axis=1)
+            lambda row : 1 if row['units'] == 0 else row['units'],axis=1)
 
-        if extracted_data['sale_type'].all() == 'NA' :
-            extracted_data['sale_type'] = extracted_data.apply(
-                lambda row : ('REFUNDS') if (row['units'] < 0) else ('PURCHASE'), axis=1)
+        # if extracted_data['sale_type'].all() == 'NA' :
+        #     extracted_data['sale_type'] = extracted_data.apply(
+        #         lambda row : ('REFUNDS') if (row['units'] < 0) else ('PURCHASE'), axis=1)
+
+
+
+        extracted_data['sale_type'] = extracted_data.apply(
+            lambda row : 'PURCHASE' if row['sale_type_ori'] == 'NA' else row['sale_type_ori'], axis=1)
 
         extracted_data['current_discount_percentage'] = extracted_data.apply(
             lambda row : 0 if row['current_discount_percentage'] == 'NA' and
                                                             row[amount_column] == 0 or
                                                             row['price'] == 0 else row['current_discount_percentage'],axis=1)
 
-        extracted_data['current_discount_percentage'] = extracted_data.apply(
-                lambda row : 1 - (round(((row[amount_column] / row[
-                'units']) / abs(row['price'])), 2)) if row['current_discount_percentage'] == 'NA' else row['current_discount_percentage'],
-                axis=1)
+
         extracted_data['current_discount_percentage'] = extracted_data['current_discount_percentage'].replace(np.nan, 0)
+        extracted_data['current_discount_percentage'] = extracted_data.apply(
+            lambda row: 0.0 if row['current_discount_percentage'] == 'NA' else row['current_discount_percentage'], axis=1)
         extracted_data['current_discount_percentage'] = pd.to_numeric(extracted_data['current_discount_percentage'],
                                                                       errors='coerce')
-
+        extracted_data['current_discount_percentage'] = extracted_data.apply(
+            lambda row: row['current_discount_percentage'] * 100 if (row['current_discount_percentage'] < 1) else row[
+                'current_discount_percentage'],
+            axis=1)
         extracted_data['price'] = extracted_data['price'].abs()
-        extracted_data['current_discount_percentage'] = extracted_data['current_discount_percentage'] * 100
+        extracted_data['current_discount_percentage'] = round(extracted_data['current_discount_percentage'] ,2)
 
-        extracted_data['reporting_date'] = extracted_data.apply(
-            lambda row : default_date if row['reporting_date'] == 'NA' else extracted_data['reporting_date'], axis=1)
+        print('before',extracted_data['reporting_date'])
+        extracted_data['reporting_date'] = extracted_data['reporting_date'].replace(np.nan, default_date)
+        # extracted_data['reporting_date'] = extracted_data.apply(
+        #     lambda row : default_date if row['reporting_date'] == 'NA' else extracted_data['reporting_date'], axis=1)
 
-
+        print('after1', extracted_data['reporting_date'])
         extracted_data['reporting_date'] = pd.to_datetime(extracted_data['reporting_date'],
                                                              format='%d-%m-%Y', infer_datetime_format=True)
+        print('after2', extracted_data['reporting_date'])
         #print('reporting date done')
         extracted_data['reporting_date'] = extracted_data['reporting_date'].dt.date
-
+        print('after3', extracted_data['reporting_date'])
         #print(extracted_data.dtypes)
         return extracted_data
 
@@ -186,7 +203,7 @@ class MDAStagingProcessDataFollett :
     def initialise_processing(self, logger, app_config, rule_config, default_config) :
 
         # For the final staging output
-        agg_name = 'FOLLETT'
+        agg_name = 'FOLLET'
         final_edw_data = pd.DataFrame()
 
         input_list = list(app_config['input_params'])
@@ -211,8 +228,9 @@ class MDAStagingProcessDataFollett :
 
         final_edw_data = obj_gen_attrs.group_data(logger, final_edw_data,
                                                      default_config[0]['group_staging_data'])
-        final_edw_data.dropna(subset=["aggregator_name","reporting_date","external_purchase_order","external_transaction_number"], inplace=True)
-        final_edw_data.to_csv('staging_Follett_Feb_2020.csv')
+        #final_edw_data.dropna(subset=["e_product_id","e_backup_product_id","external_purchase_order","external_transaction_number"], inplace=True)
+        final_edw_data  = final_edw_data[final_edw_data["e_product_id"].str.contains("NA") == False]
+        # final_edw_data.to_csv('staging_Follett_Feb_2018_1.csv')
         obj_s3_connect.store_data_as_parquet(logger, app_config, final_edw_data)
 
         logger.info('\n+-+-+-+-+-+-+Finished Processing Follett files\n')

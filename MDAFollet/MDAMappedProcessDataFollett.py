@@ -6,7 +6,7 @@
 import ast
 import pandas as pd
 import numpy as np
-
+import decimal
 from ReadWriteData.ReadData import ReadData
 from Preprocessing.ProcessCore import ProcessCore
 from Preprocessing.PreProcess import PreProcess
@@ -39,6 +39,11 @@ class MDAMappedProcessDataFollett :
     #							default_config - Default json
     #							extracted_data - pr-processed_data
     # Return Values : 			extracted_data - extracted staging data
+
+
+    def float_to_string(self,number, precision=2):
+        return '{0:.1f}'.format( number, prec=precision,).rstrip('0').rstrip('.') or '0'
+
     def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data,data) :
 
 
@@ -60,7 +65,18 @@ class MDAMappedProcessDataFollett :
         extracted_data['source'] = "FOLLET"
         extracted_data['source_id'] = filename.split('.')[0]
         extracted_data['sub_domain'] = 'NA'
+        extracted_data['external_purchase_order'] =  extracted_data['external_purchase_order'].replace('NA', 0)
+        extracted_data['external_transaction_number'] = extracted_data['external_transaction_number'].replace('NA', 0)
 
+        extracted_data['external_purchase_order'] =  extracted_data['external_purchase_order'].astype("float")
+        extracted_data['external_purchase_order'] = extracted_data['external_purchase_order'].apply(self.float_to_string)
+        # extracted_data['external_purchase_order'] = extracted_data['external_purchase_order'].replace({np.nan: 'NA'})
+        extracted_data['external_purchase_order'] = extracted_data.external_purchase_order.astype(str)
+        extracted_data['external_transaction_number'] = extracted_data['external_transaction_number'].astype("float")
+        # extracted_data['external_transaction_number'] = extracted_data['external_transaction_number'].replace({np.nan: 0})
+        extracted_data['external_transaction_number'] = extracted_data["external_transaction_number"].apply(self.float_to_string)
+        extracted_data['external_transaction_number'] = extracted_data.external_transaction_number.astype(str)\
+            # .str.split('.', expand=True)
         return extracted_data
 
     # Function Description :	This function processes data for all Follett files
