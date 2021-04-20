@@ -199,7 +199,7 @@ class MDAStagingProcessDataEbsco :
         # Grouping and storing data
         final_edw_data = obj_gen_attrs.group_data(logger, final_edw_data,
                                                      default_config[0]['group_staging_data'])
-        final_edw_data.to_csv('redshelf_NA.csv')
+
         obj_s3_connect.store_data_as_parquet(logger, app_config, final_edw_data)
 
         logger.info('\n+-+-+-+-+-+-+Finished Processing Ebsco files\n')
