@@ -1,0 +1,13 @@
+[
+	{
+		"output_date_format":"%d-%m-%Y",
+		"group_staging_data": 	{
+									"display_column_sequence": ["aggregator_name","reporting_date","internal_order_number","internal_invoice_number","external_purchase_order",
+										"external_invoice_number","external_transaction_number","billing_customer_id", "e_product_id", "p_product_id", "product_title",
+										"product_type", "imprint", "price","price_currency","price_type", "payment_amount","payment_amount_currency","new_rental_duration",
+										"trans_type_ori","trans_type","sale_type","units", "country", "account_name","adoption_department","adoption_course",
+										"course_start_date","course_status","course_end_date","source", "source_id"]
+									}
+
+	}
+]

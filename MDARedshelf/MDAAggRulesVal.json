@@ -1,0 +1,179 @@
+[
+	{
+		"name": "REDSHELF",
+		"filename_pattern": "",
+		"product_type": "Electronic",
+		"data_sheet":"all",
+		"acceptable_currencies":[],
+		"file_type":"",
+		"header_row": 0,
+		"data_row": 1,
+		"discard_last_rows":0,
+
+		"attribute_mappings":	[
+									{"Product Title":"Book"},
+									{"Title":"Book"},
+									{"National Base Price":"Retail Price"},
+									{"Amount Due to RedShelf":"Purchase Price"},
+									{"Amount Due to Publisher":"Publisher Credit"},
+									{"SRP":"Retail Price"},
+									{"Institution Due":"Purchase Price"},
+									{"National ISBN":"eISBN13"},
+									{"Publisher":"Imprint"},
+									{"Course Member Status":"Status"},
+									{"Duration":"Period"},
+									{"Bookstore Country":"Country"}
+
+								],
+		"missing_columns":["Imprint","Date", "Currency","Country", "Publisher Net Credit", "Publisher Credit", "Retail Price", "Purchase Price", "ISBN13", "Type",
+		"Institution","Department","Course Number","Start Date","Course Status","Course End","Institution Credit","RedShelf Fee",
+			"internal_order_number","internal_invoice_number","external_purchase_order","external_invoice_number","external_transaction_number","billing_customer_id"],
+
+		"relevant_attributes":	[
+									{"input_column_name": "Date", "staging_column_name":"reporting_date"},
+									{"input_column_name": "eISBN13", "staging_column_name":"e_product_id"},
+									{"input_column_name": "ISBN13", "staging_column_name":"p_product_id"},
+
+									{"input_column_name": "Book", "staging_column_name":"product_title"},
+									{"input_column_name": "Imprint", "staging_column_name":"imprint"},
+
+									{"input_column_name": "Retail Price", "staging_column_name":"price"},
+									{"input_column_name": "Currency", "staging_column_name":"payment_amount_currency"},
+									{"input_column_name": "Publisher Credit", "staging_column_name":"payment_amount"},
+									{"input_column_name": "Period", "staging_column_name":"new_rental_duration"},
+									{"input_column_name": "Country", "staging_column_name":"country"},
+
+									{"input_column_name": "Institution", "staging_column_name":"account_name"},
+									{"input_column_name": "Department", "staging_column_name":"adoption_department"},
+									{"input_column_name": "Course Number", "staging_column_name":"adoption_course"},
+									{"input_column_name": "Start Date", "staging_column_name":"course_start_date"},
+									{"input_column_name": "Course Status", "staging_column_name":"course_status"},
+									{"input_column_name": "Course End", "staging_column_name":"course_end_date"}
+
+								],
+
+		"filters":	{
+						"mandatory_columns": ["eISBN13"],
+						"amount_column":"payment_amount",
+						"column_validations": [
+												{
+													"column_name": "payment_amount",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "p_product_id",
+													"dtype": "str",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "payment_amount_currency",
+													"dtype": "str",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": "USD"
+																	}
+												},
+												{
+													"column_name": "price",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "reporting_date",
+													"dtype": "date",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": "current_date"
+																	}
+												},
+												{
+													"column_name": "imprint",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "new_rental_duration",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "country",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "account_name",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "adoption_department",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "adoption_course",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "course_start_date",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "current_date"
+																	}
+												},
+												{
+													"column_name": "course_status",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "course_end_date",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "current_date"
+																	}
+												}
+
+											],
+						"convert_percentage": "no",
+						"country_iso_values" : {"USA": "US", "USD": "US", "us": "US", "U": "US", "nc": "NC", "Colorado":"CO", "272":"NA"}
+					},
+		"date_formats":	["%Y-%m-%d","%d/%m/%Y","%d.%m.%Y"]
+	}
+
+]
