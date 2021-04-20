@@ -13,3 +13,5 @@ Output/aggregator_data_processing_pipeline-1.0-py3.7.egg
 
 venv/
 Output/a.py
+Output/aggregator_data_processing_pipeline_follet-1.0-py3.7.egg
+staging_Follett_Feb_2020.csv

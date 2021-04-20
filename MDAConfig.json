@@ -4,7 +4,7 @@
 	"output_bucket_name" : "s3-use1-ap-pe-df-orders-insights-storage-d",
 	"input_folder_name" : "FOLLET",
 	"month" : "",
-	"year" : 2018,
-	"layer": "staging"
+	"year" : 2020,
+	"layer": "mapping"
 
 }
