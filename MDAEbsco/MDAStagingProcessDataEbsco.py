@@ -87,18 +87,14 @@ class MDAStagingProcessDataEbsco :
 
         final_mapped_data['units'] = final_mapped_data.apply(lambda row : 1 if row['units'] == 'NA' else row['units'],axis=1)
 
-        #final_mapped_data['units'] = pd.to_numeric(final_mapped_data['units'], errors='coerce')
+
         final_mapped_data['units'] = final_mapped_data['units'].astype('float').astype('int')
 
-        # final_mapped_data['list_price_multiplier'] = pd.to_numeric(final_mapped_data['list_price_multiplier'],
-        #                                                            errors='coerce')
+
         final_mapped_data['list_price_multiplier'] = final_mapped_data['list_price_multiplier'].astype('float')
 
-        print(final_mapped_data['sale_type'].unique())
-        final_mapped_data['sale_type'] =  final_mapped_data['sale_type'].replace('NA', 'NA_Test', regex=True)
-        print(final_mapped_data['sale_type'].unique())
 
-        #df1 = df.loc[~(df['A'] == 'blue') & ~(df['B'] == 'green')]
+        final_mapped_data['sale_type'] =  final_mapped_data['sale_type'].replace('NA', 'NA_Test', regex=True)
         #vectorization
         final_mapped_data.loc[(final_mapped_data['sale_type'] == 'NA_Test') &
                                                   ((final_mapped_data['units']<0) | (final_mapped_data['payment_amount']<0)),'sale_type']='Returns'
@@ -239,8 +235,3 @@ class MDAStagingProcessDataEbsco :
             extracted_data['current_discount_percentage'] = 0
 
         return extracted_data
-
-
-
-
-

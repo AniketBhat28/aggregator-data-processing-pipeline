@@ -57,7 +57,7 @@ class MDAMappedProcessDataRedshelf :
     #                           default_config - Default json
     #                           extracted_data - pr-processed_data
     # Return Values :           extracted_data - extracted staging data
-    def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data) :
+    def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data,data) :
 
         extracted_data = extracted_data[extracted_data.e_product_id != 'NA']
         extracted_data = pd.DataFrame(extracted_data)
@@ -152,7 +152,7 @@ class MDAMappedProcessDataRedshelf :
         final_mapped_data = obj_gen_attrs.group_data(logger, final_staging_data,
                                                       default_config[0]['group_staging_data'])
         final_mapped_data = final_mapped_data.applymap(str)
-        final_mapped_data.to_csv('redshelf_2020.csv')
+
         obj_s3_connect.store_data_as_parquet(logger, app_config, final_mapped_data)
         logger.info('\n+-+-+-+-+-+-+Finished Processing Redshelf files\n')
 

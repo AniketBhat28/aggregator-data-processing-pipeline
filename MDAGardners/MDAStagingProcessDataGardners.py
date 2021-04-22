@@ -57,7 +57,6 @@ class MDAStagingProcessDataGardners :
         logger.info('***********generate staging data started*******************')
         final_mapped_data['aggregator_name'] = agg_rules['name']
         final_mapped_data['product_type'] = agg_rules['product_type']
-        #final_mapped_data['e_product_id'] = (final_mapped_data['e_product_id']).replace('[A-Za-z]', 'NA', regex=True)
 
         final_mapped_data = final_mapped_data[final_mapped_data.units != 'NA']
         final_mapped_data = pd.DataFrame(final_mapped_data)
@@ -88,6 +87,7 @@ class MDAStagingProcessDataGardners :
         # For the final staging output
         agg_name = 'GARDNERS'
         final_edw_data = pd.DataFrame()
+
         input_list = list(app_config['input_params'])
         input_base_path = input_list[0]['input_base_path']
 
