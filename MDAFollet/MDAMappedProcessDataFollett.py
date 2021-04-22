@@ -6,7 +6,7 @@
 import ast
 import pandas as pd
 import numpy as np
-
+import decimal
 from ReadWriteData.ReadData import ReadData
 from Preprocessing.ProcessCore import ProcessCore
 from Preprocessing.PreProcess import PreProcess
@@ -39,13 +39,18 @@ class MDAMappedProcessDataFollett :
     #							default_config - Default json
     #							extracted_data - pr-processed_data
     # Return Values : 			extracted_data - extracted staging data
+
+
+    def float_to_string(self,number, precision=2):
+        return '{0:.1f}'.format( number, prec=precision,).rstrip('0').rstrip('.') or '0'
+
     def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data,data) :
 
 
 
         print('dictionary',agg_rules['filters']['country_iso_values'])
 
-        extracted_data['aggregator_name'] = agg_rules['name']
+        extracted_data['aggregator_name'] = 'FOLLETT'
         extracted_data['product_type'] = agg_rules['product_type']
 
         extracted_data['price_currency'] = 'NA'
@@ -57,10 +62,21 @@ class MDAMappedProcessDataFollett :
 
 
         # new attributes addition
-        extracted_data['source'] = "FOLLET"
+        extracted_data['source'] = "FOLLETT"
         extracted_data['source_id'] = filename.split('.')[0]
         extracted_data['sub_domain'] = 'NA'
+        extracted_data['external_purchase_order'] =  extracted_data['external_purchase_order'].replace('NA', 0)
+        extracted_data['external_transaction_number'] = extracted_data['external_transaction_number'].replace('NA', 0)
 
+        extracted_data['external_purchase_order'] =  extracted_data['external_purchase_order'].astype("float")
+        extracted_data['external_purchase_order'] = extracted_data['external_purchase_order'].apply(self.float_to_string)
+        # extracted_data['external_purchase_order'] = extracted_data['external_purchase_order'].replace({np.nan: 'NA'})
+        extracted_data['external_purchase_order'] = extracted_data.external_purchase_order.astype(str)
+        extracted_data['external_transaction_number'] = extracted_data['external_transaction_number'].astype("float")
+        # extracted_data['external_transaction_number'] = extracted_data['external_transaction_number'].replace({np.nan: 0})
+        extracted_data['external_transaction_number'] = extracted_data["external_transaction_number"].apply(self.float_to_string)
+        extracted_data['external_transaction_number'] = extracted_data.external_transaction_number.astype(str)\
+            # .str.split('.', expand=True)
         return extracted_data
 
     # Function Description :	This function processes data for all Follett files
@@ -72,7 +88,7 @@ class MDAMappedProcessDataFollett :
     def initialise_processing(self, logger, app_config, rule_config, default_config) :
 
         # For the final staging output
-        agg_name = 'FOLLET'
+        agg_name = 'FOLLETT'
         agg_reference = self
         final_staging_data = pd.DataFrame()
         input_list = list(app_config['input_params'])

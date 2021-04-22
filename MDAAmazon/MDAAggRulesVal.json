@@ -1,0 +1,273 @@
+[{
+    "name": "AMAZON",
+    "filename_pattern": "/Amazon Rental",
+    "product_type": "EBK",
+    "data_sheet":0,
+    "acceptable_currencies":["USD"],
+    "file_type":"csv",
+    "header_row": 0,
+    "data_row": 1,
+    "discard_last_rows":0,
+    "attribute_mappings":	[
+									{"invoice date":"invoice_date"},
+									{"payment amount currency":"amount_currency"},
+									{"payment amount":"payment_amount"},
+									{"digital isbn":"digital_isbn"},
+									{"physical isbn-13":"physical_isbn_13"},
+									{"net units":"net_units"},
+									{"format":"format_00001"},
+                                    {"FORMAT_00001":"format_00001"}
+
+								],
+
+    "missing_columns":["adjustment_made"],
+    "relevant_attributes":	[
+                                {"input_column_name": "invoice_date", "staging_column_name":"reporting_date"},
+                                {"input_column_name": "vendor_code", "staging_column_name":"vendor_code"},
+                                {"input_column_name": "digital_isbn", "staging_column_name":"e_product_id"},
+                                {"input_column_name": "physical_isbn_10", "staging_column_name":"p_backup_product_id"},
+                                {"input_column_name": "physical_isbn_13", "staging_column_name":"p_product_id"},
+                                {"input_column_name": "asin", "staging_column_name":"External_Product_ID"},
+                                {"input_column_name": "title", "staging_column_name":"product_title"},
+                                {"input_column_name": "imprint", "staging_column_name":"imprint"},
+                                {"input_column_name": "format_00001", "staging_column_name":"product_format"},
+                                {"input_column_name": "list_price", "staging_column_name":"retailer_price"},
+                                {"input_column_name": "payment_amount", "staging_column_name":"Payment_Amount"},
+                                {"input_column_name": "amount_currency", "staging_column_name":"Payment_Amount_Currency"},
+                                {"input_column_name": "old_discount_percentage", "staging_column_name":"old_discount_percentage"},
+                                {"input_column_name": "new_discount_percentage", "staging_column_name":"current_discount_percentage"},
+                                {"input_column_name": "old_rental_duration", "staging_column_name":"old_rental_duration"},
+                                {"input_column_name": "net_units", "staging_column_name":"sales_net_unit"},
+                                {"input_column_name": "units_rented", "staging_column_name":"sales_unit"},
+                                {"input_column_name": "units_refunded", "staging_column_name":"returns_unit"},
+                                {"input_column_name": "adjustments_made", "staging_column_name":"adjustment_made"},
+                                {"input_column_name": "rental_type", "staging_column_name":"sale_type_ori"},
+                                {"input_column_name": "rental_duration", "staging_column_name":"rental_duration"}
+    ],
+
+    "filters":	{
+                    "mandatory_columns": ["digital_isbn", "physical_isbn_10", "physical_isbn_13"],
+                    "amount_column":"Payment_Amount",
+                    "column_validations": [
+                                            {
+                                                "column_name": "Payment_Amount",
+                                                "dtype": "float",
+                                                "missing_data":	{
+                                                                    "process_type": "process",
+                                                                    "value": 0.0
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "retailer_price",
+                                                "dtype": "float",
+                                                "missing_data":	{
+                                                                    "process_type": "process",
+                                                                    "value": 0.0
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "sales_unit",
+                                                "dtype": "float",
+                                                "missing_data":	{
+                                                                    "process_type": "process",
+                                                                    "value": 0
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "returns_unit",
+                                                "dtype": "float",
+                                                "missing_data":	{
+                                                                    "process_type": "process",
+                                                                    "value": 0
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "old_rental_duration",
+                                                "dtype": "float",
+                                                "missing_data":	{
+                                                                    "process_type": "process",
+                                                                    "value": 0
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "reporting_date",
+                                                "dtype": "date",
+                                                "missing_data":	{
+                                                                    "process_type": "process",
+                                                                    "value": "current_date"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "Payment_Amount_Currency",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "USD"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "imprint",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "product_format",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            }
+                                        ],
+                    "convert_percentage": "no",
+                    "country_iso_values" : {"Brazil": "BR", "France": "FR", "Canada": "CA", "Italy": "IT", "India": "IN", "Japan": "JP", "Mexico": "MX", "Spain": "ES"}
+					},
+		"date_formats":	[
+							{"country":"US","format":["%m%d%Y","%d.%m.%Y","%d/%m/%Y"]}
+
+						],
+		"pattern_extractions":	[
+									{
+										"regex":"AU|Brazil|Canada|DE|France|GB|India|Italy|Japan|Mexico|NL|Spain|US|UK",
+										"staging_column_name":"region_of_sale"
+									},
+									{
+										"regex":"ASGEU|ASHEU|INHQQ|TAYQQ|TYFQQ|TYFRQ",
+										"staging_column_name":"vendor_code"
+									}
+								]
+},
+
+{
+    "name": "AMAZON",
+    "filename_pattern": "/Amazon",
+    "product_type": "EBK",
+    "data_sheet":0,
+    "acceptable_currencies":[],
+    "file_type":"csv",
+    "header_row": 0,
+    "data_row": 1,
+    "discard_last_rows":3,
+    "attribute_mappings":	[
+                                      {"net units":"Net Units"}
+
+                                  ],
+    "attribute_names":	["Invoice Date", "ASIN", "Physical ISBN-10","Physical ISBN-13","Digital ISBN","Title","Author","Imprint","Format","Units Purchased","Units Refunded","Net Units","Net Units MTD","Adjustments Made","List Price","List Price Currency","Publisher Price","Publisher Price Currency","Discount Percentage","Payment Amount","Payment Amount Currency","Program Type"],
+    "trail_attribute_names":["Invoice Date", "Invoice Number", "Marketplace Currency","Marketplace Amount","Foreign Exchange Rate","Payment Currency Code","Converted Amount"],
+    "missing_columns":["Adjustments Made"],
+    "relevant_attributes":	[
+                                {"input_column_name": "Invoice Date", "staging_column_name":"reporting_date"},
+                                {"input_column_name": "Digital ISBN", "staging_column_name":"e_product_id"},
+                                {"input_column_name": "Physical ISBN-10", "staging_column_name":"p_backup_product_id"},
+                                {"input_column_name": "Physical ISBN-13", "staging_column_name":"p_product_id"},
+                                {"input_column_name": "ASIN", "staging_column_name":"External_Product_ID"},
+                                {"input_column_name": "Title", "staging_column_name":"product_title"},
+                                {"input_column_name": "Imprint", "staging_column_name":"imprint"},
+                                {"input_column_name": "Format", "staging_column_name":"product_format"},
+                                {"input_column_name": "List Price", "staging_column_name":"retailer_price"},
+                                {"input_column_name": "List Price Currency", "staging_column_name":"retailer_price_currency"},
+                                {"input_column_name": "Publisher Price", "staging_column_name":"publisher_price_ori"},
+                                {"input_column_name": "Publisher Price Currency", "staging_column_name":"publisher_price_ori_currency"},
+                                {"input_column_name": "Payment Amount", "staging_column_name":"Payment_Amount"},
+                                {"input_column_name": "Payment Amount Currency", "staging_column_name":"Payment_Amount_Currency"},
+                                {"input_column_name": "Net Units", "staging_column_name":"sales_net_unit"},
+                                {"input_column_name": "Units Purchased", "staging_column_name":"sales_unit"},
+                                {"input_column_name": "Units Refunded", "staging_column_name":"returns_unit"},
+                                {"input_column_name": "Adjustments Made", "staging_column_name":"adjustment_made"}
+                            ],
+    "filters": {
+                    "mandatory_columns": ["Digital ISBN", "Physical ISBN-10", "Physical ISBN-13"],
+                    "amount_column":"retailer_price",
+                    "column_validations": [
+                                            {
+                                                "column_name": "retailer_price",
+                                                "dtype": "float",
+                                                "missing_data":	{
+                                                                    "process_type": "process",
+                                                                    "value": 0.0
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "publisher_price_ori",
+                                                "dtype": "float",
+                                                "missing_data":	{
+                                                                    "process_type": "process",
+                                                                    "value": 0.0
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "sales_unit",
+                                                "dtype": "float",
+                                                "missing_data":	{
+                                                                    "process_type": "process",
+                                                                    "value": 0
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "returns_unit",
+                                                "dtype": "float",
+                                                "missing_data":	{
+                                                                    "process_type": "process",
+                                                                    "value": 0
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "reporting_date",
+                                                "dtype": "date",
+                                                "missing_data":	{
+                                                                    "process_type": "process",
+                                                                    "value": "current_date"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "retailer_price_currency",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "USD"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "publisher_price_ori_currency",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "USD"
+                                                                }
+                                            }
+                                        ],
+                    "convert_percentage": "yes",
+                    "country_iso_values" : {"Brazil": "BR", "France": "FR", "Canada": "CA", "Italy": "IT", "India": "IN", "Japan": "JP", "Mexico": "MX", "Spain": "ES", "Germany": "DE"}
+                },
+    "date_formats":	[
+                        {"country":"AU","format":["%Y-%m-%d","%d.%m.%Y","%d/%m/%Y"]},
+                        {"country":"BR","format":["%d/%m/%Y","%d.%m.%Y"]},
+                        {"country":"CA","format":["%Y-%m-%d", "%d/%m/%Y","%d.%m.%Y"]},
+                        {"country":"DE","format":["%d/%m/%Y","%d.%m.%Y"]},
+                        {"country":"FR","format":["%d/%m/%Y","%d.%m.%Y"]},
+                        {"country":"France","format":["%d/%m/%Y","%d.%m.%Y"]},
+                        {"country":"GB","format":["%d/%m/%Y","%d.%m.%Y"]},
+                        {"country":"IN","format":["%d/%m/%Y","%d.%m.%Y","%d/%m.%Y"]},
+                        {"country":"IT","format":["%d/%m/%Y","%d.%m.%Y"]},
+                        {"country":"JP","format":["%Y/%m/%d","%d.%m.%Y","%d/%m/%Y"]},
+                        {"country":"MX","format":["%d/%m/%Y","%d.%m.%Y"]},
+                        {"country":"NL","format":["%d/%m/%Y","%d.%m.%Y"]},
+                        {"country":"ES","format":["%d/%m/%Y","%d.%m.%Y"]},
+                        {"country":"US","format":["%m/%d/%Y","%d.%m.%Y","%d/%m/%Y"]},
+                        {"country":"UK","format":["%m/%d/%Y","%d.%m.%Y","%d/%m/%Y"]}
+
+                    ],
+    "pattern_extractions":	[
+									{
+										"regex":"AU|Brazil|Canada|DE|France|GB|India|Italy|Japan|Mexico|NL|Spain|US|UK|BR|CA|IT|JP|MX|Germany|FR",
+										"staging_column_name":"region_of_sale"
+									},
+									{
+										"regex":"ASGEU|ASHEU|INHQQ|TAYQQ|TYFQQ|TYFRQ",
+										"staging_column_name":"vendor_code"
+									}
+                            ]
+}]
