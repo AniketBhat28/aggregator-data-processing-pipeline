@@ -65,25 +65,24 @@ class MDAStagingProcessDataRedshelf :
         final_mapped_data['price'] = final_mapped_data['price'].astype('float')
         final_mapped_data['payment_amount'] = final_mapped_data['payment_amount'].astype('float')
         final_mapped_data['units'] = final_mapped_data['units'].astype('float').astype('int')
-        final_mapped_data['reporting_date'] = pd.to_datetime(final_mapped_data['reporting_date'],
-                                                             format='%d-%m-%Y', infer_datetime_format=True)
-        # print('reporting date done')
-        final_mapped_data['reporting_date'] = final_mapped_data['reporting_date'].dt.date
 
-        extracted_data = self.process_trans_type(logger, final_mapped_data)
+
+        final_mapped_data = self.process_trans_type(logger, final_mapped_data)
 
         year = app_config['output_params']['year']
         default_date = str(year) + '-01-01'
+        #print("******************************************")
+        # final_mapped_data['reporting_date'] = final_mapped_data.apply(
+        #     lambda row: default_date if row['reporting_date'] == 'NA' else final_mapped_data['reporting_date'], axis=1)
 
-        extracted_data['reporting_date'] = extracted_data.apply(
-            lambda row: default_date if row['reporting_date'] == 'NA' or row['reporting_date'] == '' else extracted_data['reporting_date'], axis=1)
+        final_mapped_data.loc[(final_mapped_data['reporting_date'] == 'NA'),'reporting_date'] = default_date
 
-        extracted_data['reporting_date'] = pd.to_datetime(extracted_data['reporting_date'],
+        final_mapped_data['reporting_date'] = pd.to_datetime(final_mapped_data['reporting_date'],
                                                           format='%d-%m-%Y', infer_datetime_format=True)
-        # print('reporting date done')
-        extracted_data['reporting_date'] = extracted_data['reporting_date'].dt.date
 
-        return extracted_data
+        final_mapped_data['reporting_date'] = final_mapped_data['reporting_date'].dt.date
+
+        return final_mapped_data
 
     # Function Description :    This function processes data for all Ebsco files
     # Input Parameters :        logger - For the logging output file.
@@ -120,7 +119,7 @@ class MDAStagingProcessDataRedshelf :
 
         final_edw_data = obj_gen_attrs.group_data(logger, final_edw_data,
                                                           default_config[0]['group_staging_data'])
-        final_edw_data.to_csv('staging_2017.csv')
+
         obj_s3_connect.store_data_as_parquet(logger, app_config, final_edw_data)
         logger.info('\n+-+-+-+-+-+-+Finished Processing Redshelf files\n')
 

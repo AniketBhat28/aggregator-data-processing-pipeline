@@ -39,7 +39,7 @@ class MDAMappedProcessDataBarnes :
     #							default_config - Default json
     #							extracted_data - pr-processed_data
     # Return Values : 			extracted_data - extracted staging data
-    def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data) :
+    def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data,data) :
 
 
         extracted_data = extracted_data[extracted_data.e_product_id != 'NA']

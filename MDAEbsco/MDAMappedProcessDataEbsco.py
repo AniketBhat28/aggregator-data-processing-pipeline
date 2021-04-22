@@ -63,7 +63,7 @@ class MDAMappedProcessDataEbsco :
     #							default_config - Default json
     #							extracted_data - pr-processed_data
     # Return Values : 			extracted_data - extracted staging data
-    def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data) :
+    def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data,data) :
 
         ext = filename.split('.')[-1]
         file_type='NA'
@@ -99,10 +99,12 @@ class MDAMappedProcessDataEbsco :
 
 
 
+        # print(filename)
+        # print('reporting_date',extracted_data['reporting_date'])
 
         if extracted_data['reporting_date'].all()=='NA':
             extracted_data = self.process_subscription_transaction_date(logger, filename, extracted_data)
-
+        # print('date processed successfully')
         extracted_data = obj_gen_attrs.process_isbn(logger, extracted_data, 'digital_isbn', 'e_product_id',
                                                     'e_backup_product_id', 'NA')
         extracted_data = obj_gen_attrs.process_isbn(logger, extracted_data, 'physical_isbn', 'p_product_id',
@@ -110,9 +112,9 @@ class MDAMappedProcessDataEbsco :
         extracted_data = obj_gen_attrs.generate_misc_isbn(logger, extracted_data, 'digital_isbn', 'physical_isbn',
                                                           'misc_product_ids', 'NA')
         extracted_data = extracted_data.replace('nan', 'NA')
-
+        # print('replacing nans')
         extracted_data = self.process_trans_type(logger, extracted_data, file_type)
-
+        # print('trans type done')
         # new attributes addition
         extracted_data['source'] = "EBSCO"
         extracted_data['source_id'] = filename.split('.')[0]
@@ -167,7 +169,7 @@ class MDAMappedProcessDataEbsco :
         # Grouping and storing data
         final_mapped_data = obj_gen_attrs.group_data(logger, final_staging_data,
                                                      default_config[0]['group_staging_data'])
-
+        #print('gourping done')
         #obj_s3_connect.store_data(logger, app_config, final_grouped_data)
         final_mapped_data = final_mapped_data.applymap(str)
         obj_s3_connect.store_data_as_parquet(logger, app_config, final_mapped_data)
@@ -243,7 +245,7 @@ class MDAMappedProcessDataEbsco :
             extracted_data['reporting_date'] = '30-09-'+ filename.split('.')[0][-4:]
         elif any(x in filename.lower() for x in q4) :
             extracted_data['reporting_date'] = '31-12-'+ filename.split('.')[0][-4:]
-        extracted_data['reporting_date'] = pd.to_datetime(extracted_data['reporting_date'])
+        #extracted_data['reporting_date'] = pd.to_datetime(extracted_data['reporting_date'])
         return extracted_data
 
     def check_csv_transaction_date(self,ext,extracted_data):
@@ -256,8 +258,3 @@ class MDAMappedProcessDataEbsco :
             extracted_data['current_discount_percentage'] = 0
 
         return extracted_data
-
-
-
-
-
