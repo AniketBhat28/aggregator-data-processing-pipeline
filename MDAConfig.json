@@ -1,10 +1,9 @@
 {
-	"aggregator_name": "Follet",
-	"input_bucket_name": "s3-euw1-ap-pe-orders-worker-agg-storage-etl",
+	"aggregator_name": "Redshelf",
+	"input_bucket_name": "s3-use1-ap-pe-df-orders-insights-storage-d",
 	"output_bucket_name" : "s3-use1-ap-pe-df-orders-insights-storage-d",
-	"input_folder_name" : "FOLLET",
+	"input_folder_name" : "REDSHELF",
 	"month" : "",
-	"year" : 2020,
-	"layer": "mapping"
-
+	"year" : 2019,
+	"layer": "staging"
 }

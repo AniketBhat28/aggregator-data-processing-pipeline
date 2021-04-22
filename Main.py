@@ -109,6 +109,7 @@ if __name__ == '__main__':
     app_config['output_params']['year'] = str(year)
     app_config['output_params']['layer'] = layer
 
+    print(BASE_PATH + '/MDA' + aggregator + '/MDAAggRulesVal.json')
     with open(BASE_PATH + '/MDA' + aggregator + '/MDAAggRulesVal.json') as f:
         rule_config = json.load(f)
 
@@ -120,9 +121,9 @@ if __name__ == '__main__':
         module_path_relative = 'StagingDataGenerators.ProcessDataAmazon'
     elif aggregator == 'Ebsco':
         if layer == 'staging':
-            module_path_relative = 'MDA_f.Ebsco.MDAStagingProcessDataEbsco'
+            module_path_relative = 'MDAEbsco.MDAStagingProcessDataEbsco'
         else:
-            module_path_relative = 'MDA_f.Ebsco.MDAMappedProcessDataEbsco'
+            module_path_relative = 'MDAEbsco.MDAMappedProcessDataEbsco'
 
     elif aggregator == 'PROQUEST':
         if layer == 'staging':
@@ -134,21 +135,29 @@ if __name__ == '__main__':
     elif aggregator == 'Ingram':
         module_path_relative = 'StagingDataGenerators.ProcessDataIngram'
     elif aggregator == 'Gardners':
-        module_path_relative = 'StagingDataGenerators.ProcessDataGardners'
+        if layer == 'staging' :
+            module_path_relative = 'MDAGardners.MDAStagingProcessDataGardners'
+        else :
+            module_path_relative = 'MDAGardners.MDAMappedProcessDataGardners'
     elif aggregator == 'Follet':
         if layer == 'staging':
             module_path_relative = 'MDAFollet.MDAStagingProcessDataFollett'
         else:
             module_path_relative = 'MDAFollet.MDAMappedProcessDataFollett'
-
     elif aggregator == 'Barnes':
-        module_path_relative = 'StagingDataGenerators.ProcessDataBarnes'
+        if layer == 'staging' :
+            module_path_relative = 'MDABarnes.MDAStagingProcessDataBarnes'
+        else :
+            module_path_relative = 'MDABarnes.MDAMappedProcessDataBarnes'
     elif aggregator == 'Overdrive':
         module_path_relative = 'StagingDataGenerators.ProcessDataOverdrive'
     elif aggregator == 'Google':
         module_path_relative = 'StagingDataGenerators.ProcessDataGoogle'
     elif aggregator == 'Redshelf':
-        module_path_relative = 'StagingDataGenerators.ProcessDataRedshelf'
+        if layer == 'staging' :
+            module_path_relative = 'MDARedshelf.MDAStagingProcessDataRedshelf'
+        else :
+            module_path_relative = 'MDARedshelf.MDAMappedProcessDataRedshelf'
     elif aggregator == 'PQ_Subscription':
         module_path_relative = 'StagingDataGenerators.ProcessDataPqSubscription'
 
