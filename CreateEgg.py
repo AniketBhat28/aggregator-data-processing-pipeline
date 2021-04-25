@@ -9,7 +9,7 @@ OUTPUT_DIR = 'Output'
 if __name__ == "__main__":
     setup(
         name="aggregator-data-processing-pipeline",
-        packages=['Preprocessing','MDAFollet','ReadWriteData','AttributeGenerators','StagingDataGenerators'],
+        packages=['Preprocessing','MDAProquest','ReadWriteData','AttributeGenerators','StagingDataGenerators'],
         version="1.0",
         script_args=['--quiet', 'bdist_egg'], # to create egg-file only
     )

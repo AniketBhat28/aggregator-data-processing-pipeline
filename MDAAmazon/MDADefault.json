@@ -2,8 +2,15 @@
 	{
 		"output_date_format":"%d-%m-%Y",
 		"group_staging_data": 	{
-									"display_column_sequence": ["aggregator_name","reporting_date","external_purchase_order","external_transaction_number","e_product_id", "e_backup_product_id", "product_title","imprint", "product_type","price","price_currency","price_type","payment_amount","payment_amount_currency", "current_discount_percentage","units","sale_type_ori","trans_type", "sale_type","country","state","city","postcode","bookstore_code", "account_name","source", "source_id", "sub_domain","external_invoice_number", "internal_invoice_number", "internal_order_number", "billing_customer_id"],
-									"aggregation_function":{"sales_units": "sum", "payment_amount": "sum"}
+									"display_column_sequence": ["aggregator_name","reporting_date","external_invoice_number","e_product_id","p_product_id",
+										"p_backup_product_id","external_product_id","external_product_id_type","product_title","product_type","imprint","product_format",
+										"price","price_currency","price_type","publisher_price_ori","publisher_price_ori_currency","payment_amount",
+										"payment_amount_currency","ex_currencies","ex_rate","old_discount_percentage","current_discount_percentage",
+										"new_rental_duration","old_rental_duration","rental_duration","rental_duration_measure","units","sales_net_unit","returns_unit",
+										"adjustment_made","sale_type_ori","trans_type","sale_type",
+										"internal_invoice_number","external_purchase_order","internal_order_number","external_transaction_number","billing_customer_id"
+										]
+
 		}
 
 	}

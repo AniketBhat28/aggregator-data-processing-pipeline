@@ -81,7 +81,6 @@ if __name__ == '__main__':
     month = config_json['month']
     year = config_json['year']
     layer = config_json['layer']
-
     app_config, input_dict = {}, {}
     app_config['input_params'], app_config['output_params'] = [], {}
 
@@ -117,7 +116,10 @@ if __name__ == '__main__':
 
     # Check the aggregator to initialise appropriate module
     if aggregator == 'Amazon':
-        module_path_relative = 'StagingDataGenerators.ProcessDataAmazon'
+        if layer == 'staging':
+            module_path_relative = 'MDAAmazon.MDAStagingProcessDataAmazon'
+        else:
+            module_path_relative = 'MDAAmazon.MDAMappedProcessDataAmazon'
     elif aggregator == 'Ebsco':
         if layer == 'staging':
             module_path_relative = 'MDA_f.Ebsco.MDAStagingProcessDataEbsco'
