@@ -203,7 +203,7 @@ class GenerateStagingAttributes:
                 if 'QRD' in each_file or 'MRD' in each_file:
                     agg_rule_name = 'PROQUEST-EBL'
                 matches = ['Q1', 'Q2', 'Q3', 'Q4', 'SUB']
-                if any(x in each_file for x in matches) and 'Corporate' not in each_file:
+                if any(x in each_file for x in matches) and 'Corporate' not in each_file and 'QRD' not in each_file:
                     agg_rule_name = 'PROQUEST-EBRARY-SUB'
                 if 'Corporate' in each_file:
                     agg_rule_name = 'PROQUEST-EBRARY-CORPORATE'
@@ -238,7 +238,7 @@ class GenerateStagingAttributes:
                 extracted_data = agg_reference.generate_staging_output(logger, each_file, agg_rules, default_config,
                                                                        extracted_data)
                 logger.info("Staging output generated for given data")
-                extracted_data['source_id'] = each_file.replace('/', '_').replace('.xlsx', '')
+                extracted_data['source_id'] = each_file.replace('.xlsx', '')+'/'+input_list[0]['input_sheet_name']
                 # Append staging data of current file into final staging dataframe
                 final_staging_data = pd.concat([final_staging_data, extracted_data], ignore_index=True, sort=True)
 
