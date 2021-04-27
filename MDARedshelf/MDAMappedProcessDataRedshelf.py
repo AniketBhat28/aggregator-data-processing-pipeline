@@ -93,7 +93,7 @@ class MDAMappedProcessDataRedshelf :
 
         # new attributes addition
         extracted_data['source'] = "REDSHELF"
-        extracted_data['source_id'] = filename.split('.')[0]
+        # extracted_data['source_id'] = filename.split('.')[0]
 
 
         return extracted_data
@@ -127,6 +127,9 @@ class MDAMappedProcessDataRedshelf :
                     # To get the sheet names
                     excel_frame = ExcelFile(input_list[0]['input_base_path'] + each_file)
                     sheets = excel_frame.sheet_names
+                    logger.info('\n+-+-+-sheets name+-+-+-+')
+                    logger.info(sheets)
+                    logger.info('\n+-+-+-+-+-+-+')
                     for each_sheet in sheets :
                         logger.info('Processing sheet: %s', each_sheet)
                         input_list[0]['input_sheet_name'] = each_sheet
@@ -137,6 +140,8 @@ class MDAMappedProcessDataRedshelf :
                                                                                      obj_pre_process, agg_name,
                                                                                      agg_reference)
 
+
+
                 else :
                     final_staging_data = obj_gen_attrs.applying_aggregator_rules(logger, input_list, each_file,
                                                                                  rule_config,
@@ -144,6 +149,7 @@ class MDAMappedProcessDataRedshelf :
                                                                                  obj_read_data,
                                                                                  obj_pre_process, agg_name,
                                                                                  agg_reference)
+
         # future date issue resolution
        # final_staging_data = obj_pre_process.process_default_transaction_date(logger, app_config, final_staging_data)
 

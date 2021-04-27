@@ -14,7 +14,7 @@ from Preprocessing.PreProcess import PreProcess
 from ReadWriteData.ConnectToS3 import ConnectToS3
 from AttributeGenerators.GenerateStagingAttributes import GenerateStagingAttributes
 
-import country_converter as coco
+# import country_converter as coco
 
 #################################
 #		GLOBAL VARIABLES		#
@@ -117,7 +117,7 @@ class MDAMappedProcessDataEbsco :
         # print('trans type done')
         # new attributes addition
         extracted_data['source'] = "EBSCO"
-        extracted_data['source_id'] = filename.split('.')[0]
+
 
 
         return extracted_data
@@ -150,6 +150,9 @@ class MDAMappedProcessDataEbsco :
                 if (input_file_extn.lower()  in ['xlsx','xls']) :
                     excel_frame = pd.ExcelFile(input_list[0]['input_base_path'] + each_file)
                     sheets = excel_frame.sheet_names
+                    logger.info('\n+-+-+-sheets name+-+-+-+')
+                    logger.info(sheets)
+                    logger.info('\n+-+-+-+-+-+-+')
                     for each_sheet in sheets :
                         logger.info('Processing sheet: %s', each_sheet)
                         input_list[0]['input_sheet_name'] = each_sheet
@@ -203,6 +206,11 @@ class MDAMappedProcessDataEbsco :
                                                                         final_staging_data,
                                                                         agg_reference, obj_pre_process,data)
 
+                input_file_extn = each_file.split('.')[-1]
+                if input_file_extn.lower() in ['xlsx', 'xls']:
+                    final_staging_data['source_id'] = each_file.split('.')[0]+'/'+input_list[0]['input_sheet_name']
+                else:
+                    final_staging_data['source_id'] = each_file.split('.')[0]
         except KeyError as err :
             logger.error(f"KeyError error while processing the file {each_file}. The error message is :  ", err)
 

@@ -120,7 +120,7 @@ if __name__ == '__main__':
         default_config = json.load(f)
 
     # Check the aggregator to initialise appropriate module
-    if aggregator == 'Amazon':
+    if aggregator == 'AMAZON':
         if layer == 'staging':
             module_path_relative = 'MDAAmazon.MDAStagingProcessDataAmazon'
         else:

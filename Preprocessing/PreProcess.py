@@ -38,9 +38,9 @@ class PreProcess:
 		
 		logger.info('Removing metadata and blanks')
 		raw_data = data
-		print(data.columns)
-		print(mandatory_columns)
-		input()
+		# print(data.columns)
+		# print(mandatory_columns)
+		# input()
 		for i, row in raw_data.iterrows():
 			if row.notnull().all():
 				data = raw_data.iloc[(i+1):].reset_index(drop=True)

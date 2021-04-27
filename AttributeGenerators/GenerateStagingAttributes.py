@@ -128,8 +128,7 @@ class GenerateStagingAttributes:
     #							final_staging_data - final_staging_data
     # Return Values : 			final_staging_data - final_staging_data
     def process_staging_data(self, logger, filename, agg_rules, default_config, extracted_data, final_staging_data,
-                             agg_reference, obj_pre_process, data, **kwargs):
-                             
+                             agg_reference, obj_pre_process, data,input_list):
         if extracted_data.dropna(how='all').empty:
             logger.info("This file is empty")
         else:
@@ -145,6 +144,11 @@ class GenerateStagingAttributes:
             extracted_data = agg_reference.generate_staging_output(logger, filename, agg_rules, default_config,
                                                                    extracted_data, data=data, **kwargs)
             logger.info("Staging output generated for given data")
+            input_file_extn = filename.split('.')[-1]
+            if input_file_extn.lower() in ['xlsx', 'xls']:
+                extracted_data['source_id'] = filename.split('.')[0] + '/' + input_list[0]['input_sheet_name']
+            else:
+                extracted_data['source_id'] = filename.split('.')[0]
 
             # Append staging data of current file into final staging dataframe
             final_staging_data = pd.concat([final_staging_data, extracted_data], ignore_index=True, sort=True)
@@ -182,7 +186,8 @@ class GenerateStagingAttributes:
                 final_staging_data = self.process_staging_data(logger, each_file, agg_rules,
                                                                default_config,
                                                                extracted_data, final_staging_data,
-                                                               agg_reference, obj_pre_process, data)
+                                                               agg_reference, obj_pre_process,data,input_list)
+
 
         except KeyError as err:
             logger.error(f"KeyError error while processing the file {each_file}. The error message is :  ", err)
