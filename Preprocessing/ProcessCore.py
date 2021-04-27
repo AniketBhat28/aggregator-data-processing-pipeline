@@ -58,11 +58,21 @@ class ProcessCore:
 	def get_rules_object(self, rule_config, condition, aggregator_name, filename, pattern1, pattern2):
 
 		if condition in filename.lower():
-			agg_rules = next((item for item in rule_config if
-							  (item['name'] == aggregator_name and item['filename_pattern'] == pattern1)),
-							 None)
+			agg_rules = next(
+				(
+					item for item in rule_config if (
+						item['name'] == aggregator_name and item['filename_pattern'] == pattern1
+						)
+				),
+				None)
 		else:
-			agg_rules = next((item for item in rule_config if
-							  (item['name'] == aggregator_name and item['filename_pattern'] == pattern2)), None)
+			agg_rules = next(
+				(
+					item for item in rule_config if(
+						item['name'] == aggregator_name and item['filename_pattern'] == pattern2
+						)
+					), 
+				None)
 
 		return agg_rules
+		

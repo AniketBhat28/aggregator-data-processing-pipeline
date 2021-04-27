@@ -1,0 +1,14 @@
+[
+	{
+		"output_date_format":"%d-%m-%Y",
+		"group_staging_data": 	{
+									"display_column_sequence": ["account_name", "aggregator_name", "business_model", "city", "country",
+										"disc_code", "e_backup_product_id", "e_product_id",
+										"imprint", "new_rental_duration", "old_rental_duration",
+										"p_backup_product_id", "p_product_id", "payment_amount", "post_code",
+										"price", "product_title", "product_type", "reporting_date", "sale_type", 
+										"sale_type_ori", "source", "source_id",
+										"state", "sub_domain", "trans_type", "trans_type_ori"]
+		}
+	}
+]
