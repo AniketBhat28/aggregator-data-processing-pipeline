@@ -30,7 +30,7 @@ obj_gen_attrs = GenerateStagingAttributes()
 #################################
 
 
-class GenerateAmazonData:
+class MDAMappedProcessDataAmazon:
 
     # Function Description :	This function cleans data headers and tailers
     # Input Parameters : 		data - input data
@@ -101,7 +101,7 @@ class GenerateAmazonData:
             extracted_data['country'] = extracted_data['region_of_sale']
 
         current_country = extracted_data['country'][0]
-        current_date_format = next(item for item in agg_rules['date_formats'] if item["country"] == current_country)[
+        current_date_format = next(item for item in agg_rules['date_formats'] if item["country"] == current_country.upper())[
             'format']
         extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'reporting_date',
                                                        default_config)
@@ -111,7 +111,7 @@ class GenerateAmazonData:
         if ('Rental' in filename):
             logger.info('Ignoring subscription file')
             extracted_data['External_Invoice_Number'] = 'NA'
-            extracted_data['retailer_price_currency'] = 'NA'
+            extracted_data['price_currency'] = 'NA'
             extracted_data['publisher_price_ori'] = 'NA'
             extracted_data['publisher_price_ori_currency'] = 'NA'
             extracted_data['EX_Currencies'] = 'NA'
@@ -129,6 +129,7 @@ class GenerateAmazonData:
             extracted_data['rental_duration_measure'] = 'day'
             extracted_data['old_discount_percentage'] = extracted_data['old_discount_percentage'] * 100
             extracted_data['current_discount_percentage'] = extracted_data['current_discount_percentage'] * 100
+            extracted_data['price_type'] = 'NA'
 
 
         else:
@@ -140,6 +141,7 @@ class GenerateAmazonData:
             extracted_data['new_rental_duration'] = 0
             extracted_data['rental_duration_measure'] = 'NA'
             extracted_data['old_discount_percentage'] = 0.0
+            extracted_data['price_type'] = 'Retail Price'
 
         amount_column = agg_rules['filters']['amount_column']
 
@@ -152,6 +154,7 @@ class GenerateAmazonData:
             extracted_data['sub_domain'] = 'NA'
         extracted_data['source_id'] = filename.split('.')[0]
         extracted_data['business_model'] = 'B2C'
+
 
         return extracted_data
 
@@ -172,10 +175,10 @@ class GenerateAmazonData:
         files_in_s3 = obj_s3_connect.\
             get_files(logger, input_list)
 
-
         for each_file in files_in_s3:
+            # and 'rental' in each_file.lower()
             if each_file != '' and 'amazon' in each_file.lower():
-                # TYFQQ Amazon GB Sept 18.csv
+
                 logger.info('\n+-+-+-+-+-+-+')
                 logger.info(each_file)
                 logger.info('\n+-+-+-+-+-+-+')
@@ -209,6 +212,7 @@ class GenerateAmazonData:
 
                             extracted_data = obj_pre_process.extract_relevant_attributes(logger, c_data,
                                                                                          agg_rules['relevant_attributes'])
+                            extracted_data = obj_gen_attrs.replace_column_names(logger, agg_rules, extracted_data)
                             if not ('Rental' in each_file):
                                 extracted_data = self.clean_extract_data(extracted_data, trail_data, each_file)
 
@@ -220,11 +224,11 @@ class GenerateAmazonData:
                                                                                     agg_reference, obj_pre_process, c_data)
                 except KeyError as err:
                     logger.error(f"KeyError error while processing the file {each_file}. The error message is :  ", err)
-
+        final_staging_data.columns = final_staging_data.columns.str.lower()
         final_grouped_data = obj_gen_attrs.group_data(logger, final_staging_data,
                                                       default_config[0]['group_staging_data'])
         final_grouped_data = final_grouped_data.astype(str)
-        obj_s3_connect.store_data(logger, app_config, final_grouped_data)
+        obj_s3_connect.wrangle_data_as_parquet(logger, app_config, final_grouped_data)
         logger.info('\n+-+-+-+-+-+-+Finished Processing Amazon files\n')
 
     # Function Description :	This function splits rows into sales and return for all Amazon files

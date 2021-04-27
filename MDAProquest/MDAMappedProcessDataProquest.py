@@ -178,5 +178,5 @@ class MDAMappedProcessDataProquest:
         final_grouped_data = obj_gen_attrs.group_data(logger, final_staging_data,
                                                       default_config[0]['group_staging_data'])
         final_grouped_data = final_grouped_data.astype(str)
-        # obj_s3_connect.wrangle_data_as_parquet(logger, app_config, final_grouped_data)
+        obj_s3_connect.wrangle_data_as_parquet(logger, app_config, final_grouped_data)
         logger.info('\n+-+-+-+-+-+-+Finished Processing PQCentral files\n')
