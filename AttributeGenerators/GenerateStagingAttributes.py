@@ -128,7 +128,8 @@ class GenerateStagingAttributes:
     #							final_staging_data - final_staging_data
     # Return Values : 			final_staging_data - final_staging_data
     def process_staging_data(self, logger, filename, agg_rules, default_config, extracted_data, final_staging_data,
-                             agg_reference, obj_pre_process, data):
+                             agg_reference, obj_pre_process, data, **kwargs):
+                             
         if extracted_data.dropna(how='all').empty:
             logger.info("This file is empty")
         else:
@@ -142,7 +143,7 @@ class GenerateStagingAttributes:
 
             logger.info("Generating Staging Output")
             extracted_data = agg_reference.generate_staging_output(logger, filename, agg_rules, default_config,
-                                                                   extracted_data, data)
+                                                                   extracted_data, data=data, **kwargs)
             logger.info("Staging output generated for given data")
 
             # Append staging data of current file into final staging dataframe
@@ -181,7 +182,7 @@ class GenerateStagingAttributes:
                 final_staging_data = self.process_staging_data(logger, each_file, agg_rules,
                                                                default_config,
                                                                extracted_data, final_staging_data,
-                                                               agg_reference, obj_pre_process,data)
+                                                               agg_reference, obj_pre_process, data)
 
         except KeyError as err:
             logger.error(f"KeyError error while processing the file {each_file}. The error message is :  ", err)

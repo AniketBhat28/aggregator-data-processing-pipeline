@@ -20,6 +20,11 @@ BASE_PATH = os.path.dirname(os.path.realpath(__file__))
 print('Base_path', BASE_PATH)
 sys.path.append('Output/aggregator_data_processing_pipeline_pq_historical-1.0-py3.7.egg')
 
+OUTPUT_DIR = os.path.join(BASE_PATH, 'Output')
+
+# Create output directory if not exist
+if not os.path.exists(OUTPUT_DIR):
+    os.mkdir(OUTPUT_DIR)
 
 # Converting Month name to numbers to create output filename
 def process_month(month):
@@ -56,7 +61,7 @@ if __name__ == '__main__':
     logger = logging.getLogger(__name__)
 
     # Create a file handler
-    handler = logging.FileHandler('Output/Output.log')
+    handler = logging.FileHandler(os.path.join(OUTPUT_DIR, 'Output.log'))
     handler.setLevel(logging.INFO)
 
     # Create a logging format
@@ -108,7 +113,6 @@ if __name__ == '__main__':
     app_config['output_params']['year'] = str(year)
     app_config['output_params']['layer'] = layer
 
-    print(BASE_PATH + '/MDA' + aggregator + '/MDAAggRulesVal.json')
     with open(BASE_PATH + '/MDA' + aggregator + '/MDAAggRulesVal.json') as f:
         rule_config = json.load(f)
 
@@ -132,10 +136,16 @@ if __name__ == '__main__':
             module_path_relative = 'MDAProquest.MDAStagingProcessDataProquest'
         else:
             module_path_relative = 'MDAProquest.MDAMappedProcessDataProquestLive'
+
     elif aggregator == 'Chegg':
-        module_path_relative = 'StagingDataGenerators.ProcessDataChegg'
+        if layer == 'staging':
+            module_path_relative = 'MDAChegg.MDAStagingProcessDataChegg'
+        else:
+            module_path_relative = 'MDAChegg.MDAMappedProcessDataChegg'
+            
     elif aggregator == 'Ingram':
         module_path_relative = 'StagingDataGenerators.ProcessDataIngram'
+
     elif aggregator == 'Gardners':
         if layer == 'staging' :
             module_path_relative = 'MDAGardners.MDAStagingProcessDataGardners'
@@ -153,8 +163,10 @@ if __name__ == '__main__':
             module_path_relative = 'MDABarnes.MDAMappedProcessDataBarnes'
     elif aggregator == 'Overdrive':
         module_path_relative = 'StagingDataGenerators.ProcessDataOverdrive'
+
     elif aggregator == 'Google':
         module_path_relative = 'StagingDataGenerators.ProcessDataGoogle'
+
     elif aggregator == 'Redshelf':
         if layer == 'staging' :
             module_path_relative = 'MDARedshelf.MDAStagingProcessDataRedshelf'
@@ -166,9 +178,8 @@ if __name__ == '__main__':
     # Get the module path and start the process
     module_path = module_path_relative
     module = importlib.import_module(module_path)
-    print(module)
+    
     className = getattr(module, module_path_relative.split('.')[-1])
-    print(className)
     classObj = className()
     classObj.initialise_processing(logger, app_config, rule_config, default_config)
 

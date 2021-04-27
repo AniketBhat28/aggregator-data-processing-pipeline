@@ -1,0 +1,326 @@
+[{
+    "name": "CHEGG",
+    "filename_pattern": "/Chegg",
+    "product_type": "Electronic",
+    "data_sheet":0,
+    "acceptable_currencies":[],
+    "file_type":"xlsx",
+    "header_row": 0,
+    "data_row": 1,
+    "discard_last_rows":0,
+
+    "attribute_mappings":	[
+                                {"order_date":"transaction date"},
+                                {"Date":"transaction date"},
+                                {"digital_isbn":"digital isbn"},
+                                {"digital_ean":"digital ean"},
+                                {"print_isbn":"print isbn"},
+                                {"print_ean":"print ean"},
+                                {"EISBN to Use":"digital ean"},
+                                
+                                {"publisher_name":"publisher name"},
+                                {"list price (USD)":"list price"},
+                                {"publisher_fee (USD)":"publisher fee"},
+                                {"term description":"term_description"},
+                                {"discount_code":"discount code"}
+                            ],
+    "missing_columns":["trans type", "term_description", "discount code", "publisher name"],		
+    "relevant_attributes":	[
+                                {"input_column_name": "transaction date", "staging_column_name":"reporting_date"},
+                                {"input_column_name": "digital ean", "staging_column_name":"e_product_id"},
+                                {"input_column_name": "digital isbn", "staging_column_name":"e_backup_product_id"},
+                                {"input_column_name": "print ean", "staging_column_name":"p_product_id"},
+                                {"input_column_name": "print isbn", "staging_column_name":"p_backup_product_id"},
+                                
+                                {"input_column_name": "title", "staging_column_name":"product_title"},
+                                {"input_column_name": "publisher name", "staging_column_name":"imprint"},
+                                {"input_column_name": "trans type", "staging_column_name":"trans_type_ori"},
+                                {"input_column_name": "refund type", "staging_column_name":"sale_type_ori"},
+                                
+                                {"input_column_name": "list price", "staging_column_name":"price"},
+                                {"input_column_name": "publisher fee", "staging_column_name":"payment_amount"},
+                                {"input_column_name": "discount code", "staging_column_name":"disc_code"},
+                                {"input_column_name": "term_description", "staging_column_name":"term_description"},
+                                
+                                {"input_column_name": "country_of_sale", "staging_column_name":"country"},
+                                {"input_column_name": "campus state", "staging_column_name":"state"},
+                                {"input_column_name": "campus city", "staging_column_name":"city"},
+                                {"input_column_name": "campus zip", "staging_column_name":"post_code"},
+                                {"input_column_name": "campus name", "staging_column_name":"account_name"}
+                                
+                            ],
+    "filters": {	
+                    "mandatory_columns": ["digital isbn", "digital ean"],
+                    "amount_column":"payment_amount",
+                    "column_validations": [
+                                            {
+                                                "column_name": "reporting_date",
+                                                "dtype": "date",
+                                                "missing_data":	{
+                                                                    "process_type": "process",
+                                                                    "value": "current_date"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "imprint",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "payment_amount",
+                                                "dtype": "float",
+                                                "missing_data":	{
+                                                                    "process_type": "process",
+                                                                    "value": 0.0
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "trans_type_ori",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "sale_type_ori",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "p_product_id",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "p_backup_product_id",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "term_description",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "country",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "state",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "city",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "post_code",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "account_name",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            }
+                                        ],
+                    "convert_percentage": "no",
+                    "rental_values" : {"180-day Rental": 180, "120-day Rental": 120,
+                                        "90-day Rental": 90, "60-day Rental": 60,
+                                        "30-day Rental": 30, "Extension- 180-day Rental": 180,
+                                        "Extension- 160-day Rental": 160, "Extension- 120-day Rental": 120, 
+                                        "Extension- 90-day Rental": 90, "Extension- 85-day Rental": 85,
+                                        "Extension- 60-day Rental": 60, "Extension- 45-day Rental": 45,
+                                    "Extension- 30-day Rental": 30, "Extension- 14-day Rental": 14	}
+                },
+    "date_formats":	["%Y-%m-%d","%d/%m/%Y","%m/%d/%Y","%m/%d/%y","%d.%m.%Y","%d-%m-%Y"]
+},
+{
+    "name": "CHEGG",
+    "filename_pattern": "/Chegg Rental",
+    "product_type": "Electronic",
+    "data_sheet":0,
+    "acceptable_currencies":[],
+    "file_type":"xlsx",
+    "header_row": 0,
+    "data_row": 1,
+    "discard_last_rows":0,
+    "attribute_mappings":	[
+                                {"digital_isbn":"digital isbn"},
+                                {"digital_ean":"digital ean"},
+                                {"print_isbn":"print isbn"},
+                                {"print_ean":"print ean"},
+                                {"Publisher name":"publisher name"}
+                            ],
+    "missing_columns":["print isbn", "print ean", "term description", "trans type"],		
+    "relevant_attributes":	[
+                                {"input_column_name": "transaction date", "staging_column_name":"reporting_date"},
+                                {"input_column_name": "digital ean", "staging_column_name":"e_product_id"},
+                                {"input_column_name": "digital isbn", "staging_column_name":"e_backup_product_id"},
+                                {"input_column_name": "print ean", "staging_column_name":"p_product_id"},
+                                {"input_column_name": "print isbn", "staging_column_name":"p_backup_product_id"},
+                                
+                                {"input_column_name": "title", "staging_column_name":"product_title"},
+                                {"input_column_name": "publisher name", "staging_column_name":"imprint"},
+                                {"input_column_name": "trans type", "staging_column_name":"trans_type_ori"},
+                                {"input_column_name": "refund type", "staging_column_name":"sale_type_ori"},
+                                
+                                {"input_column_name": "list price", "staging_column_name":"price"},
+                                {"input_column_name": "publisher fee", "staging_column_name":"payment_amount"},
+                                {"input_column_name": "discount code", "staging_column_name":"disc_code"},
+                                {"input_column_name": "term description", "staging_column_name":"term_description"},
+                                
+                                {"input_column_name": "country_of_sale", "staging_column_name":"country"},
+                                {"input_column_name": "campus state", "staging_column_name":"state"},
+                                {"input_column_name": "campus city", "staging_column_name":"city"},
+                                {"input_column_name": "campus zip", "staging_column_name":"post_code"},
+                                {"input_column_name": "campus name", "staging_column_name":"account_name"}
+                            ],
+    "filters": {	
+                    "mandatory_columns": ["digital ean", "digital isbn"],
+                    "amount_column":"payment_amount",
+                    "column_validations": [
+                                            {
+                                                "column_name": "reporting_date",
+                                                "dtype": "date",
+                                                "missing_data":	{
+                                                                    "process_type": "process",
+                                                                    "value": "current_date"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "imprint",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "payment_amount",
+                                                "dtype": "float",
+                                                "missing_data":	{
+                                                                    "process_type": "process",
+                                                                    "value": 0.0
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "price",
+                                                "dtype": "float",
+                                                "missing_data":	{
+                                                                    "process_type": "process",
+                                                                    "value": 0.0
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "trans_type_ori",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "sale_type_ori",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "disc_code",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "term_description",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "country",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "state",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "city",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "post_code",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
+                                                "column_name": "account_name",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            }
+                                        ],
+                    "convert_percentage": "no"
+                },
+    "date_formats":	["%Y-%m-%d","%d/%m/%Y","%m/%d/%Y","%m/%d/%y","%d.%m.%Y"] 
+}
+]

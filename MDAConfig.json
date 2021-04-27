@@ -1,10 +1,9 @@
 {
-	"aggregator_name": "PROQUEST",
+	"aggregator_name": "Chegg",
 	"input_bucket_name": "s3-euw1-ap-pe-orders-worker-agg-storage-etl",
-	"output_bucket_name" : "s3-use1-ap-pe-df-orders-insights-storage-d",
-	"input_folder_name" : "PQ_EBOOK_CENTRAL",
-	"month" : "",
-	"year" : 2021,
+	"output_bucket_name": "s3-use1-ap-pe-df-orders-insights-storage-d",
+	"input_folder_name": "CHEGG",
+	"month": "",
+	"year": 2020,
 	"layer": "mapped"
-
 }

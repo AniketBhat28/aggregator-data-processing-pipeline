@@ -2,7 +2,7 @@
 *.pyc
 Output/Output.log
 Output/aggregator_data_processing_pipeline-1.0-py3.7.egg
-.vscode/launch.json
+.vscode/
 .idea/ingram_aggregator.iml
 .idea/misc.xml
 .idea/modules.xml
