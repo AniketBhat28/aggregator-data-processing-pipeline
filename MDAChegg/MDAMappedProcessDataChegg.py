@@ -60,6 +60,7 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		:return: extracted dataframe
 		"""
 		if 'rental' in filename.lower():
+			# vectorization
 			extracted_data['sale_type'] = extracted_data.apply(
 				lambda row: (
 					'checkout' if (row['trans_type_ori'].lower() == 'rental' and not row['sale_type_ori']) else (
@@ -83,7 +84,7 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		return extracted_data
 
 
-	def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data, data=None):
+	def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data, input_list, **kwargs):
 		"""
 		Generates staging data for Chegg files
 		:param logger: 
@@ -121,9 +122,12 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		current_date_format = agg_rules['date_formats']
 		extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'reporting_date', default_config)
 		
+		sheet_name = input_list[0]['input_sheet_name']
+		source_id = filename.split('.')[0]
+
 		# new attributes addition
 		extracted_data['source'] = "CHEGG EBook"
-		extracted_data['source_id'] = filename.split('.')[0]
+		extracted_data['source_id'] = "{}/{}".format(source_id, sheet_name) if sheet_name else source_id
 		extracted_data['sub_domain'] = 'NA'
 		extracted_data['business_model'] = 'B2C'
 		
@@ -157,8 +161,8 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 				final_staging_data = self.process_staging_data(logger, each_file, agg_rules,
 															   default_config,
 															   extracted_data, final_staging_data,
-															   agg_reference, obj_pre_process, data)
-
+															   agg_reference, obj_pre_process, 
+															   data=data, input_list=input_list)
 		except KeyError as err:
 			logger.error(f"KeyError error while processing the file {each_file}. The error message is :  ", err)
 
