@@ -8,8 +8,8 @@
 										"payment_amount", "price", "disc_code", 
 										"product_title", "product_type", "sale_type", 
 										"sale_type_ori",  "trans_type", "trans_type_ori",
-										 "source", "source_id", "sub_domain", "city", "state", "country", "post_code", 
-										 "account_name", "business_model"]
+										"source", "source_id", "sub_domain", "city", "state", "country", "post_code", 
+										"account_name", "business_model"]
 		}
 	}
 ]

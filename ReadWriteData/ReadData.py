@@ -60,10 +60,11 @@ class ReadData:
 			logger.info('Exiting load_data(), Time taken to load : %s seconds', time.time() - current_time)
 			return data
 
-		except UnicodeDecodeError:
+		except UnicodeDecodeError as e:
+			logger.error('%s; File: %s', e, file_path)
 			try:
 				if input_file_extn == 'csv':
-					data = pd.read_csv(file_path, encoding="windows-1252")
+					data = pd.read_csv(file_path, encoding="ISO-8859-1")
 					return data
 				else:
 					logger.error('Error while loading file', exc_info=True)

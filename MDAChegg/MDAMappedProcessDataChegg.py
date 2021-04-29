@@ -44,8 +44,8 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		"""
 		extracted_data['trans_type'] = extracted_data.apply(
 			lambda row : (
-				'rental' if(row['trans_type_ori'].lower() in ('rental', 'extension')) else (
-					'sales' if row['trans_type_ori'].lower() == 'sell' else row['trans_type_ori']
+				'rental' if(row['trans_type_ori'] in ('rental', 'extension')) else (
+					'sales' if row['trans_type_ori'] == 'sell' else row['trans_type_ori']
 					)
 				),
 			axis=1)
@@ -59,85 +59,103 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		:param extracted_data: pr-processed_data
 		:return: extracted dataframe
 		"""
-		if 'rental' in filename.lower():
-			# vectorization
+		def process_for_rental(row):
+			if row['trans_type'] == 'rental':
+				return 'checkout' if (row['trans_type_ori'] == 'rental' and row['sale_type_ori'] == 'na') else (
+						'extension' if (row['trans_type_ori'] == 'extension' and row['sale_type_ori'] == 'na') else (
+							'cancellation' if (
+								row['trans_type_ori'] in ('rental', 'extension') 
+								and row['sale_type_ori'] == 'cancellation'
+								) else row['sale_type_ori']
+						)
+					)
+			elif row['trans_type'] == 'sales':
+				return 'purchase' if row['sale_type_ori'] == 'na' else (
+							'return' if row['sale_type_ori']== 'cancellation' else row['sale_type_ori']
+						)
+			else:
+				return row['sale_type_ori']
+
+		extracted_data['sale_type'] = extracted_data.apply(lambda row: process_for_rental(row), axis=1)
+		return extracted_data
+
+
+	def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data, **kwargs):
+		"""
+		Generates staging data for Chegg files
+		:param logger: For the logging output file.
+		:param filename: Name of the file
+		:param agg_rules: Rules json
+		:param default_config: Default json
+		:param extracted_data: pr-processed_data
+		:return: extracted dataframe
+		"""
+		extracted_data['aggregator_name'] = agg_rules['name']
+		extracted_data['product_type'] = agg_rules['product_type']		
+		extracted_data['sale_type_ori'] = extracted_data.sale_type_ori.str.lower()
+
+		if 'rental' in filename.lower() or 'subs' in filename.lower():
+			extracted_data['trans_type'] = 'subscription'
+			extracted_data['trans_type_ori'] = 'subscription'
+
 			extracted_data['sale_type'] = extracted_data.apply(
 				lambda row: (
-					'checkout' if (row['trans_type_ori'].lower() == 'rental' and not row['sale_type_ori']) else (
-						'extension' if (row['trans_type_ori'].lower() == 'extension' and not row['sale_type_ori']) else (
-							'cancellation' if (
-								row['trans_type_ori'].lower() in ('rental', 'extension') 
-								and row['sale_type_ori'].lower() == 'cancellation'
-								) else row['trans_type_ori']
-						)
+					'subscription' if not row['sale_type_ori'] else  (
+						'cancellation' if row['sale_type_ori'] == 'cancellation' else row['sale_type_ori']
 					)
 				),
 			axis=1)
 		else:
-			extracted_data['sale_type'] = extracted_data.apply(
-				lambda row: ( 
-					'purchase' if not row['sale_type_ori'] else  (
-						'return' if row['sale_type_ori'].lower() == 'cancellation' else row['sale_type_ori']
-					)
-				),
-			axis=1)
-		return extracted_data
+			extracted_data['old_rental_duration'] = 0
+			extracted_data['new_rental_duration'] = 0
 
-
-	def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data, input_list, **kwargs):
-		"""
-		Generates staging data for Chegg files
-		:param logger: 
-		:param filename: 
-		:param agg_rules: 
-		:param default_config: 
-		:param extracted_data: 
-		:param data: 
-		:return: extracted dataframe
-		"""
-		extracted_data['aggregator_name'] = agg_rules['name']
-		extracted_data['product_type'] = agg_rules['product_type']
-
-		extracted_data['old_rental_duration'] = 0
-		extracted_data['new_rental_duration'] = 0
-
-		if extracted_data['term_description'].all() != 'NA':
 			rental_values = {k.replace(' ', ''): v for k, v in agg_rules['filters']['rental_values'].items()}
 			extracted_data['new_rental_duration'] = extracted_data['term_description'].str.replace(" ","").map(rental_values).fillna(0)
 
-		# Process transaction type
-		extracted_data = self.process_trans_type(extracted_data)
+			if extracted_data['trans_type_ori'].all() == 'NA':
+				for map_key, map_value in agg_rules['filters']['map_rental_duration_trans_type'].items():
+					extracted_data.loc[(
+						extracted_data.term_description.str.contains(map_key, case=False, regex=False)
+						), 'trans_type_ori'] = map_value
 
-		# Process sales type
-		extracted_data = self.process_sale_type(filename, extracted_data)
-		
-		if 'p_product_id' not in extracted_data.columns.to_list():
-			extracted_data['p_product_id'] = 'NA'
-		if 'p_backup_product_id' not in extracted_data.columns.to_list():
-			extracted_data['p_backup_product_id'] = 'NA'
+			# Process transaction type
+			extracted_data['trans_type_ori'] = extracted_data.trans_type_ori.str.lower()
+			extracted_data = self.process_trans_type(extracted_data)
+
+			# Process sales type
+			extracted_data = self.process_sale_type(filename, extracted_data)
 
 		logger.info('Converting negative amounts to positives')
-		extracted_data['price'] = extracted_data['price'].abs()
+		# Convert price with currency string into float.
+		extracted_data['price'] = extracted_data['price'].replace({'\$': '', ',': ''}, regex=True).astype(float).abs()
 
 		current_date_format = agg_rules['date_formats']
 		extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'reporting_date', default_config)
-		
-		sheet_name = input_list[0]['input_sheet_name']
-		source_id = filename.split('.')[0]
 
 		# new attributes addition
 		extracted_data['source'] = "CHEGG EBook"
-		extracted_data['source_id'] = "{}/{}".format(source_id, sheet_name) if sheet_name else source_id
 		extracted_data['sub_domain'] = 'NA'
 		extracted_data['business_model'] = 'B2C'
-		
 		return extracted_data
 
 	
 	def applying_aggregator_rules(self, logger, input_list, each_file, rule_config, default_config,
 								  final_staging_data, obj_read_data, obj_pre_process,
 								  agg_name, agg_reference):
-
+		"""
+		To processes data by applying aggregator rules.
+		:param logger: For the logging output file. 
+		:param input_list: List of input configuration
+		:param each_file: Name of the file
+		:param rule_config: Rules json
+		:param default_config: Default json
+		:param final_staging_data: final extracted dataframe
+		:param obj_read_data: Obj of read data class
+		:param obj_pre_process: Obj of pre process class
+		:param agg_name: Name of the aggregator
+		:param agg_reference: Instance of the aggregator class
+		:return: None
+		"""
 		logger.info('\n+-+-+-+-+-+-+Starting Processing %s files\n', agg_name)
 		try:
 			data = obj_read_data.load_data(logger, input_list, each_file)
@@ -173,10 +191,10 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 	def initialise_processing(self, logger, app_config, rule_config, default_config):
 		"""
 		To processes data for all Chegg files
-		:param logger: 
-		:param app_config: 
-		:param rule_config: 
-		:param default_config: 		
+		:param logger: For the logging output file.
+		:param app_config: Input configuration
+		:param rule_config: Rules json
+		:param default_config: Default json		
 		:return: None
 		"""
 		# For the final staging output
@@ -219,7 +237,7 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 				logger.info("ignoring processing the " + each_file + " as it is not a csv or excel file")
 
 		# future date issue resolution
-		final_staging_data = obj_pre_process.process_default_transaction_date(logger, app_config, final_staging_data)
+		# final_staging_data = obj_pre_process.process_default_transaction_date(logger, app_config, final_staging_data)
 
 		# Grouping and storing data
 		final_grouped_data = self.group_data(logger, final_staging_data, default_config[0]['group_staging_data'])

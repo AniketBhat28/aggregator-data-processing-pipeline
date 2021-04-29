@@ -22,9 +22,18 @@
                                 {"list price (USD)":"list price"},
                                 {"publisher_fee (USD)":"publisher fee"},
                                 {"term description":"term_description"},
-                                {"discount_code":"discount code"}
+                                {"discount_code":"discount code"},
+                                
+                                {"refund_type":"refund type"},
+                                {"trans_type":"trans type"},
+
+                                {"campus_state":"campus state"},
+                                {"campus_city":"campus city"},
+                                {"campus_zip":"campus zip"},
+                                {"campus_name":"campus name"}
+
                             ],
-    "missing_columns":["trans type", "term_description", "discount code", "publisher name"],		
+    "missing_columns": ["discount code", "publisher name", "trans type"],		
     "relevant_attributes":	[
                                 {"input_column_name": "transaction date", "staging_column_name":"reporting_date"},
                                 {"input_column_name": "digital ean", "staging_column_name":"e_product_id"},
@@ -165,7 +174,13 @@
                                         "Extension- 160-day Rental": 160, "Extension- 120-day Rental": 120, 
                                         "Extension- 90-day Rental": 90, "Extension- 85-day Rental": 85,
                                         "Extension- 60-day Rental": 60, "Extension- 45-day Rental": 45,
-                                    "Extension- 30-day Rental": 30, "Extension- 14-day Rental": 14	}
+                                    "Extension- 30-day Rental": 30, "Extension- 14-day Rental": 14	},
+                    "map_rental_duration_trans_type": {
+                        "extension": "extension",
+                        "sold item": "sell",
+                        "rental": "rental"
+                    }
+                                
                 },
     "date_formats":	["%Y-%m-%d","%d/%m/%Y","%m/%d/%Y","%m/%d/%y","%d.%m.%Y","%d-%m-%Y"]
 },
@@ -184,9 +199,10 @@
                                 {"digital_ean":"digital ean"},
                                 {"print_isbn":"print isbn"},
                                 {"print_ean":"print ean"},
-                                {"Publisher name":"publisher name"}
+                                {"Publisher name":"publisher name"},
+                                {"refund_type":"refund type"}
                             ],
-    "missing_columns":["print isbn", "print ean", "term description", "trans type"],		
+    "missing_columns":["print isbn", "print ean"],		
     "relevant_attributes":	[
                                 {"input_column_name": "transaction date", "staging_column_name":"reporting_date"},
                                 {"input_column_name": "digital ean", "staging_column_name":"e_product_id"},
@@ -196,13 +212,11 @@
                                 
                                 {"input_column_name": "title", "staging_column_name":"product_title"},
                                 {"input_column_name": "publisher name", "staging_column_name":"imprint"},
-                                {"input_column_name": "trans type", "staging_column_name":"trans_type_ori"},
                                 {"input_column_name": "refund type", "staging_column_name":"sale_type_ori"},
                                 
                                 {"input_column_name": "list price", "staging_column_name":"price"},
                                 {"input_column_name": "publisher fee", "staging_column_name":"payment_amount"},
                                 {"input_column_name": "discount code", "staging_column_name":"disc_code"},
-                                {"input_column_name": "term description", "staging_column_name":"term_description"},
                                 
                                 {"input_column_name": "country_of_sale", "staging_column_name":"country"},
                                 {"input_column_name": "campus state", "staging_column_name":"state"},
@@ -247,14 +261,6 @@
                                                                 }
                                             },
                                             {
-                                                "column_name": "trans_type_ori",
-                                                "dtype": "str",
-                                                "missing_data": {
-                                                                    "process_type": "process",
-                                                                    "value": "NA"
-                                                                }
-                                            },
-                                            {
                                                 "column_name": "sale_type_ori",
                                                 "dtype": "str",
                                                 "missing_data": {
@@ -264,14 +270,6 @@
                                             },
                                             {
                                                 "column_name": "disc_code",
-                                                "dtype": "str",
-                                                "missing_data": {
-                                                                    "process_type": "process",
-                                                                    "value": "NA"
-                                                                }
-                                            },
-                                            {
-                                                "column_name": "term_description",
                                                 "dtype": "str",
                                                 "missing_data": {
                                                                     "process_type": "process",
