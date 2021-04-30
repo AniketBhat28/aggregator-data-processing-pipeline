@@ -38,7 +38,6 @@ class MDAStagingProcessDataProquest:
     #							extracted_data - pr-processed_data
     # Return Values : 			extracted_data - extracted staging data
     def process_trans_type(self, logger, final_mapped_data):
-
         logger.info("Processing transaction and sales types")
 
         final_mapped_data['trans_type'] = final_mapped_data.apply(
@@ -56,12 +55,15 @@ class MDAStagingProcessDataProquest:
     # Return Values : 			extracted_data - extracted staging data
 
     def generate_edw_staging_data(self, logger, final_mapped_data):
+        logger.info('***********generate staging data started*******************')
+
         final_mapped_data = final_mapped_data.replace('nan', 'NA')
         final_mapped_data = final_mapped_data.replace({np.nan: 'NA'})
         final_mapped_data.replace('None', 'NA', inplace=True)
-        print("total no of rows before nan : ", final_mapped_data.shape[0])
+        logger.info("total no of rows before nan : %s", final_mapped_data.shape[0])
+
         final_mapped_data = final_mapped_data[final_mapped_data['External_Purchase_Order'] != 'Total']
-        print("total no of rows after nan : ", final_mapped_data.shape[0])
+        logger.info("total no of rows after nan : %s", final_mapped_data.shape[0])
 
         final_mapped_data = final_mapped_data.replace(r'^\s*$', np.nan, regex=True)
         final_mapped_data['e_product_id'] = final_mapped_data['e_product_id'].apply(
@@ -69,7 +71,7 @@ class MDAStagingProcessDataProquest:
         final_mapped_data['p_product_id'] = final_mapped_data['p_product_id'].apply(
             lambda x: x.replace('.0', ''))
         final_mapped_data['External_Product_ID'] = final_mapped_data['External_Product_ID'].apply(lambda x: x.replace('.0', ''))
-        final_mapped_data = self.proquest_price_cal(final_mapped_data)
+        final_mapped_data = self.proquest_price_cal(final_mapped_data, logger)
         final_mapped_data = self.calculate_final_discount_percentage(final_mapped_data, logger)
         # extracted_data = self.process_trans_type(logger, final_mapped_data)
         final_mapped_data['Payment_Amount'].replace('None', 0, inplace=True)
@@ -99,6 +101,7 @@ class MDAStagingProcessDataProquest:
                                                              format='%d-%m-%Y', infer_datetime_format=True)
         final_mapped_data['reporting_date'] = final_mapped_data['reporting_date'].dt.date
 
+        logger.info('****************generate staging data done**************')
         return final_mapped_data
 
     # Function Description :	This function processes data for all Ebsco files
@@ -110,11 +113,11 @@ class MDAStagingProcessDataProquest:
     def initialise_processing(self, logger, app_config, rule_config, default_config):
 
         # For the final staging output
-
         final_edw_data = pd.DataFrame()
 
         input_list = list(app_config['input_params'])
         input_base_path = input_list[0]['input_base_path']
+
         # Processing for each file in the given folder
         logger.info('\n+-+-+-+-+-+-+Starting MDAProquest files Processing\n')
         logger.info('Get the corresponding rules object for MDAProquest')
@@ -145,7 +148,8 @@ class MDAStagingProcessDataProquest:
         obj_s3_connect.wrangle_data_as_parquet(logger, app_config, final_edw_data)
         logger.info('\n+-+-+-+-+-+-+Finished Processing MDAProquest files\n')
 
-    def proquest_price_cal(self, extracted_data):
+    def proquest_price_cal(self, extracted_data, logger):
+        logger.info('***********proquest_price_cal started*******************')
 
         extracted_data['Price'] = extracted_data.apply(
             lambda row: 0.0 if row['Price'] == 'NA' else row['Price'], axis=1)
@@ -173,9 +177,12 @@ class MDAStagingProcessDataProquest:
             lambda row: 1.0 if row['list_price_multiplier'] == 'NA' else row['list_price_multiplier'],
             axis=1)
 
+        logger.info('***********proquest_price_cal ended*******************')
         return extracted_data
 
     def calculate_final_discount_percentage(self, extracted_data, logger):
+        logger.info('***********calculate_final_discount_percentage started*******************')
+
         # if extracted_data['current_discount_percentage'].all() == 'NA':
         #     extracted_data['current_discount_percentage'] = 0.0
         extracted_data['current_discount_percentage'] = extracted_data.apply(
@@ -187,4 +194,6 @@ class MDAStagingProcessDataProquest:
             lambda row: row['current_discount_percentage'] * 100 if (row['current_discount_percentage'] < 1) else row[
                 'current_discount_percentage'],
             axis=1)
+
+        logger.info('***********calculate_final_discount_percentage ended*******************')
         return extracted_data
