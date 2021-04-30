@@ -91,7 +91,7 @@ class MDAStagingProcessDataProquest:
         final_mapped_data['sale_type'] = final_mapped_data.apply(
             lambda row: 'REFUNDS' if (row['units'] < 0 or row['Payment_Amount'] < 0) else row['sale_type'], axis=1)
         final_mapped_data['country'] = final_mapped_data.apply(
-            lambda row: ('USA') if row['country'] == 'NA' else row['country'], axis=1)
+            lambda row: ('US') if row['country'] == 'NA' else row['country'], axis=1)
         final_mapped_data['Price_currency'] = final_mapped_data.apply(
             lambda row: ('USD') if row['Price_currency'] == 'NA' else row['Price_currency'], axis=1)
         final_mapped_data['Payment_Amount_Currency'] = final_mapped_data['Price_currency']
