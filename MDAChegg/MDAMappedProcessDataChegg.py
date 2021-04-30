@@ -45,7 +45,7 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		extracted_data['trans_type'] = extracted_data.apply(
 			lambda row : (
 				'rental' if(row['trans_type_ori'] in ('rental', 'extension')) else (
-					'sales' if row['trans_type_ori'] == 'sell' else row['trans_type_ori']
+					'sales' if row['trans_type_ori'] == 'sell' else 'NA'
 					)
 				),
 			axis=1)
@@ -61,20 +61,20 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		"""
 		def process_for_rental(row):
 			if row['trans_type'] == 'rental':
-				return 'checkout' if (row['trans_type_ori'] == 'rental' and row['sale_type_ori'] == 'na') else (
-						'extension' if (row['trans_type_ori'] == 'extension' and row['sale_type_ori'] == 'na') else (
-							'cancellation' if (
+				return 'Checkout' if (row['trans_type_ori'] == 'rental' and row['sale_type_ori'] == 'na') else (
+						'Extension' if (row['trans_type_ori'] == 'extension' and row['sale_type_ori'] == 'na') else (
+							'Cancellation' if (
 								row['trans_type_ori'] in ('rental', 'extension') 
 								and row['sale_type_ori'] == 'cancellation'
-								) else row['sale_type_ori']
+								) else 'NA'
 						)
 					)
 			elif row['trans_type'] == 'sales':
-				return 'purchase' if row['sale_type_ori'] == 'na' else (
-							'return' if row['sale_type_ori']== 'cancellation' else row['sale_type_ori']
+				return 'Purchase' if row['sale_type_ori'] == 'na' else (
+							'Return' if row['sale_type_ori']== 'cancellation' else 'NA'
 						)
 			else:
-				return row['sale_type_ori']
+				return 'NA'
 
 		extracted_data['sale_type'] = extracted_data.apply(lambda row: process_for_rental(row), axis=1)
 		return extracted_data
@@ -100,8 +100,8 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 
 			extracted_data['sale_type'] = extracted_data.apply(
 				lambda row: (
-					'subscription' if not row['sale_type_ori'] else  (
-						'cancellation' if row['sale_type_ori'] == 'cancellation' else row['sale_type_ori']
+					'Subscription' if not row['sale_type_ori'] else  (
+						'Cancellation' if row['sale_type_ori'] == 'cancellation' else row['sale_type_ori']
 					)
 				),
 			axis=1)
@@ -115,7 +115,7 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 			if extracted_data['trans_type_ori'].all() == 'NA':
 				for map_key, map_value in agg_rules['filters']['map_rental_duration_trans_type'].items():
 					extracted_data.loc[(
-						extracted_data.term_description.str.contains(map_key, case=False, regex=False)
+						extracted_data.term_description.str.contains(map_key, case=False)
 						), 'trans_type_ori'] = map_value
 
 			# Process transaction type
@@ -127,7 +127,7 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 
 		logger.info('Converting negative amounts to positives')
 		# Convert price with currency string into float.
-		extracted_data['price'] = extracted_data['price'].replace({'\$': '', ',': ''}, regex=True).astype(float).abs()
+		extracted_data['price'] = extracted_data['price'].replace({'\$': '', ',': ''}, regex=True).astype(float)
 
 		current_date_format = agg_rules['date_formats']
 		extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'reporting_date', default_config)

@@ -67,17 +67,22 @@ class MDAStagingProcessDataChegg(GenerateStagingAttributes):
 		:return: final pd dataframe
 		"""
 		logger.info('***********generate staging data started*******************')
+
 		final_mapped_data['aggregator_name'] = agg_rules['name']
 		final_mapped_data['product_type'] = agg_rules['product_type']
-
-		final_mapped_data['e_product_id'] = final_mapped_data.e_product_id.str.split('.', expand=True)
 
 		# Drop invalid rows
 		final_mapped_data = final_mapped_data.drop(
 			final_mapped_data[(
 				(
-					(final_mapped_data.reporting_date == 'nan') 
-					& (final_mapped_data.product_title == 'nan')
+					(
+						(final_mapped_data.reporting_date == 'nan')
+						| (final_mapped_data.reporting_date == '')
+					) 
+					& (
+						(final_mapped_data.product_title == 'nan')
+						| (final_mapped_data.product_title == '')
+					)
 					& (
 						(final_mapped_data.e_product_id.str.len() > 13)
 						| (final_mapped_data.e_product_id.str.isdigit() == False)
@@ -90,7 +95,13 @@ class MDAStagingProcessDataChegg(GenerateStagingAttributes):
 			logger.info("All records are invalid entries in this file")
 			return final_mapped_data
 
-		final_mapped_data['p_product_id'] = final_mapped_data.p_product_id.str.split('.', expand=True)
+		# Check for the scientific notation
+		# Remove decimals if file not contains scientific notation.
+		scientific_notation_regex = "-?\d\.\d+[Ee][+\-]\d\d?"
+		if not final_mapped_data.e_product_id.str.contains(scientific_notation_regex).all():
+			final_mapped_data['e_product_id'] = final_mapped_data.e_product_id.str.split('.', expand=True)
+			final_mapped_data['p_product_id'] = final_mapped_data.p_product_id.str.split('.', expand=True)
+
 		final_mapped_data['post_code'] = final_mapped_data.post_code.str.split('.', expand=True)
 		
 		final_mapped_data = self.process_trans_type(logger, final_mapped_data)
@@ -100,6 +111,10 @@ class MDAStagingProcessDataChegg(GenerateStagingAttributes):
 			(final_mapped_data['new_rental_duration'] == 'NA') | (final_mapped_data['new_rental_duration'] == 'nan')
 			), 'new_rental_duration'] = 0
 		final_mapped_data['new_rental_duration'] = final_mapped_data['new_rental_duration'].astype('float').astype('int')
+
+		final_mapped_data.loc[(
+			(final_mapped_data['old_rental_duration'] == 'NA') | (final_mapped_data['old_rental_duration'] == 'nan')
+			), 'old_rental_duration'] = 0
 		final_mapped_data['old_rental_duration'] = final_mapped_data['old_rental_duration'].astype('float').astype('int')
 
 		final_mapped_data['price'] = final_mapped_data['price'].astype('float')
