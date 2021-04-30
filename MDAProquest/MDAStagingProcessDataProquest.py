@@ -66,22 +66,25 @@ class MDAStagingProcessDataProquest:
         logger.info("total no of rows after nan : %s", final_mapped_data.shape[0])
 
         final_mapped_data = final_mapped_data.replace(r'^\s*$', np.nan, regex=True)
-        final_mapped_data['e_product_id'] = final_mapped_data['e_product_id'].apply(
-            lambda x: x.replace('.0', ''))
-        final_mapped_data['p_product_id'] = final_mapped_data['p_product_id'].apply(
-            lambda x: x.replace('.0', ''))
-        final_mapped_data['External_Product_ID'] = final_mapped_data['External_Product_ID'].apply(lambda x: x.replace('.0', ''))
+
+        final_mapped_data['e_product_id'] = final_mapped_data.e_product_id.str.replace('.0', '')
+        final_mapped_data['p_product_id'] = final_mapped_data.p_product_id.str.replace('.0', '')
+        final_mapped_data['External_Product_ID'] = final_mapped_data.External_Product_ID.str.replace('.0', '')
+
         final_mapped_data = self.proquest_price_cal(final_mapped_data, logger)
         final_mapped_data = self.calculate_final_discount_percentage(final_mapped_data, logger)
+
         # extracted_data = self.process_trans_type(logger, final_mapped_data)
         final_mapped_data['Payment_Amount'].replace('None', 0, inplace=True)
         final_mapped_data['Payment_Amount'] = final_mapped_data['Payment_Amount'].astype('float')
+
         final_mapped_data['Price'].replace('None', 0, inplace=True)
         final_mapped_data['Price'] = final_mapped_data['Price'].astype('float')
 
         final_mapped_data['list_price_multiplier'].replace('None', 1, inplace=True)
         final_mapped_data['list_price_multiplier'] = pd.to_numeric(final_mapped_data['list_price_multiplier'],
                                                                    errors='coerce')
+
         final_mapped_data['adjusted_publisher_price_ori'].replace('None', 0, inplace=True)
         final_mapped_data['adjusted_publisher_price_ori'] = final_mapped_data['adjusted_publisher_price_ori'].astype(
             'float')
@@ -90,12 +93,17 @@ class MDAStagingProcessDataProquest:
         final_mapped_data['publisher_price_ori'] = final_mapped_data['publisher_price_ori'].astype('float')
 
         final_mapped_data['units'] = final_mapped_data['units'].astype('float').astype('int')
-        final_mapped_data['sale_type'] = final_mapped_data.apply(
-            lambda row: 'REFUNDS' if (row['units'] < 0 or row['Payment_Amount'] < 0) else row['sale_type'], axis=1)
-        final_mapped_data['country'] = final_mapped_data.apply(
-            lambda row: ('US') if row['country'] == 'NA' else row['country'], axis=1)
-        final_mapped_data['Price_currency'] = final_mapped_data.apply(
-            lambda row: ('USD') if row['Price_currency'] == 'NA' else row['Price_currency'], axis=1)
+
+        final_mapped_data.loc[(
+            (final_mapped_data.units < 0) | (final_mapped_data.Payment_Amount < 0)
+            ), 'sale_type'] = 'REFUNDS'
+
+        final_mapped_data.loc[(
+            (final_mapped_data.country == 'NA') | (final_mapped_data.country == 'USA')
+            ), 'country'] = 'US'
+
+        final_mapped_data.loc[(final_mapped_data.Price_currency == 'NA'), 'Price_currency'] = 'USD'
+
         final_mapped_data['Payment_Amount_Currency'] = final_mapped_data['Price_currency']
         final_mapped_data['reporting_date'] = pd.to_datetime(final_mapped_data['reporting_date'],
                                                              format='%d-%m-%Y', infer_datetime_format=True)
