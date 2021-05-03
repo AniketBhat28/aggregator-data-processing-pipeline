@@ -47,8 +47,8 @@ class MDAStagingProcessDataChegg(GenerateStagingAttributes):
 
 		final_mapped_data['trans_type'] = final_mapped_data.apply(
 			lambda row : (
-				'rental' if(row['trans_type_ori'] in ('rental', 'extension')) else (
-					'sales' if row['trans_type_ori'] == 'sell' else 'subscription'
+				'Rental' if(row['trans_type_ori'] in ('rental', 'extension')) else (
+					'Sales' if row['trans_type_ori'] == 'sell' else 'Subscription'
 					)
 				),
 			axis=1)
@@ -105,7 +105,7 @@ class MDAStagingProcessDataChegg(GenerateStagingAttributes):
 		final_mapped_data['post_code'] = final_mapped_data.post_code.str.split('.', expand=True)
 		
 		final_mapped_data = self.process_trans_type(logger, final_mapped_data)
-		final_mapped_data['sale_type_ori'] = final_mapped_data.sale_type_ori.str.lower()
+		final_mapped_data.loc[(final_mapped_data['sale_type_ori'] == 'na'), 'sale_type_ori'] = 'NA'
 
 		final_mapped_data.loc[(
 			(final_mapped_data['new_rental_duration'] == 'NA') | (final_mapped_data['new_rental_duration'] == 'nan')

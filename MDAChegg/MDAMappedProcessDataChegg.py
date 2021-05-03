@@ -44,8 +44,8 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		"""
 		extracted_data['trans_type'] = extracted_data.apply(
 			lambda row : (
-				'rental' if(row['trans_type_ori'] in ('rental', 'extension')) else (
-					'sales' if row['trans_type_ori'] == 'sell' else 'NA'
+				'Rental' if(row['trans_type_ori'] in ('rental', 'extension')) else (
+					'Sales' if row['trans_type_ori'] == 'sell' else 'NA'
 					)
 				),
 			axis=1)
@@ -60,7 +60,7 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		:return: extracted dataframe
 		"""
 		def process_for_rental(row):
-			if row['trans_type'] == 'rental':
+			if row['trans_type'] == 'Rental':
 				return 'Checkout' if (row['trans_type_ori'] == 'rental' and row['sale_type_ori'] == 'na') else (
 						'Extension' if (row['trans_type_ori'] == 'extension' and row['sale_type_ori'] == 'na') else (
 							'Cancellation' if (
@@ -69,7 +69,7 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 								) else 'NA'
 						)
 					)
-			elif row['trans_type'] == 'sales':
+			elif row['trans_type'] == 'Sales':
 				return 'Purchase' if row['sale_type_ori'] == 'na' else (
 							'Return' if row['sale_type_ori']== 'cancellation' else 'NA'
 						)
@@ -95,13 +95,13 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		extracted_data['sale_type_ori'] = extracted_data.sale_type_ori.str.lower()
 
 		if 'rental' in filename.lower() or 'subs' in filename.lower():
-			extracted_data['trans_type'] = 'subscription'
+			extracted_data['trans_type'] = 'Subscription'
 			extracted_data['trans_type_ori'] = 'subscription'
 
 			extracted_data['sale_type'] = extracted_data.apply(
 				lambda row: (
-					'Subscription' if not row['sale_type_ori'] else  (
-						'Cancellation' if row['sale_type_ori'] == 'cancellation' else row['sale_type_ori']
+					'Subscription' if row['sale_type_ori'] == 'na' else  (
+						'Cancellation' if row['sale_type_ori'] == 'cancellation' else 'NA'
 					)
 				),
 			axis=1)
