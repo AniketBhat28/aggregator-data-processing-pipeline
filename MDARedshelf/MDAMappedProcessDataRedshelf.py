@@ -93,8 +93,6 @@ class MDAMappedProcessDataRedshelf :
 
         # new attributes addition
         extracted_data['source'] = "REDSHELF"
-        # extracted_data['source_id'] = filename.split('.')[0]
-
 
         return extracted_data
 
@@ -150,15 +148,12 @@ class MDAMappedProcessDataRedshelf :
                                                                                  obj_pre_process, agg_name,
                                                                                  agg_reference)
 
-        # future date issue resolution
-       # final_staging_data = obj_pre_process.process_default_transaction_date(logger, app_config, final_staging_data)
 
         # Grouping and storing data
 
         final_mapped_data = obj_gen_attrs.group_data(logger, final_staging_data,
                                                       default_config[0]['group_staging_data'])
         final_mapped_data = final_mapped_data.applymap(str)
-
         obj_s3_connect.store_data_as_parquet(logger, app_config, final_mapped_data)
         logger.info('\n+-+-+-+-+-+-+Finished Processing Redshelf files\n')
 

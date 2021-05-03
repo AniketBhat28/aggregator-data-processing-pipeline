@@ -48,7 +48,7 @@ class MDAMappedProcessDataFollett :
 
 
 
-        print('dictionary',agg_rules['filters']['country_iso_values'])
+        #print('dictionary',agg_rules['filters']['country_iso_values'])
 
         extracted_data['aggregator_name'] = 'FOLLETT'
         extracted_data['product_type'] = agg_rules['product_type']
@@ -63,20 +63,22 @@ class MDAMappedProcessDataFollett :
 
         # new attributes addition
         extracted_data['source'] = "FOLLETT"
-        extracted_data['source_id'] = filename.split('.')[0]
-        extracted_data['sub_domain'] = 'NA'
-        extracted_data['external_purchase_order'] =  extracted_data['external_purchase_order'].replace('NA', 0)
-        extracted_data['external_transaction_number'] = extracted_data['external_transaction_number'].replace('NA', 0)
+        extracted_data['e_product_id'] = extracted_data['e_product_id'].replace(u'\xa0','',regex=True)
+        extracted_data['e_backup_product_id'] = extracted_data['e_backup_product_id'].replace(u'\xa0', '',regex=True)
 
-        extracted_data['external_purchase_order'] =  extracted_data['external_purchase_order'].astype("float")
-        extracted_data['external_purchase_order'] = extracted_data['external_purchase_order'].apply(self.float_to_string)
-        # extracted_data['external_purchase_order'] = extracted_data['external_purchase_order'].replace({np.nan: 'NA'})
-        extracted_data['external_purchase_order'] = extracted_data.external_purchase_order.astype(str)
-        extracted_data['external_transaction_number'] = extracted_data['external_transaction_number'].astype("float")
-        # extracted_data['external_transaction_number'] = extracted_data['external_transaction_number'].replace({np.nan: 0})
-        extracted_data['external_transaction_number'] = extracted_data["external_transaction_number"].apply(self.float_to_string)
-        extracted_data['external_transaction_number'] = extracted_data.external_transaction_number.astype(str)\
+        # extracted_data['external_purchase_order'] =  extracted_data['external_purchase_order'].replace('NA', 0)
+        # extracted_data['external_transaction_number'] = extracted_data['external_transaction_number'].replace('NA', 0)
+        #
+        # extracted_data['external_purchase_order'] =  extracted_data['external_purchase_order'].astype("float")
+        # extracted_data['external_purchase_order'] = extracted_data['external_purchase_order'].apply(self.float_to_string)
+        # # extracted_data['external_purchase_order'] = extracted_data['external_purchase_order'].replace({np.nan: 'NA'})
+        # extracted_data['external_purchase_order'] = extracted_data.external_purchase_order.astype(str)
+        # extracted_data['external_transaction_number'] = extracted_data['external_transaction_number'].astype("float")
+        # # extracted_data['external_transaction_number'] = extracted_data['external_transaction_number'].replace({np.nan: 0})
+        # extracted_data['external_transaction_number'] = extracted_data["external_transaction_number"].apply(self.float_to_string)
+        # extracted_data['external_transaction_number'] = extracted_data.external_transaction_number.astype(str)
             # .str.split('.', expand=True)
+        extracted_data = extracted_data.replace(np.nan, 'NA')
         return extracted_data
 
     # Function Description :	This function processes data for all Follett files

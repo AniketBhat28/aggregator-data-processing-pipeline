@@ -20,7 +20,8 @@
 
 								],
 
-    "missing_columns":["adjustment_made", "internal_invoice_number","external_purchase_order","internal_order_number","external_transaction_number","billing_customer_id"],
+    "missing_columns":["adjustment_made", "internal_invoice_number","external_purchase_order","internal_order_number",
+      "external_transaction_number","billing_customer_id"],
     "relevant_attributes":	[
                                 {"input_column_name": "invoice_date", "staging_column_name":"reporting_date"},
                                 {"input_column_name": "vendor_code", "staging_column_name":"vendor_code"},
@@ -126,21 +127,21 @@
                     "country_iso_values" : {"Brazil": "BR", "France": "FR", "Canada": "CA", "Italy": "IT", "India": "IN", "Japan": "JP", "Mexico": "MX", "Spain": "ES"}
 					},
 		"date_formats":	[
-							{"country":"AU","format":["%Y-%m-%d","%d.%m.%Y","%d/%m/%Y"]},
-                            {"country":"BR","format":["%d/%m/%Y","%d.%m.%Y"]},
-                            {"country":"CA","format":["%Y-%m-%d", "%d/%m/%Y","%d.%m.%Y"]},
-                            {"country":"DE","format":["%d/%m/%Y","%d.%m.%Y"]},
-                            {"country":"FR","format":["%d/%m/%Y","%d.%m.%Y"]},
-                            {"country":"FRANCE","format":["%d/%m/%Y","%d.%m.%Y"]},
-                            {"country":"GB","format":["%d/%m/%Y","%d.%m.%Y"]},
-                            {"country":"IN","format":["%d/%m/%Y","%d.%m.%Y","%d/%m.%Y"]},
-                            {"country":"IT","format":["%d/%m/%Y","%d.%m.%Y"]},
-                            {"country":"JP","format":["%Y/%m/%d","%d.%m.%Y","%d/%m/%Y"]},
-                            {"country":"MX","format":["%d/%m/%Y","%d.%m.%Y"]},
-                            {"country":"NL","format":["%d/%m/%Y","%d.%m.%Y"]},
-                            {"country":"ES","format":["%d/%m/%Y","%d.%m.%Y"]},
-                            {"country":"US","format":["%m/%d/%Y","%d.%m.%Y","%d/%m/%Y"]},
-                            {"country":"UK","format":["%m/%d/%Y","%d.%m.%Y","%d/%m/%Y"]}
+							{"country":"AU","format":["%Y-%m-%d","%d.%m.%Y","%d/%m/%Y","%d-%m-%Y"]},
+                            {"country":"BR","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                            {"country":"CA","format":["%Y-%m-%d", "%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                            {"country":"DE","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                            {"country":"FR","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                            {"country":"FRANCE","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                            {"country":"GB","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                            {"country":"IN","format":["%d/%m/%Y","%d.%m.%Y","%d/%m.%Y","%d-%m-%Y"]},
+                            {"country":"IT","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                            {"country":"JP","format":["%Y/%m/%d","%d.%m.%Y","%d/%m/%Y","%d-%m-%Y"]},
+                            {"country":"MX","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                            {"country":"NL","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                            {"country":"ES","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                            {"country":"US","format":["%m/%d/%Y","%d.%m.%Y","%d/%m/%Y","%d%m%Y","%d-%m-%Y"]},
+                            {"country":"UK","format":["%m/%d/%Y","%d.%m.%Y","%d/%m/%Y","%d-%m-%Y"]}
 
 						],
 		"pattern_extractions":	[
@@ -169,7 +170,9 @@
                                       {"net units":"Net Units"}
 
                                   ],
-    "attribute_names":	["Invoice Date", "ASIN", "Physical ISBN-10","Physical ISBN-13","Digital ISBN","Title","Author","Imprint","Format","Units Purchased","Units Refunded","Net Units","Net Units MTD","Adjustments Made","List Price","List Price Currency","Publisher Price","Publisher Price Currency","Discount Percentage","Payment Amount","Payment Amount Currency","Program Type"],
+    "attribute_names":	["Invoice Date", "ASIN", "Physical ISBN-10","Physical ISBN-13","Digital ISBN","Title","Author","Imprint","Format","Units Purchased","Units Refunded","Net Units",
+      "Net Units MTD","Adjustments Made","List Price","List Price Currency","Publisher Price","Publisher Price Currency",
+      "Discount Percentage","Payment Amount","Payment Amount Currency","Program Type"],
     "trail_attribute_names":["Invoice Date", "Invoice Number", "Marketplace Currency","Marketplace Amount","Foreign Exchange Rate","Payment Currency Code","Converted Amount"],
     "missing_columns":["Adjustments Made","internal_invoice_number","external_purchase_order","internal_order_number","external_transaction_number","billing_customer_id"],
     "relevant_attributes":	[
@@ -257,21 +260,21 @@
                     "country_iso_values" : {"Brazil": "BR", "France": "FR", "Canada": "CA", "Italy": "IT", "India": "IN", "Japan": "JP", "Mexico": "MX", "Spain": "ES", "Germany": "DE"}
                 },
     "date_formats":	[
-                        {"country":"AU","format":["%Y-%m-%d","%d.%m.%Y","%d/%m/%Y"]},
-                        {"country":"BR","format":["%d/%m/%Y","%d.%m.%Y"]},
-                        {"country":"CA","format":["%Y-%m-%d", "%d/%m/%Y","%d.%m.%Y"]},
-                        {"country":"DE","format":["%d/%m/%Y","%d.%m.%Y"]},
-                        {"country":"FR","format":["%d/%m/%Y","%d.%m.%Y"]},
-                        {"country":"FRANCE","format":["%d/%m/%Y","%d.%m.%Y"]},
-                        {"country":"GB","format":["%d/%m/%Y","%d.%m.%Y"]},
-                        {"country":"IN","format":["%d/%m/%Y","%d.%m.%Y","%d/%m.%Y"]},
-                        {"country":"IT","format":["%d/%m/%Y","%d.%m.%Y"]},
-                        {"country":"JP","format":["%Y/%m/%d","%d.%m.%Y","%d/%m/%Y"]},
-                        {"country":"MX","format":["%d/%m/%Y","%d.%m.%Y"]},
-                        {"country":"NL","format":["%d/%m/%Y","%d.%m.%Y"]},
-                        {"country":"ES","format":["%d/%m/%Y","%d.%m.%Y"]},
-                        {"country":"US","format":["%m/%d/%Y","%d.%m.%Y","%d/%m/%Y"]},
-                        {"country":"UK","format":["%m/%d/%Y","%d.%m.%Y","%d/%m/%Y"]}
+                        {"country":"AU","format":["%Y-%m-%d","%d.%m.%Y","%d/%m/%Y","%d-%m-%Y"]},
+                        {"country":"BR","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                        {"country":"CA","format":["%Y-%m-%d", "%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                        {"country":"DE","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                        {"country":"FR","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                        {"country":"FRANCE","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                        {"country":"GB","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                        {"country":"IN","format":["%d/%m/%Y","%d.%m.%Y","%d/%m.%Y","%d-%m-%Y"]},
+                        {"country":"IT","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                        {"country":"JP","format":["%Y/%m/%d","%d.%m.%Y","%d/%m/%Y","%d-%m-%Y"]},
+                        {"country":"MX","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                        {"country":"NL","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                        {"country":"ES","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
+                        {"country":"US","format":["%m/%d/%Y","%d.%m.%Y","%d/%m/%Y","%m%d%Y","%d-%m-%Y"]},
+                        {"country":"UK","format":["%m/%d/%Y","%d.%m.%Y","%d/%m/%Y","%d-%m-%Y"]}
 
                     ],
     "pattern_extractions":	[

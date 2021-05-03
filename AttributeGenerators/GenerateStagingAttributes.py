@@ -142,13 +142,13 @@ class GenerateStagingAttributes:
 
             logger.info("Generating Staging Output")
             extracted_data = agg_reference.generate_staging_output(logger, filename, agg_rules, default_config,
-                                                                   extracted_data, data=data, **kwargs)
+                                                                   extracted_data, data=data)
             logger.info("Staging output generated for given data")
-            input_file_extn = filename.split('.')[-1]
-            if input_file_extn.lower() in ['xlsx', 'xls']:
-                extracted_data['source_id'] = filename.split('.')[0] + '/' + input_list[0]['input_sheet_name']
-            else:
-                extracted_data['source_id'] = filename.split('.')[0]
+            sheet_name = input_list[0]['input_sheet_name']
+            filename = filename.split('/')[-1]
+            source_id = filename.split('.')[0]
+            extracted_data['source_id'] = "{}/{}".format(source_id, sheet_name) if sheet_name else source_id
+
 
             # Append staging data of current file into final staging dataframe
             final_staging_data = pd.concat([final_staging_data, extracted_data], ignore_index=True, sort=True)
@@ -173,7 +173,7 @@ class GenerateStagingAttributes:
                 data = data.dropna(how='all')
                 data.columns = data.columns.str.strip()
 
-                if agg_name in ['REDSHELF', 'OVERDRIVE', 'FOLLETT', 'CHEGG', 'PROQUEST', 'INGRAM']:
+                if agg_name in ['REDSHELF', 'OVERDRIVE', 'FOLLETT', 'CHEGG', 'PROQUEST', 'INGRAM','BARNES']:
                     data = self.replace_column_names(logger, agg_rules, data)
 
                 mandatory_columns = agg_rules['filters']['mandatory_columns']

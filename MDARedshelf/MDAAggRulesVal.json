@@ -146,7 +146,7 @@
 												},
 												{
 													"column_name": "course_start_date",
-													"dtype": "str",
+													"dtype": "date",
 													"missing_data": {
 																		"process_type": "process",
 																		"value": "current_date"
@@ -162,7 +162,7 @@
 												},
 												{
 													"column_name": "course_end_date",
-													"dtype": "str",
+													"dtype": "date",
 													"missing_data": {
 																		"process_type": "process",
 																		"value": "current_date"

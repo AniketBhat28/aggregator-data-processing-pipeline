@@ -204,13 +204,13 @@ class MDAMappedProcessDataEbsco :
                 final_staging_data = obj_gen_attrs.process_staging_data(logger, each_file, agg_rules,
                                                                         default_config, extracted_data,
                                                                         final_staging_data,
-                                                                        agg_reference, obj_pre_process,data)
+                                                                        agg_reference, obj_pre_process,data,input_list)
 
-                input_file_extn = each_file.split('.')[-1]
-                if input_file_extn.lower() in ['xlsx', 'xls']:
-                    final_staging_data['source_id'] = each_file.split('.')[0]+'/'+input_list[0]['input_sheet_name']
-                else:
-                    final_staging_data['source_id'] = each_file.split('.')[0]
+                # input_file_extn = each_file.split('.')[-1]
+                # if input_file_extn.lower() in ['xlsx', 'xls']:
+                #     final_staging_data['source_id'] = each_file.split('.')[0]+'/'+input_list[0]['input_sheet_name']
+                # else:
+                #     final_staging_data['source_id'] = each_file.split('.')[0]
         except KeyError as err :
             logger.error(f"KeyError error while processing the file {each_file}. The error message is :  ", err)
 
