@@ -41,8 +41,7 @@ class MDAStagingProcessDataAmazon:
     #							extracted_data - pr-processed_data
     # Return Values : 			extracted_data - extracted staging data
     def generate_edw_staging_data(self, logger, agg_rules, default_config, app_config, extracted_data):
-
-
+        logger.info('***********generate staging data started*******************')
 
         extracted_data = extracted_data.drop(extracted_data[(extracted_data["e_product_id"] == 'NA') &
                     (extracted_data["p_backup_product_id"] == 'NA') &
@@ -53,85 +52,65 @@ class MDAStagingProcessDataAmazon:
         extracted_data['p_backup_product_id'] = extracted_data.p_backup_product_id.str.split('.', expand=True)
         extracted_data['e_product_id'] = extracted_data.e_product_id.str.split('.', expand=True)
         extracted_data['p_product_id'] = extracted_data.p_product_id.str.split('.', expand=True)
-        extracted_data.loc[(extracted_data['old_discount_percentage'] == 'NA'), 'old_discount_percentage'] = '0.0'
-        extracted_data.loc[(extracted_data['current_discount_percentage'] == 'NA'), 'current_discount_percentage'] = '0.0'
+
+        extracted_data['country'] = extracted_data.country.str.upper()
+
         extracted_data['old_discount_percentage'].fillna(0.0, inplace=True)
-        extracted_data['current_discount_percentage'].fillna(0.0, inplace=True)
+        extracted_data.loc[(extracted_data['old_discount_percentage'] == 'NA'), 'old_discount_percentage'] = '0.0'
+        extracted_data['old_discount_percentage'] = round(extracted_data['old_discount_percentage'].astype('float'), 2)
 
         extracted_data['new_rental_duration'].fillna(0, inplace=True)
-        extracted_data['new_rental_duration'] = extracted_data.apply(
-            lambda row: 0 if row['new_rental_duration'] == 'NA' else row['new_rental_duration'], axis=1)
+        extracted_data.loc[(extracted_data['new_rental_duration'] == 'NA'), 'new_rental_duration'] = '0'
+        extracted_data['new_rental_duration'] = extracted_data['new_rental_duration'].astype('float').astype('int')
+        
         extracted_data['old_rental_duration'].fillna(0, inplace=True)
-        extracted_data['old_rental_duration'] = extracted_data.apply(
-            lambda row: 0 if row['old_rental_duration'] == 'NA' else row['old_rental_duration'], axis=1)
+        extracted_data.loc[(extracted_data['old_rental_duration'] == 'NA'), 'old_rental_duration'] = '0'
+        extracted_data['old_rental_duration'] = extracted_data['old_rental_duration'].astype('float').astype('int')
+
         extracted_data['rental_duration'].fillna(0, inplace=True)
-        extracted_data['rental_duration'] = extracted_data.apply(
-            lambda row: 0 if row['rental_duration'] == 'NA' else row['rental_duration'], axis=1)
+        extracted_data.loc[(extracted_data['rental_duration'] == 'NA'), 'rental_duration'] = '0'
+        extracted_data['rental_duration'] = extracted_data['rental_duration'].astype('float').astype('int')
+
         extracted_data['units'].fillna(1, inplace=True)
-        extracted_data['units'] = extracted_data.apply(
-            lambda row: 0 if row['units'] == 'NA' else row['units'], axis=1)
-        extracted_data['sales_net_unit'] = extracted_data.apply(
-            lambda row: 0 if row['sales_net_unit'] == 'NA' else row['sales_net_unit'], axis=1)
+        extracted_data.loc[(extracted_data['units'] == 'NA'), 'units'] = '1'
+        extracted_data['units'] = extracted_data['units'].astype('float').astype('int')
+        extracted_data.loc[(extracted_data['units'] == 0), 'units'] = 1
 
         extracted_data['sales_net_unit'].fillna(0, inplace=True)
-        extracted_data['returns_unit'].fillna(0, inplace=True)
-        extracted_data['returns_unit'] = extracted_data.apply(
-            lambda row: 0 if row['returns_unit'] == 'NA' else row['returns_unit'], axis=1)
-
-        extracted_data['new_rental_duration'] = extracted_data['new_rental_duration'].astype('float').astype('int')
-        extracted_data['old_rental_duration'] = extracted_data['old_rental_duration'].astype('float').astype('int')
-        extracted_data['rental_duration'] = extracted_data['rental_duration'].astype('float').astype('int')
-        extracted_data['units'] = extracted_data['units'].astype('float').astype('int')
+        extracted_data.loc[(extracted_data['sales_net_unit'] == 'NA'), 'sales_net_unit'] = '0'
         extracted_data['sales_net_unit'] = extracted_data['sales_net_unit'].astype('float').astype('int')
+        
+        extracted_data['returns_unit'].fillna(0, inplace=True)
+        extracted_data.loc[(extracted_data['returns_unit'] == 'NA'), 'returns_unit'] = '0'
         extracted_data['returns_unit'] = extracted_data['returns_unit'].astype('float').astype('int')
 
-        extracted_data['price'] = extracted_data['price'].astype('str')
-        extracted_data['price'] = (extracted_data['price']).str.rstrip()
+        extracted_data['price'] = extracted_data['price'].astype('str').str.rstrip()
         extracted_data['price'] = pd.to_numeric(extracted_data['price'], errors='coerce')
-        extracted_data['price'] = round(extracted_data['price'].abs(),2)
+        extracted_data['price'] = round(extracted_data['price'].abs(), 2)
 
-        extracted_data['ex_rate'] = extracted_data.apply(
-            lambda row : 1 if row['ex_rate'] == 'NA' else row['ex_rate'], axis=1)
+        extracted_data.loc[(extracted_data['ex_rate'] == 'NA'), 'ex_rate'] = '1'
         extracted_data['ex_rate'] = extracted_data['ex_rate'].astype('float')
 
-        extracted_data['publisher_price_ori'] = extracted_data.apply(
-            lambda row : 0.0 if row['publisher_price_ori'] == 'NA' else row['publisher_price_ori'], axis=1)
-        extracted_data['publisher_price_ori'] = round(extracted_data['publisher_price_ori'].astype('float'),2)
+        extracted_data.loc[(extracted_data['publisher_price_ori'] == 'NA'), 'publisher_price_ori'] = '0.0'
+        extracted_data['publisher_price_ori'] = round(extracted_data['publisher_price_ori'].astype('float'), 2)
 
-
-        extracted_data['payment_amount_currency'] = extracted_data.apply(
-            lambda row: 'USD' if row['payment_amount_currency'] == 'NA' else row['payment_amount_currency'], axis=1)
+        extracted_data.loc[(extracted_data['payment_amount_currency'] == 'NA'), 'payment_amount_currency'] = 'USD'
 
         extracted_data['payment_amount'] = pd.to_numeric(extracted_data['payment_amount'], errors='coerce')
-        #extracted_data['units'] = extracted_data['units'].fillna(1)
-        extracted_data['units'] = extracted_data.apply(
-            lambda row : 1 if row['units'] == "NA" else row['units'], axis=1)
+        
+        extracted_data.loc[(extracted_data['sale_type_ori'] == 'NA'), 'sale_type'] = 'Purchase'
 
-        extracted_data['units'] = extracted_data.apply(
-            lambda row: 1 if row['units'] == 0 else row['units'], axis=1)
-
-        extracted_data['sale_type'] = extracted_data.apply(
-            lambda row: 'Purchase' if row['sale_type_ori'] == 'NA' else row['sale_type_ori'], axis=1)
-
-        extracted_data['current_discount_percentage'] = extracted_data.apply(
-            lambda row: 0 if row['current_discount_percentage'] == 'NA' and
-                             row['amount_column'] == 0 or
-                             row['price'] == 0 else row['current_discount_percentage'], axis=1)
-
-        extracted_data['current_discount_percentage'] = extracted_data['current_discount_percentage'].replace('NA', 0)
-        extracted_data['current_discount_percentage'] = extracted_data.apply(
-            lambda row: 0.0 if row['current_discount_percentage'] == 'NA' else row['current_discount_percentage'],
-            axis=1)
+        extracted_data['current_discount_percentage'].fillna(0.0, inplace=True)
+        extracted_data['current_discount_percentage'] = extracted_data['current_discount_percentage'].replace('NA', '0')
+        extracted_data.loc[(extracted_data['current_discount_percentage'] == 'NA'), 'current_discount_percentage'] = '0.0'
         extracted_data['current_discount_percentage'] = pd.to_numeric(extracted_data['current_discount_percentage'],
                                                                       errors='coerce')
         extracted_data['current_discount_percentage'] = extracted_data.apply(
             lambda row: row['current_discount_percentage'] * 100 if (row['current_discount_percentage'] < 1) else row[
                 'current_discount_percentage'],
             axis=1)
-
-
         extracted_data['current_discount_percentage'] = round(extracted_data['current_discount_percentage'], 2)
-        extracted_data['old_discount_percentage'] = round(extracted_data['old_discount_percentage'].astype('float'),2)
+        
         year = app_config['output_params']['year']
         default_date = '01-01-' + str(year)
         extracted_data['reporting_date'] = extracted_data['reporting_date'].replace('NA', default_date)
@@ -140,7 +119,7 @@ class MDAStagingProcessDataAmazon:
 
         extracted_data['reporting_date'] = extracted_data['reporting_date'].dt.date
 
-        # print(extracted_data.dtypes)
+        logger.info('****************generate staging data done**************')
         return extracted_data
 
     # Function Description :	This function processes data for all Follett files
