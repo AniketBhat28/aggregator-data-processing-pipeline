@@ -75,4 +75,20 @@ class ProcessCore:
 				None)
 
 		return agg_rules
+
+	
+	def validate_scientific_notation(self, final_mapped_data, staging_column, max_len=13):
+		"""
+			Method to validate a field contains valid scientific notation.
+			:param final_mapped_data: Final data frame
+			:param staging_column: Input column
+			:param max_len: Allowed length
+			:return: If invalid scientific notation found return False otherwise it will return True
+		"""
+		regex = "-?\d\.\d+[Ee][+\-]\d\d?"
+	
+		if final_mapped_data[staging_column].str.contains(regex):
+			return True
+
+		return False
 		

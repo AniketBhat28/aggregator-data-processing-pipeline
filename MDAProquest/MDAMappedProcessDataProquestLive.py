@@ -57,6 +57,7 @@ class MDAMappedProcessDataProquestLive:
 
     def process_dates(self, logger, extracted_data, filename):
         logger.info("Processing reporting date")
+
         if 'MRD' in filename or ('QRD' in filename and ('2020' in filename or '2019' in filename)):
             extracted_data["reporting_date"] = extracted_data['repo_date'].astype(str).str[:10]
         else:
@@ -79,8 +80,11 @@ class MDAMappedProcessDataProquestLive:
                 reporting_dt = year_no + '-10-01'
             else:
                 reporting_dt = '2017-10-01'
-            logger.info("reporting date : " + reporting_dt)
             extracted_data["reporting_date"] = reporting_dt
+
+            logger.info("reporting date : " + reporting_dt)
+        
+        logger.info("reporting date has been processed")
 
     # Function Description :	This function generates staging data for PqCentral files
     # Input Parameters : 		logger - For the logging output file.
@@ -90,6 +94,7 @@ class MDAMappedProcessDataProquestLive:
     #							extracted_data - pr-processed_data
     # Return Values : 			extracted_data - extracted staging data
     def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data):
+        logger.info('***********generate staging data started*******************')
 
         extracted_data['aggregator_name'] = 'PROQUEST'
         extracted_data['product_type'] = 'Electronic'
@@ -101,20 +106,27 @@ class MDAMappedProcessDataProquestLive:
         if agg_rules['name'] == 'PROQUEST-EBRARY-PERPETUAL':
             extracted_data['trans_type'] = 'Sales'
             extracted_data['sale_type'] = 'Perpetual'
+
         if agg_rules['name'] == 'PROQUEST-EBRARY-CORPORATE':
             extracted_data['trans_type'] = 'Subscription'
             extracted_data['sale_type'] = 'Purchase'
+
         if agg_rules['name'] == 'PROQUEST-EBRARY-SUB':
             extracted_data['External_Product_ID_type'] = 'Book ID'
             extracted_data['trans_type'] = 'Subscription'
             self.process_sale_type(logger, extracted_data)
+
         extracted_data['Payment_Amount_Currency'] = extracted_data['Price_currency']
         self.process_dates(logger, extracted_data, filename)
+
         if agg_rules['name'] == 'PROQUEST-EBL':
             extracted_data['price_type'] = 'Adjusted Retail Price'
             self.process_trans_type(logger, extracted_data)
+
         extracted_data['units'] = pd.to_numeric(extracted_data['units'], errors='coerce')
         extracted_data['units'] = extracted_data['units'].astype('float').astype('int')
+
+        logger.info('****************generate staging data done**************')
         return extracted_data
 
     # Function Description :	This function processes data for all PqCentral files

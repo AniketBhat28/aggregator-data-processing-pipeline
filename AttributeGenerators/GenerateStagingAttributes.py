@@ -128,7 +128,7 @@ class GenerateStagingAttributes:
     #							final_staging_data - final_staging_data
     # Return Values : 			final_staging_data - final_staging_data
     def process_staging_data(self, logger, filename, agg_rules, default_config, extracted_data, final_staging_data,
-                             agg_reference, obj_pre_process, data,input_list):
+                             agg_reference, obj_pre_process, data, input_list):
         if extracted_data.dropna(how='all').empty:
             logger.info("This file is empty")
         else:
@@ -144,11 +144,11 @@ class GenerateStagingAttributes:
             extracted_data = agg_reference.generate_staging_output(logger, filename, agg_rules, default_config,
                                                                    extracted_data, data=data)
             logger.info("Staging output generated for given data")
+
             sheet_name = input_list[0]['input_sheet_name']
             filename = filename.split('/')[-1]
             source_id = filename.split('.')[0]
             extracted_data['source_id'] = "{}/{}".format(source_id, sheet_name) if sheet_name else source_id
-
 
             # Append staging data of current file into final staging dataframe
             final_staging_data = pd.concat([final_staging_data, extracted_data], ignore_index=True, sort=True)
@@ -186,7 +186,7 @@ class GenerateStagingAttributes:
                 final_staging_data = self.process_staging_data(logger, each_file, agg_rules,
                                                                default_config,
                                                                extracted_data, final_staging_data,
-                                                               agg_reference, obj_pre_process,data,input_list)
+                                                               agg_reference, obj_pre_process, data, input_list)
 
 
         except KeyError as err:
