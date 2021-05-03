@@ -10,7 +10,6 @@
 		"data_row": 1,
 		"discard_last_rows":0,
 		"attribute_mappings":[],
-		"attribute_mappings":[],
 
 		"missing_columns":["internal_order_number","internal_invoice_number","external_purchase_order","external_invoice_number","external_transaction_number","billing_customer_id"],
 		"relevant_attributes":	[
@@ -89,6 +88,22 @@
 												},
 												{
 													"column_name": "product_format",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "trans_type_ori",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "sale_type_ori",
 													"dtype": "str",
 													"missing_data": {
 																		"process_type": "process",

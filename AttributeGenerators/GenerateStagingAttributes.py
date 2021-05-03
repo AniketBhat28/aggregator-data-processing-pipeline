@@ -173,7 +173,7 @@ class GenerateStagingAttributes:
                 data = data.dropna(how='all')
                 data.columns = data.columns.str.strip()
 
-                if agg_name in ['REDSHELF', 'OVERDRIVE', 'FOLLETT', 'CHEGG', 'PROQUEST', 'INGRAM']:
+                if agg_name in ['REDSHELF', 'OVERDRIVE', 'FOLLETT', 'CHEGG', 'PROQUEST', 'INGRAM','BARNES']:
                     data = self.replace_column_names(logger, agg_rules, data)
 
                 mandatory_columns = agg_rules['filters']['mandatory_columns']

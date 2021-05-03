@@ -70,7 +70,7 @@ class MDAMappedProcessDataGardners:
 
 		# new attributes addition
 		extracted_data['source'] = "GARDNERS"
-		extracted_data['source_id'] = filename.split('.')[0]
+		extracted_data = extracted_data.replace(np.nan, 'NA')
 
 		return extracted_data
 

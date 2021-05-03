@@ -7,7 +7,7 @@
 										"price","price_currency","price_type","publisher_price_ori","publisher_price_ori_currency","payment_amount",
 										"payment_amount_currency","ex_currencies","ex_rate","old_discount_percentage","current_discount_percentage",
 										"new_rental_duration","old_rental_duration","rental_duration","rental_duration_measure","units","sales_net_unit","returns_unit",
-										"adjustment_made","sale_type_ori","trans_type","sale_type",
+										"adjustment_made","sale_type_ori","trans_type","sale_type","country","source","source_id","sub_domain",
 										"internal_invoice_number","external_purchase_order","internal_order_number","external_transaction_number","billing_customer_id"
 										]
 

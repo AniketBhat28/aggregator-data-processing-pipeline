@@ -22,7 +22,9 @@
 
 
 								],
-		"missing_columns":["external_invoice_number", "internal_invoice_number", "internal_order_number", "billing_customer_id","Date","OrderNumber","TransactionNumber","State","City","Zip","StoreNumber","School","Digital ISBN10","VendorName","Description","Publisher","TransactionType","CurrencyType","Dscnt","Units"],
+		"missing_columns":["external_invoice_number", "internal_invoice_number", "internal_order_number", "billing_customer_id",
+			"Date","OrderNumber","TransactionNumber","State","City","Zip","StoreNumber","School","Digital ISBN10",
+			"VendorName","Description","Publisher","TransactionType","CurrencyType","Dscnt","Units"],
 		"relevant_attributes":	[
 									{"input_column_name": "OrderNumber", "staging_column_name":"external_purchase_order"},
 									{"input_column_name": "TransactionNumber", "staging_column_name":"external_transaction_number"},
@@ -118,6 +120,6 @@
 						"convert_percentage": "no",
 						"country_iso_values" : {"USD": "US", "CAD": "CA"}
 					},
-		"date_formats":	["%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y"]
+		"date_formats":	["%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y","%d-%m-%Y"]
 	}
 ]

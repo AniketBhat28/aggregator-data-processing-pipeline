@@ -79,16 +79,14 @@ class MDAMappedProcessDataBarnes :
             lambda row : ('Return') if (row['sale_type_ori'] == 'CRE') else ('Purchase'), axis=1)
 
         if extracted_data['account_name'].all() == 'NA':
-            extracted_data['country'] = 'USA'
+            extracted_data['country'] = 'US'
 
 
         if extracted_data['price_currency'].all() == 'NA':
             extracted_data['price_currency'] = 'USD'
 
         # new attributes addition
-        extracted_data['source'] = "BARNES EBook"
-        extracted_data['source_id'] = filename.split('.')[0]
-        extracted_data['sub_domain'] = 'NA'
+        extracted_data['source'] = "BARNES"
         extracted_data['price_type'] = 'retail'
 
         return extracted_data

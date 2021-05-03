@@ -51,6 +51,16 @@ class MDAStagingProcessDataFollett:
     # Return Values : 			extracted_data - extracted staging data
     def generate_edw_staging_data(self, logger, agg_rules, default_config, app_config, extracted_data):
 
+
+        extracted_data = extracted_data.drop(extracted_data[(extracted_data["e_product_id"]=='NA') & (extracted_data["e_backup_product_id"]=='NA')].index)
+        extracted_data = pd.DataFrame(extracted_data)
+
+        extracted_data = extracted_data.drop(extracted_data[(extracted_data['e_product_id'].str.contains("Total\w{0,}", case=False))].index)
+                                           # & (extracted_data["e_backup_product_id"] == 'NA')])
+
+        extracted_data = extracted_data.drop(extracted_data[(extracted_data['e_product_id'].str.contains("Vend\w{0,}", case=False))].index)
+                                            #& (extracted_data["e_backup_product_id"] == 'NA')])
+
         extracted_data['external_invoice_number'] = 'NA'
         extracted_data['internal_invoice_number'] = 'NA'
         extracted_data['internal_order_number'] = 'NA'
@@ -60,7 +70,7 @@ class MDAStagingProcessDataFollett:
 
         year = app_config['output_params']['year']
         default_date = '01-01-' + str(year)
-        print('default_date', default_date)
+
 
         currency_suffix = '[\$£,()-]'
         extracted_data['price'] = (extracted_data['price']).replace(currency_suffix, '', regex=True)
@@ -75,9 +85,7 @@ class MDAStagingProcessDataFollett:
         extracted_data['payment_amount'] = pd.to_numeric(extracted_data['payment_amount'], errors='coerce')
         extracted_data['price'] = pd.to_numeric(extracted_data['price'], errors='coerce')
 
-        current_date_format = agg_rules['date_formats']
-        extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'reporting_date',
-                                                       default_config)
+
 
         logger.info('Processing region of sale')
         extracted_data['country'] = extracted_data['payment_amount_currency'].map(
@@ -87,23 +95,18 @@ class MDAStagingProcessDataFollett:
         extracted_data['product_type'] = agg_rules['product_type']
         amount_column = agg_rules['filters']['amount_column']
 
-        extracted_data['units'] = extracted_data.apply(
-            lambda row: 1 if row['units'] == 'NA' else row['units'],
-            axis=1)
+        # extracted_data['units'] = extracted_data.apply(
+        #     lambda row: 1 if row['units'] == 'NA' else row['units'],axis=1)
+        #
+        # extracted_data['units'] = pd.to_numeric(extracted_data['units'],errors='coerce')
 
-        extracted_data['units'] = pd.to_numeric(extracted_data['units'],
-                                                errors='coerce')
-        # print('sale',extracted_data['sales_unit'])
-        extracted_data['units'] = extracted_data['units'].fillna(1)
+        #extracted_data['units'] = extracted_data['units'].fillna(1)
+        extracted_data['units'] = extracted_data['units'].replace('NA',1)
         extracted_data['units'] = extracted_data['units'].astype('float').astype('int')
 
-        # print('sale 22', extracted_data['sales_unit'])
         extracted_data['units'] = extracted_data.apply(
             lambda row: 1 if row['units'] == 0 else row['units'], axis=1)
 
-        # if extracted_data['sale_type'].all() == 'NA' :
-        #     extracted_data['sale_type'] = extracted_data.apply(
-        #         lambda row : ('REFUNDS') if (row['units'] < 0) else ('PURCHASE'), axis=1)
 
         extracted_data['sale_type'] = extracted_data.apply(
             lambda row: 'PURCHASE' if row['sale_type_ori'] == 'NA' else row['sale_type_ori'], axis=1)
@@ -126,22 +129,23 @@ class MDAStagingProcessDataFollett:
         extracted_data['price'] = extracted_data['price'].abs()
         extracted_data['current_discount_percentage'] = round(extracted_data['current_discount_percentage'], 2)
 
-        print('before', extracted_data['reporting_date'])
-        extracted_data['reporting_date'] = extracted_data['reporting_date'].replace(np.nan, default_date)
-        # extracted_data['reporting_date'] = extracted_data.apply(
-        #     lambda row : default_date if row['reporting_date'] == 'NA' else extracted_data['reporting_date'], axis=1)
+        # extracted_data.to_csv('df_before_date.csv')
+        extracted_data['reporting_date'] = extracted_data['reporting_date'].replace('NA', default_date)
 
-        print('after1', extracted_data['reporting_date'])
+        current_date_format = agg_rules['date_formats']
+
+        extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'reporting_date',
+                                                       default_config)
+
         extracted_data['reporting_date'] = pd.to_datetime(extracted_data['reporting_date'],
                                                           format='%d-%m-%Y', infer_datetime_format=True)
-        print('after2', extracted_data['reporting_date'])
-        # print('reporting date done')
+
         extracted_data['reporting_date'] = extracted_data['reporting_date'].dt.date
-        print('after3', extracted_data['reporting_date'])
+
         self.process_sale_type(logger, extracted_data)
-        extracted_data['external_purchase_order'] = extracted_data['external_purchase_order'].replace('0', 'NA')
-        extracted_data['external_transaction_number'] = extracted_data['external_transaction_number'].replace('0', 'NA')
-        # print(extracted_data.dtypes)
+        # extracted_data['external_purchase_order'] = extracted_data['external_purchase_order'].replace('0', 'NA')
+        # extracted_data['external_transaction_number'] = extracted_data['external_transaction_number'].replace('0', 'NA')
+        #
         return extracted_data
 
     # Function Description :	This function processes data for all Follett files
@@ -179,8 +183,8 @@ class MDAStagingProcessDataFollett:
         final_edw_data = obj_gen_attrs.group_data(logger, final_edw_data,
                                                   default_config[0]['group_staging_data'])
         # final_edw_data.dropna(subset=["e_product_id","e_backup_product_id","external_purchase_order","external_transaction_number"], inplace=True)
-        final_edw_data = final_edw_data[final_edw_data["e_product_id"].str.contains("NA") == False]
-        # final_edw_data.to_csv('staging_Follett_Feb_2018_1.csv')
+
+
         obj_s3_connect.wrangle_data_as_parquet(logger, app_config, final_edw_data)
 
         logger.info('\n+-+-+-+-+-+-+Finished Processing Follett files\n')

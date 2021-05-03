@@ -68,8 +68,7 @@ class MDAMappedProcessDataAmazon:
             extracted_data['trans_type'] = 'Sales'
         else:
             # as sale_type_ori is equal to rental_type
-            extracted_data['trans_type'] = \
-                extracted_data['sale_type_ori'].astype('str').apply(
+            extracted_data['trans_type'] = extracted_data['sale_type_ori'].astype('str').apply(
                     lambda row: ('Sales') if (row.lower() == 'purchase') else ('Rental'))
             extracted_data['sale_type'] = extracted_data['sale_type_ori']
 
@@ -112,12 +111,12 @@ class MDAMappedProcessDataAmazon:
             logger.info('Ignoring subscription file')
             extracted_data['External_Invoice_Number'] = 'NA'
             extracted_data['price_currency'] = 'NA'
+            extracted_data['price_type'] = 'NA'
             extracted_data['publisher_price_ori'] = 'NA'
             extracted_data['publisher_price_ori_currency'] = 'NA'
             extracted_data['EX_Currencies'] = 'NA'
             extracted_data['EX_Rate'] = 'NA'
-            extracted_data['rental_duration'] = \
-                extracted_data['rental_duration'].apply(lambda row: 0 if (row == 'Purchased') else row)
+            extracted_data['rental_duration'] = extracted_data['rental_duration'].apply(lambda row: 0 if (row == 'Purchased') else row)
             extracted_data['rental_duration'] = extracted_data['rental_duration'].astype(str)
             extracted_data['old_rental_duration'].fillna(0)
 
@@ -125,7 +124,7 @@ class MDAMappedProcessDataAmazon:
                 'old_rental_duration']
             extracted_data['new_rental_duration'] = extracted_data['new_rental_duration'].apply(
                 lambda x: 0 if (x < 0) else x)
-            # extracted_data[["rental_duration","old_rental_duration","new_rental_duration"]].to_csv('file1.csv', index=False)
+
             extracted_data['rental_duration_measure'] = 'day'
             extracted_data['old_discount_percentage'] = extracted_data['old_discount_percentage'] * 100
             extracted_data['current_discount_percentage'] = extracted_data['current_discount_percentage'] * 100
@@ -133,7 +132,7 @@ class MDAMappedProcessDataAmazon:
 
 
         else:
-            # extracted_data['EX_Currencies'] = extracted_data['Payment_Amount_Currency']
+            
             extracted_data['current_discount_percentage'] = data['Discount Percentage']
             extracted_data['sale_type_ori'] = 'NA'
             extracted_data['old_rental_duration'] = 0
@@ -147,15 +146,15 @@ class MDAMappedProcessDataAmazon:
 
         # new attributes addition
         if 'rental' in filename.lower():
-            extracted_data['source'] = "Amazon EBook Rental"
+            extracted_data['source'] = "Amazon Rental"
             extracted_data['sub_domain'] = 'AMAZON RENTAL'
         else:
-            extracted_data['source'] = "Amazon EBook"
+            extracted_data['source'] = "Amazon"
             extracted_data['sub_domain'] = 'NA'
-        extracted_data['source_id'] = filename.split('.')[0]
-        extracted_data['business_model'] = 'B2C'
+        #extracted_data['source_id'] = filename.split('.')[0]
+        #extracted_data['business_model'] = 'B2C'
 
-
+        extracted_data=extracted_data.replace(np.nan,'NA')
         return extracted_data
 
     # Function Description :	This function processes data for all Amazon files
@@ -221,13 +220,15 @@ class MDAMappedProcessDataAmazon:
                             final_staging_data = obj_gen_attrs.process_staging_data(logger, each_file, agg_rules,
                                                                                     default_config, extracted_data,
                                                                                     final_staging_data,
-                                                                                    agg_reference, obj_pre_process, c_data)
+                                                                                    agg_reference, obj_pre_process, c_data,input_list)
                 except KeyError as err:
                     logger.error(f"KeyError error while processing the file {each_file}. The error message is :  ", err)
         final_staging_data.columns = final_staging_data.columns.str.lower()
         final_grouped_data = obj_gen_attrs.group_data(logger, final_staging_data,
                                                       default_config[0]['group_staging_data'])
+
         final_grouped_data = final_grouped_data.astype(str)
+
         obj_s3_connect.wrangle_data_as_parquet(logger, app_config, final_grouped_data)
         logger.info('\n+-+-+-+-+-+-+Finished Processing Amazon files\n')
 

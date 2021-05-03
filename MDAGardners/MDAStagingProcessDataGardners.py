@@ -55,9 +55,12 @@ class MDAStagingProcessDataGardners :
     def generate_edw_staging_data(self, logger, agg_rules, final_mapped_data) :
 
         logger.info('***********generate staging data started*******************')
+        final_mapped_data = final_mapped_data.replace('nan', 'NA')
         final_mapped_data['aggregator_name'] = agg_rules['name']
         final_mapped_data['product_type'] = agg_rules['product_type']
 
+        final_mapped_data = final_mapped_data[final_mapped_data.e_product_id != 'NA']
+        final_mapped_data = final_mapped_data[final_mapped_data.reporting_date != 'NA']
         final_mapped_data = final_mapped_data[final_mapped_data.units != 'NA']
         final_mapped_data = pd.DataFrame(final_mapped_data)
         final_mapped_data = self.process_trans_type(logger,final_mapped_data)
