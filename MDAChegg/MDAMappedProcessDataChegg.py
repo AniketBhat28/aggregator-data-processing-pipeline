@@ -35,6 +35,7 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 
 	# Class variables
 	AGG_NAME = 'CHEGG'
+	LOGGER = None
 
 	def process_trans_type(self, extracted_data):
 		"""
@@ -42,14 +43,17 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		:param extracted_data: pr-processed_data
 		:return: extracted dataframe
 		"""
+		self.LOGGER.info("Processing transaction type")
+
 		extracted_data['trans_type'] = extracted_data.apply(
 			lambda row : (
-				'rental' if(row['trans_type_ori'] in ('rental', 'extension')) else (
-					'sales' if row['trans_type_ori'] == 'sell' else 'NA'
+				'Rental' if(row['trans_type_ori'] in ('rental', 'extension')) else (
+					'Sales' if row['trans_type_ori'] == 'sell' else 'NA'
 					)
 				),
 			axis=1)
 
+		self.LOGGER.info("Processed transaction type")
 		return extracted_data
 
 
@@ -59,8 +63,10 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		:param extracted_data: pr-processed_data
 		:return: extracted dataframe
 		"""
+		self.LOGGER.info("Processing sales type")
+
 		def process_for_rental(row):
-			if row['trans_type'] == 'rental':
+			if row['trans_type'] == 'Rental':
 				return 'Checkout' if (row['trans_type_ori'] == 'rental' and row['sale_type_ori'] == 'na') else (
 						'Extension' if (row['trans_type_ori'] == 'extension' and row['sale_type_ori'] == 'na') else (
 							'Cancellation' if (
@@ -69,7 +75,7 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 								) else 'NA'
 						)
 					)
-			elif row['trans_type'] == 'sales':
+			elif row['trans_type'] == 'Sales':
 				return 'Purchase' if row['sale_type_ori'] == 'na' else (
 							'Return' if row['sale_type_ori']== 'cancellation' else 'NA'
 						)
@@ -77,6 +83,8 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 				return 'NA'
 
 		extracted_data['sale_type'] = extracted_data.apply(lambda row: process_for_rental(row), axis=1)
+
+		self.LOGGER.info("Processed sales type")
 		return extracted_data
 
 
@@ -90,18 +98,20 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		:param extracted_data: pr-processed_data
 		:return: extracted dataframe
 		"""
+		logger.info('***********generate staging data started*******************')
+
 		extracted_data['aggregator_name'] = agg_rules['name']
 		extracted_data['product_type'] = agg_rules['product_type']		
 		extracted_data['sale_type_ori'] = extracted_data.sale_type_ori.str.lower()
 
 		if 'rental' in filename.lower() or 'subs' in filename.lower():
-			extracted_data['trans_type'] = 'subscription'
+			extracted_data['trans_type'] = 'Subscription'
 			extracted_data['trans_type_ori'] = 'subscription'
 
 			extracted_data['sale_type'] = extracted_data.apply(
 				lambda row: (
-					'Subscription' if not row['sale_type_ori'] else  (
-						'Cancellation' if row['sale_type_ori'] == 'cancellation' else row['sale_type_ori']
+					'Subscription' if row['sale_type_ori'] == 'na' else  (
+						'Cancellation' if row['sale_type_ori'] == 'cancellation' else 'NA'
 					)
 				),
 			axis=1)
@@ -133,9 +143,11 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'reporting_date', default_config)
 
 		# new attributes addition
-		extracted_data['source'] = "CHEGG EBook"
+		extracted_data['source'] = "CHEGG"
 		extracted_data['sub_domain'] = 'NA'
 		extracted_data['business_model'] = 'B2C'
+
+		logger.info('****************generate staging data done**************')
 		return extracted_data
 
 	
@@ -199,6 +211,7 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		"""
 		# For the final staging output
 		agg_name = self.AGG_NAME
+		self.LOGGER = logger
 		agg_reference = self
 		final_staging_data = pd.DataFrame()
 		input_list = list(app_config['input_params'])
