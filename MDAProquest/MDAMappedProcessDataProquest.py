@@ -126,6 +126,7 @@ class MDAMappedProcessDataProquest:
         extracted_data['units'] = pd.to_numeric(extracted_data['units'], errors='coerce')
         extracted_data['units'] = extracted_data['units'].astype('float').astype('int')
 
+        extracted_data['source'] = "PROQUEST"
         logger.info('****************generate staging data done**************')
         return extracted_data
 

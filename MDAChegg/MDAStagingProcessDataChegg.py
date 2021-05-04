@@ -36,14 +36,15 @@ class MDAStagingProcessDataChegg(GenerateStagingAttributes):
 
 	# Class variables
 	AGG_NAME = 'CHEGG'
+	LOGGER = None
 
-	def process_trans_type(self, logger, final_mapped_data):
+	def process_trans_type(self, final_mapped_data):
 		"""
 		To process the transaction type
 		:param extracted_data: pr-processed_data
 		:return: extracted dataframe
 		"""
-		logger.info("Processing transaction and sales types")
+		self.LOGGER.info("Processing transaction type")
 
 		final_mapped_data['trans_type'] = final_mapped_data.apply(
 			lambda row : (
@@ -53,7 +54,7 @@ class MDAStagingProcessDataChegg(GenerateStagingAttributes):
 				),
 			axis=1)
 		
-		logger.info("Transaction and sales types processed")
+		self.LOGGER.info("Transaction type is processed")
 		return final_mapped_data
 
 
@@ -104,7 +105,7 @@ class MDAStagingProcessDataChegg(GenerateStagingAttributes):
 
 		final_mapped_data['post_code'] = final_mapped_data.post_code.str.split('.', expand=True)
 		
-		final_mapped_data = self.process_trans_type(logger, final_mapped_data)
+		final_mapped_data = self.process_trans_type(final_mapped_data)
 		final_mapped_data.loc[(final_mapped_data['sale_type_ori'] == 'na'), 'sale_type_ori'] = 'NA'
 
 		final_mapped_data.loc[(
@@ -141,6 +142,8 @@ class MDAStagingProcessDataChegg(GenerateStagingAttributes):
 		:return: None
 		"""
 		# For the final staging output
+		agg_name = self.AGG_NAME
+		self.LOGGER = logger
 		final_edw_data = pd.DataFrame()
 
 		input_list = list(app_config['input_params'])
@@ -148,7 +151,7 @@ class MDAStagingProcessDataChegg(GenerateStagingAttributes):
 
 		# Processing for each file in the fiven folder
 		logger.info('\n+-+-+-+-+-+-+Starting Chegg files Processing\n')
-		agg_rules = next((item for item in rule_config if (item['name'] == self.AGG_NAME)), None)
+		agg_rules = next((item for item in rule_config if (item['name'] == agg_name)), None)
 
 		files_in_s3 = obj_s3_connect.get_files(logger, input_list)
 		for each_file in files_in_s3:
