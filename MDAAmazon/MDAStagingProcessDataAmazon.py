@@ -69,6 +69,7 @@ class MDAStagingProcessDataAmazon:
                 return_sale_list.append(row.copy())
         
         sales_process_data = pd.DataFrame(return_sale_list)
+        sales_process_data['payment_amount'] = round(sales_process_data.payment_amount, 2)
         # Drop invalid rows
         extracted_data = extracted_data.drop(filtered_data.index)
         extracted_data = pd.concat([extracted_data, sales_process_data], ignore_index=True, sort=True)
