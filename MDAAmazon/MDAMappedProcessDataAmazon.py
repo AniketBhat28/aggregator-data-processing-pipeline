@@ -142,8 +142,6 @@ class MDAMappedProcessDataAmazon:
             extracted_data['old_discount_percentage'] = 0.0
             extracted_data['price_type'] = 'Retail Price'
 
-        amount_column = agg_rules['filters']['amount_column']
-
         # new attributes addition
         if 'rental' in filename.lower():
             extracted_data['source'] = "Amazon Rental"
@@ -151,10 +149,10 @@ class MDAMappedProcessDataAmazon:
         else:
             extracted_data['source'] = "Amazon"
             extracted_data['sub_domain'] = 'NA'
-        #extracted_data['source_id'] = filename.split('.')[0]
+
         #extracted_data['business_model'] = 'B2C'
 
-        extracted_data=extracted_data.replace(np.nan,'NA')
+        extracted_data=extracted_data.replace(np.nan, 'NA')
         return extracted_data
 
     # Function Description :	This function processes data for all Amazon files
@@ -219,10 +217,11 @@ class MDAMappedProcessDataAmazon:
 
                             final_staging_data = obj_gen_attrs.process_staging_data(logger, each_file, agg_rules,
                                                                                     default_config, extracted_data,
-                                                                                    final_staging_data,
-                                                                                    agg_reference, obj_pre_process, c_data,input_list)
+                                                                                    final_staging_data, agg_reference,
+                                                                                    obj_pre_process, c_data, input_list)
                 except KeyError as err:
                     logger.error(f"KeyError error while processing the file {each_file}. The error message is :  ", err)
+                    
         final_staging_data.columns = final_staging_data.columns.str.lower()
         final_grouped_data = obj_gen_attrs.group_data(logger, final_staging_data,
                                                       default_config[0]['group_staging_data'])
