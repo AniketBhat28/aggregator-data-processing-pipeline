@@ -244,7 +244,11 @@ class GenerateStagingAttributes:
                 extracted_data = agg_reference.generate_staging_output(logger, each_file, agg_rules, default_config,
                                                                        extracted_data)
                 logger.info("Staging output generated for given data")
-                extracted_data['source_id'] = each_file.replace('.xlsx', '')+'/'+input_list[0]['input_sheet_name']
+
+                sheet_name = input_list[0]['input_sheet_name']
+                filename = each_file.split('/')[-1]
+                source_id = filename.split('.')[0]
+                extracted_data['source_id'] = "{}/{}".format(source_id, sheet_name) if sheet_name else source_id
                 # Append staging data of current file into final staging dataframe
                 final_staging_data = pd.concat([final_staging_data, extracted_data], ignore_index=True, sort=True)
 
