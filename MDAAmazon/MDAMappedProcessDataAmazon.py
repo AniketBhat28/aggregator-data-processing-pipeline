@@ -99,8 +99,8 @@ class MDAMappedProcessDataAmazon:
         else:
             extracted_data['country'] = extracted_data['region_of_sale']
 
-        current_country = extracted_data['country'][0]
-        current_date_format = next(item for item in agg_rules['date_formats'] if item["country"] == current_country.upper())[
+        current_country = extracted_data['country'][0].upper()
+        current_date_format = next(item for item in agg_rules['date_formats'] if item["country"] == current_country)[
             'format']
         extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'reporting_date',
                                                        default_config)
