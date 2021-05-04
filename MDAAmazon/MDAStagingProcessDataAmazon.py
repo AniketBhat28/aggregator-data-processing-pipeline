@@ -32,15 +32,62 @@ obj_gen_attrs = GenerateStagingAttributes()
 
 class MDAStagingProcessDataAmazon:
 
+    # Class variables
+    AGG_NAME = 'AMAZON'
+    
+    def split_return_sale_data(self, logger, extracted_data):
+        """
+        Split return and sale data separately and remove the original data 
+        :param logger: For the logging output file.
+        :param extracted_data: pr-processed_data
+        :return: extracted dataframe
+        """
+        logger.info('*********** Split return and sale data *******************')
 
-    # Function Description :	This function generates staging data for Follett files
-    # Input Parameters : 		logger - For the logging output file.
-    #							filename - Name of the file
-    #							agg_rules - Rules json
-    #							default_config - Default json
-    #							extracted_data - pr-processed_data
-    # Return Values : 			extracted_data - extracted staging data
+        return_sale_list = []
+        filtered_data = extracted_data[
+            (
+                (extracted_data.sales_net_unit > 0) 
+                & (extracted_data.returns_unit > 0)
+            )]
+
+        for _, row in filtered_data.to_dict('index').items():
+            sales_net_unit = row['sales_net_unit']
+            returns_unit = row['returns_unit']
+            payment_amount = -(row['payment_amount'] / row['sales_net_unit']) * row['returns_unit']
+
+            for puchase_type in ['sales', 'returns']:
+                if puchase_type == 'sales':
+                    row['units'] = sales_net_unit
+                    row['returns_unit'] = 0
+                else:
+                    row['units'] = 0
+                    row['returns_unit'] = -returns_unit
+                    row['sales_net_unit'] = row['returns_unit']
+                    row['payment_amount'] = payment_amount
+
+                return_sale_list.append(row.copy())
+        
+        sales_process_data = pd.DataFrame(return_sale_list)
+        sales_process_data['payment_amount'] = round(sales_process_data.payment_amount, 2)
+        # Drop invalid rows
+        extracted_data = extracted_data.drop(filtered_data.index)
+        extracted_data = pd.concat([extracted_data, sales_process_data], ignore_index=True, sort=True)
+
+        logger.info('*********** Processes return and sale data*******************')
+        return extracted_data
+
+
     def generate_edw_staging_data(self, logger, agg_rules, default_config, app_config, extracted_data):
+        """
+        Generates staging data for Amazon files
+        :param logger: For the logging output file.
+        :param filename: Name of the file
+        :param agg_rules: Rules json
+        :param default_config: Default json
+        :param extracted_data: pr-processed_data
+        :return: extracted dataframe
+        """
         logger.info('***********generate staging data started*******************')
 
         extracted_data = extracted_data.drop(extracted_data[(extracted_data["e_product_id"] == 'NA') &
@@ -119,27 +166,30 @@ class MDAStagingProcessDataAmazon:
 
         extracted_data['reporting_date'] = extracted_data['reporting_date'].dt.date
 
+        # Split staging data into returns and sales data.
+        extracted_data = self.split_return_sale_data(logger, extracted_data)
+
         logger.info('****************generate staging data done**************')
         return extracted_data
 
-    # Function Description :	This function processes data for all Follett files
-    # Input Parameters : 		logger - For the logging output file.
-    #							app_config - Configuration
-    #							rule_config - Rules json
-    #							default_config - Default json
-    # Return Values : 			None
-    def initialise_processing(self, logger, app_config, rule_config, default_config):
 
-        # For the final staging output
-        agg_name = 'AMAZON'
+    def initialise_processing(self, logger, app_config, rule_config, default_config):
+        """
+        To processes data for all Amazon files
+        :param logger: For the logging output file.
+        :param app_config: Input configuration
+        :param rule_config: Rules json
+        :param default_config: Default json		
+        :return: None
+        """
         final_edw_data = pd.DataFrame()
 
         input_list = list(app_config['input_params'])
         input_base_path = input_list[0]['input_base_path']
 
         # Processing for each file in the fiven folder
-        logger.info('\n+-+-+-+-+-+-+Starting Follett files Processing\n')
-        agg_rules = next((item for item in rule_config if (item['name'] == agg_name)), None)
+        logger.info('\n+-+-+-+-+-+-+Starting Amazon files Processing\n')
+        agg_rules = next((item for item in rule_config if (item['name'] == self.AGG_NAME)), None)
         files_in_s3 = obj_s3_connect.get_files(logger, input_list)
         for each_file in files_in_s3:
             if each_file != '':
@@ -158,4 +208,4 @@ class MDAStagingProcessDataAmazon:
                                                   default_config[0]['group_staging_data'])
 
         obj_s3_connect.store_data_as_parquet(logger, app_config, final_edw_data)
-        logger.info('\n+-+-+-+-+-+-+Finished Processing Follett files\n')
+        logger.info('\n+-+-+-+-+-+-+Finished Processing Amazon files\n')
