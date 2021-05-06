@@ -76,18 +76,31 @@ class MDAStagingProcessDataAmazon:
         extracted_data = extracted_data.drop(filtered_data.index)
 
         # Logic 2
-        # IF unit is 0 and sales_net_unit < 0, 
+        # IF sales_net_unit < 0, 
         # Then unit = sales_net_unit & returns_unit = -(returns_unit) & sales_net_unit = 0
-        filtered_data = extracted_data[
-            (
-                (extracted_data.units == 0) 
-                & (extracted_data.sales_net_unit < 0)
-            )]
+        filtered_data = extracted_data[(extracted_data.sales_net_unit < 0)]
 
         for _, row in filtered_data.to_dict('index').items():
             row['units'] = row['sales_net_unit']
             row['returns_unit'] = -row['returns_unit']
             row['sales_net_unit'] = 0
+
+            if row['trans_type'] == 'Rental' and row['sale_type'] != 'NA':
+                row['sale_type'] = '{} {}'.format(row['sale_type'], 'Cancellation')
+
+            return_sale_list.append(row)
+
+        # Drop original rows
+        extracted_data = extracted_data.drop(filtered_data.index)
+
+        # Logic 3
+        # IF sales_net_unit = 0, 
+        # Then unit = -(unit) & returns_unit = -(returns_unit)
+        filtered_data = extracted_data[(extracted_data.sales_net_unit == 0)]
+
+        for _, row in filtered_data.to_dict('index').items():
+            row['units'] = -row['units']
+            row['returns_unit'] = -row['returns_unit']
 
             if row['trans_type'] == 'Rental' and row['sale_type'] != 'NA':
                 row['sale_type'] = '{} {}'.format(row['sale_type'], 'Cancellation')
@@ -176,6 +189,7 @@ class MDAStagingProcessDataAmazon:
         extracted_data['payment_amount'] = pd.to_numeric(extracted_data['payment_amount'], errors='coerce')
         
         extracted_data.loc[(extracted_data['sale_type_ori'] == 'NA'), 'sale_type'] = 'Purchase'
+        extracted_data['sale_type'] = extracted_data.sale_type.str.title()
 
         extracted_data['current_discount_percentage'].fillna(0.0, inplace=True)
         extracted_data['current_discount_percentage'] = extracted_data['current_discount_percentage'].replace('NA', '0')
