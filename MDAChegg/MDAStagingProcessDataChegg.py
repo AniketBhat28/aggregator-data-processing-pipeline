@@ -69,9 +69,6 @@ class MDAStagingProcessDataChegg(GenerateStagingAttributes):
 		"""
 		logger.info('***********generate staging data started*******************')
 
-		final_mapped_data['aggregator_name'] = agg_rules['name']
-		final_mapped_data['product_type'] = agg_rules['product_type']
-
 		# Drop invalid rows
 		final_mapped_data = final_mapped_data.drop(
 			final_mapped_data[(
@@ -96,6 +93,10 @@ class MDAStagingProcessDataChegg(GenerateStagingAttributes):
 			logger.info("All records are invalid entries in this file")
 			return final_mapped_data
 
+		# Hard coded values
+		final_mapped_data['aggregator_name'] = agg_rules['name']
+		final_mapped_data['product_type'] = agg_rules['product_type']
+
 		# Check for the scientific notation
 		# Remove decimals if file not contains scientific notation.
 		scientific_notation_regex = "-?\d\.\d+[Ee][+\-]\d\d?"
@@ -118,16 +119,22 @@ class MDAStagingProcessDataChegg(GenerateStagingAttributes):
 			), 'old_rental_duration'] = 0
 		final_mapped_data['old_rental_duration'] = final_mapped_data['old_rental_duration'].astype('float').astype('int')
 
-		final_mapped_data['price'] = final_mapped_data['price'].astype('float')
-		final_mapped_data['payment_amount'] = final_mapped_data['payment_amount'].astype('float')
+		logger.info('Converting negative amounts to positives')
+		# Convert price with currency string into float.
+		final_mapped_data['price'] = final_mapped_data.price.replace({'\$': '', ',': ''}, regex=True).astype(float)
+		final_mapped_data['payment_amount'] = round(final_mapped_data['payment_amount'].astype('float'), 2)
+
+		final_mapped_data['units'] = final_mapped_data['units'].astype('float').astype('int')
+		final_mapped_data['sales_net_unit'] = final_mapped_data['sales_net_unit'].astype('float').astype('int')
+		final_mapped_data['returns_unit'] = final_mapped_data['returns_unit'].astype('float').astype('int')
 
 		final_mapped_data.loc[(final_mapped_data.disc_code == 'nan'), 'disc_code'] = 'NA'
 
 		final_mapped_data['reporting_date'] = pd.to_datetime(
 			final_mapped_data['reporting_date'], format='%d-%m-%Y', infer_datetime_format=True
-			)
-															 
+			)											 
 		final_mapped_data['reporting_date'] = final_mapped_data['reporting_date'].dt.date
+
 		logger.info('****************generate staging data done**************')
 		return final_mapped_data
 

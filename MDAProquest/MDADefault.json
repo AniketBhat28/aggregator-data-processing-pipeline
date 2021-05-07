@@ -2,7 +2,7 @@
 	{
 		"output_date_format":"%d-%m-%Y",
 		"group_staging_data": 	{
-									"display_column_sequence": ["aggregator_name","reporting_date","External_Purchase_Order","e_product_id","e_backup_product_id","p_product_id","misc_product_ids","External_Product_ID_type","External_Product_ID","product_title","imprint","product_type","Price","Price_currency","Payment_Amount","Payment_Amount_Currency","current_discount_percentage","disc_code","units","trans_type","sale_type","DRM_model","region","country","source_id","adjusted_publisher_price_ori","publisher_price_ori","list_price_multiplier","price_type","external_invoice_number", "internal_invoice_number", "internal_order_number", "external_transaction_number", "billing_customer_id"]
+									"display_column_sequence": ["aggregator_name", "reporting_date", "External_Purchase_Order", "e_product_id","e_backup_product_id", "p_product_id", "misc_product_ids", "External_Product_ID_type", "External_Product_ID","product_title", "imprint", "product_type", "Price", "Price_currency", "Payment_Amount", "Payment_Amount_Currency","current_discount_percentage", "disc_code", "units", "trans_type", "sale_type", "DRM_model", "region", "country","source", "source_id", "adjusted_publisher_price_ori", "publisher_price_ori", "list_price_multiplier", "price_type","external_invoice_number", "internal_invoice_number", "internal_order_number", "external_transaction_number", "billing_customer_id"]
 									}
 
 	}

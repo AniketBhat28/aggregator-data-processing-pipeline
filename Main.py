@@ -137,7 +137,7 @@ if __name__ == '__main__':
         else:
             module_path_relative = 'MDAProquest.MDAMappedProcessDataProquestLive'
 
-    elif aggregator == 'Chegg':
+    elif aggregator == 'CHEGG':
         if layer == 'staging':
             module_path_relative = 'MDAChegg.MDAStagingProcessDataChegg'
         else:

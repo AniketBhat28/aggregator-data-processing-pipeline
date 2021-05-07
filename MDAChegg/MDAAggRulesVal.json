@@ -8,7 +8,6 @@
     "header_row": 0,
     "data_row": 1,
     "discard_last_rows":0,
-
     "attribute_mappings":	[
                                 {"order_date":"transaction date"},
                                 {"Date":"transaction date"},
@@ -19,9 +18,11 @@
                                 {"EISBN to Use":"digital ean"},
                                 
                                 {"publisher_name":"publisher name"},
+                                {"Publisher name":"publisher name"},
                                 {"list price (USD)":"list price"},
                                 {"publisher_fee (USD)":"publisher fee"},
                                 {"term description":"term_description"},
+                                {"Rental - Purchase": "term_description"},
                                 {"discount_code":"discount code"},
                                 
                                 {"refund_type":"refund type"},
@@ -31,9 +32,8 @@
                                 {"campus_city":"campus city"},
                                 {"campus_zip":"campus zip"},
                                 {"campus_name":"campus name"}
-
                             ],
-    "missing_columns": ["discount code", "publisher name", "trans type"],		
+    "missing_columns": ["discount code", "trans type"],
     "relevant_attributes":	[
                                 {"input_column_name": "transaction date", "staging_column_name":"reporting_date"},
                                 {"input_column_name": "digital ean", "staging_column_name":"e_product_id"},
@@ -56,7 +56,6 @@
                                 {"input_column_name": "campus city", "staging_column_name":"city"},
                                 {"input_column_name": "campus zip", "staging_column_name":"post_code"},
                                 {"input_column_name": "campus name", "staging_column_name":"account_name"}
-                                
                             ],
     "filters": {	
                     "mandatory_columns": ["digital isbn", "digital ean"],
@@ -127,6 +126,14 @@
                                                                 }
                                             },
                                             {
+                                                "column_name": "disc_code",
+                                                "dtype": "str",
+                                                "missing_data": {
+                                                                    "process_type": "process",
+                                                                    "value": "NA"
+                                                                }
+                                            },
+                                            {
                                                 "column_name": "country",
                                                 "dtype": "str",
                                                 "missing_data": {
@@ -179,8 +186,7 @@
                         "extension": "extension",
                         "sold item": "sell",
                         "rental": "rental"
-                    }
-                                
+                    }          
                 },
     "date_formats":	["%Y-%m-%d","%d/%m/%Y","%m/%d/%Y","%m/%d/%y","%d.%m.%Y","%d-%m-%Y"]
 },
@@ -195,14 +201,28 @@
     "data_row": 1,
     "discard_last_rows":0,
     "attribute_mappings":	[
+                                {"order_date":"transaction date"},
+                                {"Date":"transaction date"},
                                 {"digital_isbn":"digital isbn"},
                                 {"digital_ean":"digital ean"},
                                 {"print_isbn":"print isbn"},
                                 {"print_ean":"print ean"},
+                                {"EISBN to Use":"digital ean"},
+                                
+                                {"publisher_name":"publisher name"},
                                 {"Publisher name":"publisher name"},
-                                {"refund_type":"refund type"}
+                                {"list price (USD)":"list price"},
+                                {"publisher_fee (USD)":"publisher fee"},
+                                {"discount_code":"discount code"},
+                                {"refund_type":"refund type"},
+
+                                {"campus_state":"campus state"},
+                                {"campus_city":"campus city"},
+                                {"campus_zip":"campus zip"},
+                                {"campus_name":"campus name"}
+
                             ],
-    "missing_columns":["print isbn", "print ean"],		
+    "missing_columns":["print isbn", "print ean"],
     "relevant_attributes":	[
                                 {"input_column_name": "transaction date", "staging_column_name":"reporting_date"},
                                 {"input_column_name": "digital ean", "staging_column_name":"e_product_id"},
