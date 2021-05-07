@@ -100,7 +100,6 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 			row['units'] = -1
 			row['sales_net_unit'] = 0
 			row['returns_unit'] = -1
-			row['payment_amount'] = -row['payment_amount']
 			returns_unit_list.append(row)
 
 		# Drop original rows
