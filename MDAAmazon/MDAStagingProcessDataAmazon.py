@@ -44,6 +44,7 @@ class MDAStagingProcessDataAmazon:
         """
         logger.info('*********** Split return and sale data *******************')
 
+        # Logic 1
         return_sale_list = []
         filtered_data = extracted_data[
             (
@@ -54,37 +55,79 @@ class MDAStagingProcessDataAmazon:
         for _, row in filtered_data.to_dict('index').items():
             sales_net_unit = row['sales_net_unit']
             returns_unit = row['returns_unit']
-            payment_amount = -(row['payment_amount'] / row['sales_net_unit']) * row['returns_unit']
+            payment_amount = -(row['payment_amount'] / sales_net_unit) * returns_unit
 
             for puchase_type in ['sales', 'returns']:
                 if puchase_type == 'sales':
                     row['units'] = sales_net_unit
                     row['returns_unit'] = 0
                 else:
-                    row['units'] = 0
+                    row['sales_net_unit'] = 0
                     row['returns_unit'] = -returns_unit
-                    row['sales_net_unit'] = row['returns_unit']
+                    row['units'] = -returns_unit
                     row['payment_amount'] = payment_amount
 
+                    if row['trans_type'] == 'Rental' and row['sale_type'] != 'NA':
+                        row['sale_type'] = '{} {}'.format(row['sale_type'], 'Cancellation')
+
                 return_sale_list.append(row.copy())
-        
+
+        # Drop original rows
+        extracted_data = extracted_data.drop(filtered_data.index)
+
+        # Logic 2
+        # IF sales_net_unit < 0, 
+        # Then unit = sales_net_unit & returns_unit = -(returns_unit) & sales_net_unit = 0
+        filtered_data = extracted_data[(extracted_data.sales_net_unit < 0)]
+
+        for _, row in filtered_data.to_dict('index').items():
+            row['units'] = row['sales_net_unit']
+            row['returns_unit'] = -row['returns_unit']
+            row['sales_net_unit'] = 0
+
+            if row['trans_type'] == 'Rental' and row['sale_type'] != 'NA':
+                row['sale_type'] = '{} {}'.format(row['sale_type'], 'Cancellation')
+
+            return_sale_list.append(row)
+
+        # Drop original rows
+        extracted_data = extracted_data.drop(filtered_data.index)
+
+        # Logic 3
+        # IF sales_net_unit = 0, 
+        # Then unit = -(unit) & returns_unit = -(returns_unit)
+        filtered_data = extracted_data[(extracted_data.sales_net_unit == 0)]
+
+        for _, row in filtered_data.to_dict('index').items():
+            row['units'] = -row['units']
+            row['returns_unit'] = -row['returns_unit']
+
+            if row['trans_type'] == 'Rental' and row['sale_type'] != 'NA':
+                row['sale_type'] = '{} {}'.format(row['sale_type'], 'Cancellation')
+
+            return_sale_list.append(row)
+
+        # Drop original rows
+        extracted_data = extracted_data.drop(filtered_data.index)
+
         sales_process_data = pd.DataFrame(return_sale_list)
         sales_process_data['payment_amount'] = round(sales_process_data.payment_amount, 2)
-        # Drop invalid rows
-        extracted_data = extracted_data.drop(filtered_data.index)
+
+        # Add processed data into the extracted data
         extracted_data = pd.concat([extracted_data, sales_process_data], ignore_index=True, sort=True)
 
         logger.info('*********** Processes return and sale data*******************')
         return extracted_data
 
 
-    def generate_edw_staging_data(self, logger, agg_rules, default_config, app_config, extracted_data):
+    def generate_edw_staging_data(self, logger, filename, agg_rules, default_config, app_config, extracted_data):
         """
         Generates staging data for Amazon files
         :param logger: For the logging output file.
         :param filename: Name of the file
         :param agg_rules: Rules json
         :param default_config: Default json
+        :param app_config: Input configuration
         :param extracted_data: pr-processed_data
         :return: extracted dataframe
         """
@@ -146,6 +189,7 @@ class MDAStagingProcessDataAmazon:
         extracted_data['payment_amount'] = pd.to_numeric(extracted_data['payment_amount'], errors='coerce')
         
         extracted_data.loc[(extracted_data['sale_type_ori'] == 'NA'), 'sale_type'] = 'Purchase'
+        extracted_data['sale_type'] = extracted_data.sale_type.str.title()
 
         extracted_data['current_discount_percentage'].fillna(0.0, inplace=True)
         extracted_data['current_discount_percentage'] = extracted_data['current_discount_percentage'].replace('NA', '0')
@@ -166,6 +210,8 @@ class MDAStagingProcessDataAmazon:
 
         extracted_data['reporting_date'] = extracted_data['reporting_date'].dt.date
 
+        extracted_data['product_type'] = filename.split('/')[0].split('=')[1]
+        extracted_data['trans_type'] = filename.split('/')[1].split('=')[1]
         # Split staging data into returns and sales data.
         extracted_data = self.split_return_sale_data(logger, extracted_data)
 
@@ -198,10 +244,9 @@ class MDAStagingProcessDataAmazon:
                 logger.info('\n+-+-+-+-+-+-+')
 
                 final_mapped_data = wr.s3.read_parquet(path=input_base_path + each_file)
-                final_staging_data = self.generate_edw_staging_data(logger, agg_rules, default_config, app_config,
-                                                                    final_mapped_data)
-                final_staging_data['product_type'] = each_file.split('/')[0].split('=')[1]
-                final_staging_data['trans_type'] = each_file.split('/')[1].split('=')[1]
+                final_staging_data = self.generate_edw_staging_data(logger, each_file, agg_rules, 
+                                                                        default_config, app_config, final_mapped_data
+                                                                        )
                 final_edw_data = pd.concat([final_edw_data, final_staging_data], ignore_index=True, sort=True)
 
         final_edw_data = obj_gen_attrs.group_data(logger, final_edw_data,
