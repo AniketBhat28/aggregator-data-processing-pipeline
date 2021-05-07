@@ -69,10 +69,7 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 			if row['trans_type'] == 'Rental':
 				return 'Checkout' if (row['trans_type_ori'] == 'rental' and row['sale_type_ori'] == 'na') else (
 						'Extension' if (row['trans_type_ori'] == 'extension' and row['sale_type_ori'] == 'na') else (
-							'Cancellation' if (
-								row['trans_type_ori'] in ('rental', 'extension') 
-								and row['sale_type_ori'] == 'cancellation'
-								) else 'NA'
+							'Cancellation' if (row['sale_type_ori'] == 'cancellation') else 'NA'
 						)
 					)
 			elif row['trans_type'] == 'Sales':
@@ -85,6 +82,34 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		extracted_data['sale_type'] = extracted_data.apply(lambda row: process_for_rental(row), axis=1)
 
 		self.LOGGER.info("Processed sales type")
+		return extracted_data
+
+	
+	def process_returns_unit(self, extracted_data):
+		"""
+		Process the returns unit
+		:param extracted_data: pr-processed_data
+		:return: extracted dataframe
+		"""
+		self.LOGGER.info("Processing returns unit")
+		
+		returns_unit_list = []
+		filtered_data = extracted_data[(extracted_data['sale_type_ori'] == 'cancellation')]
+
+		for _, row in filtered_data.to_dict('index').items():
+			row['units'] = -1
+			row['sales_net_unit'] = 0
+			row['returns_unit'] = -1
+			row['payment_amount'] = -row['payment_amount']
+			returns_unit_list.append(row)
+
+		# Drop original rows
+		extracted_data = extracted_data.drop(filtered_data.index)
+
+		units_processed_data = pd.DataFrame(returns_unit_list)
+		extracted_data = pd.concat([extracted_data, units_processed_data], ignore_index=True, sort=True)
+
+		self.LOGGER.info("Processed returns unit")
 		return extracted_data
 
 
@@ -100,11 +125,21 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 		"""
 		logger.info('***********generate staging data started*******************')
 
+		# Hard coded values
 		extracted_data['aggregator_name'] = agg_rules['name']
-		extracted_data['product_type'] = agg_rules['product_type']		
+		extracted_data['product_type'] = agg_rules['product_type']
+		extracted_data['price_currency'] = 'USD'
+		extracted_data['payment_amount_currency'] = 'USD'
+		extracted_data['price_type'] = 'Retail Price'
+		extracted_data['units'] = 1
+		extracted_data['sales_net_unit'] = 1
+		extracted_data['returns_unit'] = 0
+
 		extracted_data['sale_type_ori'] = extracted_data.sale_type_ori.str.lower()
 
 		if 'rental' in filename.lower() or 'subs' in filename.lower():
+			logger.info('*** FileType : Subscription ***')
+
 			extracted_data['trans_type'] = 'Subscription'
 			extracted_data['trans_type_ori'] = 'subscription'
 
@@ -135,9 +170,8 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 			# Process sales type
 			extracted_data = self.process_sale_type(filename, extracted_data)
 
-		logger.info('Converting negative amounts to positives')
-		# Convert price with currency string into float.
-		extracted_data['price'] = extracted_data['price'].replace({'\$': '', ',': ''}, regex=True).astype(float)
+		# Process returns unit
+		extracted_data = self.process_returns_unit(extracted_data)
 
 		current_date_format = agg_rules['date_formats']
 		extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'reporting_date', default_config)
@@ -248,9 +282,6 @@ class MDAMappedProcessDataChegg(GenerateStagingAttributes):
 																		)
 			else:
 				logger.info("ignoring processing the " + each_file + " as it is not a csv or excel file")
-
-		# future date issue resolution
-		# final_staging_data = obj_pre_process.process_default_transaction_date(logger, app_config, final_staging_data)
 
 		# Grouping and storing data
 		final_grouped_data = self.group_data(logger, final_staging_data, default_config[0]['group_staging_data'])
