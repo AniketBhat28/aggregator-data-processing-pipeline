@@ -122,7 +122,7 @@ class MDAStagingProcessDataChegg(GenerateStagingAttributes):
 		logger.info('Converting negative amounts to positives')
 		# Convert price with currency string into float.
 		final_mapped_data['price'] = final_mapped_data.price.replace({'\$': '', ',': ''}, regex=True).astype(float)
-		final_mapped_data['payment_amount'] = final_mapped_data['payment_amount'].astype('float')
+		final_mapped_data['payment_amount'] = round(final_mapped_data['payment_amount'].astype('float'), 2)
 
 		final_mapped_data['units'] = final_mapped_data['units'].astype('float').astype('int')
 		final_mapped_data['sales_net_unit'] = final_mapped_data['sales_net_unit'].astype('float').astype('int')
