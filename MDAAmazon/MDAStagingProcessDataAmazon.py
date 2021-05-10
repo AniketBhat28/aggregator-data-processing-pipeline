@@ -67,7 +67,9 @@ class MDAStagingProcessDataAmazon:
                     row['units'] = -returns_unit
                     row['payment_amount'] = payment_amount
 
-                    if row['trans_type'] == 'Rental' and row['sale_type'] != 'NA':
+                    if row['trans_type'] == 'Sales':
+                        row['sale_type'] = 'Return'
+                    elif row['sale_type'] != 'NA':
                         row['sale_type'] = '{} {}'.format(row['sale_type'], 'Cancellation')
 
                 return_sale_list.append(row.copy())
@@ -85,7 +87,9 @@ class MDAStagingProcessDataAmazon:
             row['returns_unit'] = -row['returns_unit']
             row['sales_net_unit'] = 0
 
-            if row['trans_type'] == 'Rental' and row['sale_type'] != 'NA':
+            if row['trans_type'] == 'Sales':
+                row['sale_type'] = 'Return'
+            elif row['sale_type'] != 'NA':
                 row['sale_type'] = '{} {}'.format(row['sale_type'], 'Cancellation')
 
             return_sale_list.append(row)
@@ -96,13 +100,18 @@ class MDAStagingProcessDataAmazon:
         # Logic 3
         # IF sales_net_unit = 0, 
         # Then unit = -(unit) & returns_unit = -(returns_unit)
-        filtered_data = extracted_data[(extracted_data.sales_net_unit == 0)]
-
+        filtered_data = extracted_data[
+            (
+                (extracted_data.sales_net_unit == 0) 
+                & (extracted_data.returns_unit > 0)
+            )]
         for _, row in filtered_data.to_dict('index').items():
             row['units'] = -row['units']
             row['returns_unit'] = -row['returns_unit']
 
-            if row['trans_type'] == 'Rental' and row['sale_type'] != 'NA':
+            if row['trans_type'] == 'Sales':
+                row['sale_type'] = 'Return'
+            elif row['sale_type'] != 'NA':
                 row['sale_type'] = '{} {}'.format(row['sale_type'], 'Cancellation')
 
             return_sale_list.append(row)
@@ -142,6 +151,9 @@ class MDAStagingProcessDataAmazon:
         extracted_data['p_backup_product_id'] = extracted_data.p_backup_product_id.str.split('.', expand=True)
         extracted_data['e_product_id'] = extracted_data.e_product_id.str.split('.', expand=True)
         extracted_data['p_product_id'] = extracted_data.p_product_id.str.split('.', expand=True)
+
+        # Remove all special characters
+        extracted_data['e_product_id'] = extracted_data.e_product_id.str.replace('\W', '', regex=True)
 
         extracted_data['country'] = extracted_data.country.str.upper()
 

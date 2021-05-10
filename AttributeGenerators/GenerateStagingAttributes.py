@@ -83,7 +83,7 @@ class GenerateStagingAttributes:
     def extract_patterns(self, data, pattern_dict, input_string):
 
         pattern = pattern_dict['regex']
-        temp_pattern_output = re.findall(fr"(?i)((?:{pattern}))", input_string, re.IGNORECASE)
+        temp_pattern_output = re.findall(fr"(?:{pattern})\b", input_string, re.IGNORECASE)
         if len(temp_pattern_output) != 0:
             data[pattern_dict['staging_column_name']] = temp_pattern_output[0]
 

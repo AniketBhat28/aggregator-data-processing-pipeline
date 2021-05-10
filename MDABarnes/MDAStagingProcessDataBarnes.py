@@ -56,6 +56,9 @@ class MDAStagingProcessDataBarnes :
         final_mapped_data['external_purchase_order'] = final_mapped_data.external_purchase_order.str.split('.', expand=True)
         final_mapped_data['e_product_id'] = final_mapped_data.e_product_id.str.split('.', expand=True)
 
+        # Remove all special characters
+        final_mapped_data['e_product_id'] = final_mapped_data.e_product_id.str.replace('\W', '', regex=True)
+
         final_mapped_data['reporting_date'] = pd.to_datetime(final_mapped_data['reporting_date'],
                                                           format='%d-%m-%Y', infer_datetime_format=True)
         # print('reporting date done')

@@ -36,7 +36,7 @@ class MDAStagingProcessDataFollett:
 
         logger.info("Processing  sales types")
         extracted_data['sale_type'] = np.where(
-            extracted_data['sale_type'].str.upper().isin(['SALES','SALE CORRECTION','PURCHASE','REFUND REVERSAL','CREATE']), 'Purchase', 'Return')
+            extracted_data['sale_type'].str.upper().isin(['SALES', 'SALE', 'SALE CORRECTION', 'PURCHASE', 'REFUND REVERSAL', 'CREATE']), 'Purchase', 'Return')
 
         logger.info("Transaction and sales types processed")
         return extracted_data
@@ -51,16 +51,28 @@ class MDAStagingProcessDataFollett:
     # Return Values : 			extracted_data - extracted staging data
     def generate_edw_staging_data(self, logger, agg_rules, default_config, app_config, extracted_data):
 
+        logger.info('***********generate staging data started*******************')
+        
+        # Drop invalid rows
+        extracted_data = extracted_data.drop(
+            extracted_data[(
+                    (
+                        (extracted_data.e_product_id == 'NA')
+                        & (extracted_data.e_backup_product_id == 'NA')
+                    )
+                    |
+                    (extracted_data.e_product_id.str.contains("Total\w{0,}", case=False))
+                    | (extracted_data.e_product_id.str.contains("Vend\w{0,}", case=False))
+                )].index
+            )
 
-        extracted_data = extracted_data.drop(extracted_data[(extracted_data["e_product_id"]=='NA') & (extracted_data["e_backup_product_id"]=='NA')].index)
-        extracted_data = pd.DataFrame(extracted_data)
+        if extracted_data.dropna(how='all').empty:
+            logger.info("All records are invalid entries in this file")
+            return extracted_data
 
-        extracted_data = extracted_data.drop(extracted_data[(extracted_data['e_product_id'].str.contains("Total\w{0,}", case=False))].index)
-                                           # & (extracted_data["e_backup_product_id"] == 'NA')])
-
-        extracted_data = extracted_data.drop(extracted_data[(extracted_data['e_product_id'].str.contains("Vend\w{0,}", case=False))].index)
-                                            #& (extracted_data["e_backup_product_id"] == 'NA')])
-
+        # Hard coded values
+        extracted_data['product_type'] = agg_rules['product_type']
+        extracted_data['trans_type'] = 'Sales'
         extracted_data['external_invoice_number'] = 'NA'
         extracted_data['internal_invoice_number'] = 'NA'
         extracted_data['internal_order_number'] = 'NA'
@@ -68,49 +80,31 @@ class MDAStagingProcessDataFollett:
         extracted_data['e_backup_product_id'] = extracted_data.e_backup_product_id.str.split('.', expand=True)
         extracted_data['e_product_id'] = extracted_data.e_product_id.str.split('.', expand=True)
 
-        year = app_config['output_params']['year']
-        default_date = '01-01-' + str(year)
+        extracted_data.loc[(
+            (extracted_data['payment_amount_currency'] == 'NA')
+            | (extracted_data['payment_amount_currency'] == 'US')
+            ), 'payment_amount_currency'] = 'USD'
 
-
-        currency_suffix = '[\$£,()-]'
-        extracted_data['price'] = (extracted_data['price']).replace(currency_suffix, '', regex=True)
-        extracted_data['price'] = extracted_data['price'].astype('str')
-        extracted_data['price'] = (extracted_data['price']).str.rstrip()
-        extracted_data['price'] = pd.to_numeric(extracted_data['price'])
-
-        extracted_data['payment_amount_currency'] = extracted_data.apply(
-            lambda row: 'USD' if (row['payment_amount_currency'] == 'NA' or row['payment_amount_currency'] == 'US') else
-            row['payment_amount_currency'], axis=1)
         extracted_data['price_currency'] = extracted_data['payment_amount_currency']
         extracted_data['payment_amount'] = pd.to_numeric(extracted_data['payment_amount'], errors='coerce')
+
+        currency_suffix = '[\$£,()-]'
+        extracted_data['price'] = extracted_data['price'].replace(currency_suffix, '', regex=True)
+        extracted_data['price'] = extracted_data['price'].str.rstrip()
         extracted_data['price'] = pd.to_numeric(extracted_data['price'], errors='coerce')
-
-
+        extracted_data['price'] = extracted_data['price'].abs()
 
         logger.info('Processing region of sale')
         extracted_data['country'] = extracted_data['payment_amount_currency'].map(
             agg_rules['filters']['country_iso_values']).fillna('NA')
-
-        extracted_data['trans_type'] = 'Sales'
-        extracted_data['product_type'] = agg_rules['product_type']
-        amount_column = agg_rules['filters']['amount_column']
-
-        # extracted_data['units'] = extracted_data.apply(
-        #     lambda row: 1 if row['units'] == 'NA' else row['units'],axis=1)
-        #
-        # extracted_data['units'] = pd.to_numeric(extracted_data['units'],errors='coerce')
-
-        #extracted_data['units'] = extracted_data['units'].fillna(1)
-        extracted_data['units'] = extracted_data['units'].replace('NA',1)
+        
+        extracted_data['units'] = extracted_data['units'].replace('NA', 1)
         extracted_data['units'] = extracted_data['units'].astype('float').astype('int')
+        extracted_data.loc[(extracted_data['units'] == 0), 'units'] = 1
 
-        extracted_data['units'] = extracted_data.apply(
-            lambda row: 1 if row['units'] == 0 else row['units'], axis=1)
+        extracted_data.loc[((extracted_data.sale_type_ori == 'NA') & (extracted_data.payment_amount > 0)), 'sale_type'] = 'PURCHASE'
 
-
-        extracted_data['sale_type'] = extracted_data.apply(
-            lambda row: 'PURCHASE' if row['sale_type_ori'] == 'NA' else row['sale_type_ori'], axis=1)
-
+        amount_column = agg_rules['filters']['amount_column']
         extracted_data['current_discount_percentage'] = extracted_data.apply(
             lambda row: 0 if row['current_discount_percentage'] == 'NA' and
                              row[amount_column] == 0 or
@@ -126,26 +120,23 @@ class MDAStagingProcessDataFollett:
             lambda row: row['current_discount_percentage'] * 100 if (row['current_discount_percentage'] < 1) else row[
                 'current_discount_percentage'],
             axis=1)
-        extracted_data['price'] = extracted_data['price'].abs()
         extracted_data['current_discount_percentage'] = round(extracted_data['current_discount_percentage'], 2)
 
         # extracted_data.to_csv('df_before_date.csv')
+        year = app_config['output_params']['year']
+        default_date = '01-01-' + str(year)
         extracted_data['reporting_date'] = extracted_data['reporting_date'].replace('NA', default_date)
 
         current_date_format = agg_rules['date_formats']
-
         extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'reporting_date',
                                                        default_config)
-
         extracted_data['reporting_date'] = pd.to_datetime(extracted_data['reporting_date'],
                                                           format='%d-%m-%Y', infer_datetime_format=True)
-
         extracted_data['reporting_date'] = extracted_data['reporting_date'].dt.date
 
         self.process_sale_type(logger, extracted_data)
-        # extracted_data['external_purchase_order'] = extracted_data['external_purchase_order'].replace('0', 'NA')
-        # extracted_data['external_transaction_number'] = extracted_data['external_transaction_number'].replace('0', 'NA')
-        #
+        
+        logger.info('****************generate staging data done**************')
         return extracted_data
 
     # Function Description :	This function processes data for all Follett files

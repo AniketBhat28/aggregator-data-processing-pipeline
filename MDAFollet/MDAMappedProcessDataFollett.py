@@ -44,11 +44,7 @@ class MDAMappedProcessDataFollett :
     def float_to_string(self,number, precision=2):
         return '{0:.1f}'.format( number, prec=precision,).rstrip('0').rstrip('.') or '0'
 
-    def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data,data) :
-
-
-
-        #print('dictionary',agg_rules['filters']['country_iso_values'])
+    def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data,data):
 
         extracted_data['aggregator_name'] = 'FOLLETT'
         extracted_data['product_type'] = agg_rules['product_type']
@@ -59,7 +55,6 @@ class MDAMappedProcessDataFollett :
         extracted_data['country'] = 'NA'
         extracted_data['trans_type'] = 'SALES'
         extracted_data['sale_type'] = extracted_data['sale_type_ori']
-
 
         # new attributes addition
         extracted_data['source'] = "FOLLETT"
@@ -94,12 +89,15 @@ class MDAMappedProcessDataFollett :
         agg_reference = self
         final_staging_data = pd.DataFrame()
         input_list = list(app_config['input_params'])
+        negated_keywords = ['correction', 'adjustment']
 
         # Processing for each file in the fiven folder
         logger.info('\n+-+-+-+-+-+-+Starting Follett files Processing\n')
         files_in_s3 = obj_s3_connect.get_files(logger, input_list)
         for each_file in files_in_s3 :
-            if each_file != '' and each_file.split('.')[-1] != 'txt' :
+            negated_file = [each_file for keyword in negated_keywords if keyword in each_file]
+            
+            if each_file and each_file.split('.')[-1] != 'txt' and not negated_file:
                 logger.info('\n+-+-+-+-+-+-+')
                 logger.info(each_file)
                 logger.info('\n+-+-+-+-+-+-+')
@@ -108,7 +106,6 @@ class MDAMappedProcessDataFollett :
                                                                              default_config, final_staging_data,
                                                                              obj_read_data,
                                                                              obj_pre_process, agg_name, agg_reference)
-
 
         final_mapped_data = obj_gen_attrs.group_data(logger, final_staging_data,
                                                      default_config[0]['group_staging_data'])
