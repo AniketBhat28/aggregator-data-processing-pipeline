@@ -98,7 +98,7 @@ class MDAStagingProcessDataAmazon:
         extracted_data = extracted_data.drop(filtered_data.index)
 
         # Logic 3
-        # IF sales_net_unit = 0, 
+        # IF sales_net_unit = 0 & returns_unit > 0
         # Then unit = -(unit) & returns_unit = -(returns_unit)
         filtered_data = extracted_data[
             (
@@ -108,6 +108,7 @@ class MDAStagingProcessDataAmazon:
         for _, row in filtered_data.to_dict('index').items():
             row['units'] = -row['units']
             row['returns_unit'] = -row['returns_unit']
+            row['payment_amount'] = -abs(row['payment_amount'])
 
             if row['trans_type'] == 'Sales':
                 row['sale_type'] = 'Return'

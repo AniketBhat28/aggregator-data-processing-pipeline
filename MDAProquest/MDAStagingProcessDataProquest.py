@@ -57,7 +57,7 @@ class MDAStagingProcessDataProquest:
     def generate_edw_staging_data(self, logger, final_mapped_data):
         logger.info('***********generate staging data started*******************')
 
-        final_mapped_data = final_mapped_data.replace('nan', 'NA')
+        final_mapped_data = final_mapped_data.replace('nan', 'NA', regex=False)
         final_mapped_data = final_mapped_data.replace({np.nan: 'NA'})
         final_mapped_data.replace('None', 'NA', inplace=True)
         logger.info("total no of rows before nan : %s", final_mapped_data.shape[0])
@@ -67,9 +67,9 @@ class MDAStagingProcessDataProquest:
 
         final_mapped_data = final_mapped_data.replace(r'^\s*$', np.nan, regex=True)
 
-        final_mapped_data['e_product_id'] = final_mapped_data.e_product_id.str.replace('.0', '')
-        final_mapped_data['p_product_id'] = final_mapped_data.p_product_id.str.replace('.0', '')
-        final_mapped_data['External_Product_ID'] = final_mapped_data.External_Product_ID.str.replace('.0', '')
+        final_mapped_data['e_product_id'] = final_mapped_data.e_product_id.str.split('.', expand=True)
+        final_mapped_data['p_product_id'] = final_mapped_data.p_product_id.str.split('.', expand=True)
+        final_mapped_data['External_Product_ID'] = final_mapped_data.External_Product_ID.str.split('.', expand=True)
 
         final_mapped_data = self.proquest_price_cal(final_mapped_data, logger)
         final_mapped_data = self.calculate_final_discount_percentage(final_mapped_data, logger)

@@ -41,6 +41,8 @@ class MDAStagingProcessDataFollett:
         logger.info("Transaction and sales types processed")
         return extracted_data
 
+    def float_to_string(self,number, precision=2):
+        return '{0:.1f}'.format( number, prec=precision,).rstrip('0').rstrip('.') or '0'
 
     # Function Description :	This function generates staging data for Follett files
     # Input Parameters : 		logger - For the logging output file.
@@ -50,7 +52,6 @@ class MDAStagingProcessDataFollett:
     #							extracted_data - pr-processed_data
     # Return Values : 			extracted_data - extracted staging data
     def generate_edw_staging_data(self, logger, agg_rules, default_config, app_config, extracted_data):
-
         logger.info('***********generate staging data started*******************')
         
         # Drop invalid rows
@@ -60,15 +61,10 @@ class MDAStagingProcessDataFollett:
                         (extracted_data.e_product_id == 'NA')
                         & (extracted_data.e_backup_product_id == 'NA')
                     )
-                    |
-                    (extracted_data.e_product_id.str.contains("Total\w{0,}", case=False))
+                    | (extracted_data.e_product_id.str.contains("Total\w{0,}", case=False))
                     | (extracted_data.e_product_id.str.contains("Vend\w{0,}", case=False))
                 )].index
             )
-
-        if extracted_data.dropna(how='all').empty:
-            logger.info("All records are invalid entries in this file")
-            return extracted_data
 
         # Hard coded values
         extracted_data['product_type'] = agg_rules['product_type']
@@ -79,6 +75,19 @@ class MDAStagingProcessDataFollett:
         extracted_data['billing_customer_id'] = 'NA'
         extracted_data['e_backup_product_id'] = extracted_data.e_backup_product_id.str.split('.', expand=True)
         extracted_data['e_product_id'] = extracted_data.e_product_id.str.split('.', expand=True)
+
+        extracted_data['external_purchase_order'] =  extracted_data.external_purchase_order.replace('NA', 0)
+        extracted_data['external_purchase_order'] =  extracted_data.external_purchase_order.astype("float")
+        extracted_data['external_purchase_order'] = extracted_data.external_purchase_order.apply(self.float_to_string)
+        extracted_data['external_purchase_order'] = extracted_data.external_purchase_order.replace({np.nan: 'NA'})
+        extracted_data['external_purchase_order'] = extracted_data.external_purchase_order.astype(str)
+        extracted_data['external_purchase_order'] = extracted_data.external_purchase_order.replace('0', 'NA')
+
+        extracted_data['external_transaction_number'] = extracted_data.external_transaction_number.replace('NA', 0)
+        extracted_data['external_transaction_number'] = extracted_data.external_transaction_number.astype("float")
+        extracted_data['external_transaction_number'] = extracted_data.external_transaction_number.apply(self.float_to_string)
+        extracted_data['external_transaction_number'] = extracted_data.external_transaction_number.astype(str)
+        extracted_data['external_transaction_number'] = extracted_data.external_purchase_order.replace('0', 'NA')
 
         extracted_data.loc[(
             (extracted_data['payment_amount_currency'] == 'NA')
@@ -122,7 +131,6 @@ class MDAStagingProcessDataFollett:
             axis=1)
         extracted_data['current_discount_percentage'] = round(extracted_data['current_discount_percentage'], 2)
 
-        # extracted_data.to_csv('df_before_date.csv')
         year = app_config['output_params']['year']
         default_date = '01-01-' + str(year)
         extracted_data['reporting_date'] = extracted_data['reporting_date'].replace('NA', default_date)
@@ -174,7 +182,7 @@ class MDAStagingProcessDataFollett:
         final_edw_data = obj_gen_attrs.group_data(logger, final_edw_data,
                                                   default_config[0]['group_staging_data'])
         # final_edw_data.dropna(subset=["e_product_id","e_backup_product_id","external_purchase_order","external_transaction_number"], inplace=True)
-
+        # final_edw_data.to_csv('df_before_date.csv')
 
         obj_s3_connect.wrangle_data_as_parquet(logger, app_config, final_edw_data)
 

@@ -120,6 +120,6 @@
 						"convert_percentage": "no",
 						"country_iso_values" : {"USD": "US", "CAD": "CA"}
 					},
-		"date_formats":	["%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y","%d-%m-%Y"]
+		"date_formats":	["%Y-%m-%d", "%d/%m/%Y", "%d.%m.%Y", "%d-%m-%Y"]
 	}
 ]
