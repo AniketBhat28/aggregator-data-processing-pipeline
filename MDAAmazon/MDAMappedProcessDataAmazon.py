@@ -100,11 +100,11 @@ class MDAMappedProcessDataAmazon:
             extracted_data['country'] = extracted_data['region_of_sale']
 
         current_country = extracted_data['country'][0].upper()
-        current_date_format = next(item for item in agg_rules['date_formats'] if item["country"] == current_country)[
-            'format']
-        extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'reporting_date',
-                                                       default_config)
+        current_date_format = next(
+            item for item in agg_rules['date_formats'] if item["country"] == current_country
+            )['format']
 
+        extracted_data = obj_pre_process.process_dates(logger, extracted_data, current_date_format, 'reporting_date', default_config)
         extracted_data = self.process_trans_type(logger, extracted_data, filename)
 
         if ('Rental' in filename):
@@ -129,10 +129,7 @@ class MDAMappedProcessDataAmazon:
             extracted_data['old_discount_percentage'] = extracted_data['old_discount_percentage'] * 100
             extracted_data['current_discount_percentage'] = extracted_data['current_discount_percentage'] * 100
             extracted_data['price_type'] = 'NA'
-
-
         else:
-            
             extracted_data['current_discount_percentage'] = data['Discount Percentage']
             extracted_data['sale_type_ori'] = 'NA'
             extracted_data['old_rental_duration'] = 0

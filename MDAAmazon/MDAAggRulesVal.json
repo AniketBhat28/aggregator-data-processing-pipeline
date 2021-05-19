@@ -140,7 +140,7 @@
                             {"country":"MX","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
                             {"country":"NL","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
                             {"country":"ES","format":["%d/%m/%Y","%d.%m.%Y","%d-%m-%Y"]},
-                            {"country":"US","format":["%m/%d/%Y","%d.%m.%Y","%d/%m/%Y","%d%m%Y","%d-%m-%Y"]},
+                            {"country":"US","format":["%m/%d/%Y","%d.%m.%Y","%d/%m/%Y","%m%d%Y","%d-%m-%Y"]},
                             {"country":"UK","format":["%m/%d/%Y","%d.%m.%Y","%d/%m/%Y","%d-%m-%Y"]}
 
 						],

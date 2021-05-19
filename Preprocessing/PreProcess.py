@@ -101,6 +101,13 @@ class PreProcess:
 	def process_dates(self, logger, extracted_data, date_formats, date_column_name, default_config):
 
 		logger.info("Processing dates and converting to common format")
+		
+		# To fix prefix zero issue, Converting date from integer format to string format
+		reporting_date = extracted_data[date_column_name][0]
+		if isinstance(reporting_date, np.int64) and len(str(reporting_date)) == 7:
+			logger.info("Fixing dates with prefix zero")
+			extracted_data[date_column_name] = '0' + extracted_data[date_column_name].astype(str)
+
 		output_date_format = default_config[0]['output_date_format']
 		if len(date_formats) == 1:
 			extracted_data['temp_transaction_date'] = pd.to_datetime(extracted_data[date_column_name], format=date_formats[0])
