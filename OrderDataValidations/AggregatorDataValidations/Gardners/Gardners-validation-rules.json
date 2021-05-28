@@ -1,5 +1,11 @@
 {
    "schema": {
+      "aggregator_name": {
+         "type": "string",
+         "allowed": [
+            "GARDNERS"
+         ]
+      },
       "product_type": {
          "type": "string",
          "allowed": [
@@ -10,19 +16,20 @@
          "type": "string",
          "allowed": [
             "Sales",
-            "Subscription"
+            "Rental"
          ]
       },
-      "price_type": {
+     "sale_type": {
          "type": "string",
          "allowed": [
-            "Adjusted Retail Price"
+            "Purchase",
+            "Return"
          ]
       },
       "source": {
          "type": "string",
          "allowed": [
-            "EBSCO"
+            "GARDNERS"
          ]
       }
    }

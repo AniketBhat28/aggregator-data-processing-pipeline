@@ -1,3 +1,7 @@
+#############################
+#      Imports    #
+#############################
+
 import logging as logger
 import os
 import json
@@ -23,11 +27,11 @@ class AmazonAggregatorValidations:
         logger.info("\n\t------Starting Amazon Aggregator Data Validations------")
         load_data = test_data
 
-        # Initialising the file with Aggregator Config Json
+        # Initialising the file with Aggregator Specific Config Json
         with open(BASE_PATH + '/aggregator-specific-configData.json') as f:
             aggregator_config_json = json.load(f)
 
-        # Initialising the file with Aggregator validation Rules Json
+        # Initialising the file with Amazon validation Rules Json
         with open(BASE_PATH1 + '/Amazon-validation-rules.json') as f:
             Amazon_val_rule_json = json.load(f)
         Amazon_val_rules = Amazon_val_rule_json["schema"]
@@ -38,7 +42,7 @@ class AmazonAggregatorValidations:
         #       Starting Data Validations
         ############################################################
 
-        # Running validation on entire frame based on Aggregator Rules Json
+        # Running validation on entire frame based on Amazon Aggregator Rules Json
         cerberus_rule_val_df = load_data.to_dict('records')
         validator.allow_unknown = True
 
@@ -57,6 +61,6 @@ class AmazonAggregatorValidations:
                 amazon_val_results = amazon_val_results.append(failed_amazon_val)
                 amazon_val_results['Validation Result'] = str(validator.errors)
 
-        # # Creating Final Data frame which failed validation
+        # # Creating Final Data frame which failed Amazon Validation Rules
         # final_amazon_val_results = pd.concat([amazon_val_results], ignore_index=True, sort=True)
         # return final_amazon_val_results

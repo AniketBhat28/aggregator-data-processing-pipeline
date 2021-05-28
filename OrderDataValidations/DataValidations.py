@@ -1,25 +1,31 @@
-# imports
+####################
+#     Imports      #
+####################
 
 import pandas as pd
 import boto3
 import io
 import importlib
 
-# from OrderDataValidations.AggregatorDataValidations import AmazonAggregatorValidations
 from OrderDataValidations.GenericAggregatorValidations import GenericAggregatorValidations
 from OrderDataValidations.ReadStagingData import ReadStagingData
-from OrderDataValidations.AggregatorDataValidations.Amazon.AmazonAggregatorValidations import AmazonAggregatorValidations
-from OrderDataValidations.AggregatorDataValidations.Ebsco.EbscoAggregatorValidations import EbscoAggregatorValidations
 
-# Global variables
+#############################
+#      Global Variables     #
+#############################
+
 obj_read_data = ReadStagingData()
-obj_amazon_agg_val = AmazonAggregatorValidations()
-obj_ebsco_agg_val = EbscoAggregatorValidations()
 obj_generic_agg_val = GenericAggregatorValidations()
 s3 = boto3.resource("s3")
 
-# Starting Order Data Validations
+#############################
+#     Class Functions       #
+#############################
+
+# Starting Order Data Validations script Main function
 def OrderDataValidations():
+
+    # Store App config details like S3 Bucket name, fileExtension, filePath etc
     app_config = obj_read_data.read_staging_bucket()
     input_bucket_name = app_config['input_params'][0]['input_bucket_name']
     aggregator = app_config['input_params'][0]['aggregator_name']
@@ -27,18 +33,16 @@ def OrderDataValidations():
     input_file_extension = app_config['input_params'][0]['input_file_extension']
     dir_path = app_config['input_params'][0]['input_directory']
 
-
     s3_bucket = s3.Bucket(input_bucket_name)
 
-    # Function to read Parquet Aggregator files from S3 Bucket
-
+    # Function to read all Parquet files from specified S3 Bucket
     def pd_read_s3_parquet(key, bucket, s3_client=None):
         if s3_client is None:
             s3_client = boto3.client('s3')
         obj = s3_client.get_object(Bucket=input_bucket_name, Key=key)
         return pd.read_parquet(io.BytesIO(obj['Body'].read()))
 
-    # Read Each Parquet File and perform Generic and Aggregator Data validations
+    # Read Each Parquet File from the Parquet files list
     file_list = {item.key for item in s3_bucket.objects.filter(Prefix=dir_path) if item.key.endswith(input_file_extension)}
 
     if not file_list:
@@ -49,27 +53,47 @@ def OrderDataValidations():
     print("\n-+-+-+-+-Following is the list of parquet files found in s3 bucket-+-+-+-+-")
     print(file_list)
 
+    # Start Schema and Generic Data validations followed by Aggregator validations on each file
     for aggFile in file_list:
         extracted_data = pd_read_s3_parquet(aggFile, bucket=input_bucket_name)
         print("\n------FileName: " + aggFile + "------")
 
-        # Run generic data validations
-        obj_generic_agg_val.generic_data_validations(test_data=extracted_data)
+        # Run Schema and Generic Data Validations on the extracted file data
+        # obj_generic_agg_val.generic_data_validations(test_data=extracted_data)
 
-        # Initialise with required Aggregator validations based on Aggregator name
+        # Initialize with respective Aggregator specific validation rules based on Aggregator Name
         if aggregator == 'AMAZON':
             module_path_relative = 'AggregatorDataValidations.Amazon.AmazonAggregatorValidations'
+        elif aggregator == 'BARNES':
+            module_path_relative = 'AggregatorDataValidations.Barnes.BarnesAggregatorValidations'
+        elif aggregator == 'CHEGG':
+            module_path_relative = 'AggregatorDataValidations.Chegg.CheggAggregatorValidations'
         elif aggregator == 'EBSCO':
             module_path_relative = 'AggregatorDataValidations.Ebsco.EbscoAggregatorValidations'
+        elif aggregator == 'FOLLET':
+            module_path_relative = 'AggregatorDataValidations.Follett.FollettAggregatorValidations'
+        elif aggregator == 'GARDNERS':
+            module_path_relative = 'AggregatorDataValidations.Gardners.GardnersAggregatorValidations'
         elif aggregator == 'PROQUEST':
             module_path_relative = 'AggregatorDataValidations.Proquest.ProquestAggregatorValidations'
-        elif aggregator == 'FOLLETT':
-            module_path_relative = 'AggregatorDataValidations.Follett.FollettAggregatorValidations'
+        elif aggregator == 'REDSHELF':
+            module_path_relative = 'AggregatorDataValidations.Redshelf.RedshelfAggregatorValidations'
+        elif aggregator == 'OMS':
+            module_path_relative = 'OwnedsitesDataValidations.OMS.OMSAggregatorValidations'
+        elif aggregator == 'UBW':
+            module_path_relative = 'OwnedsitesDataValidations.UBW.UBWAggregatorValidations'
+        elif aggregator == 'USPT':
+            module_path_relative = 'WarehouseDataValidations.USPT.UsptWarehouseValidations'
+        elif aggregator == 'UKBP':
+            module_path_relative = 'WarehouseDataValidations.UKBP.UkbpWarehouseValidations'
+        elif aggregator == 'SGBM':
+            module_path_relative = 'WarehouseDataValidations.SGBM.SgbmWarehouseValidations'
+        elif aggregator == 'AUSTLD':
+            module_path_relative = 'WarehouseDataValidations.AUSTLD.AustldWarehouseValidations'
 
-        # Start Aggregator specific data validations
+        # Run the respective Aggregator specific validation rules on the parquet file data
         module_path = module_path_relative
         module = importlib.import_module(module_path)
-        x= module_path_relative.split('.')
         className = getattr(module, module_path_relative.split('.')[2])
         classObj = className()
         classObj.aggregator_data_validations(test_data=extracted_data)

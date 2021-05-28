@@ -1,0 +1,35 @@
+{
+   "schema": {
+      "aggregator_name": {
+         "type": "string"
+      },
+      "trans_type": {
+         "type": "string",
+         "regex": "[a-zA-Z]*",
+         "allowed": [
+           "Sales",
+           "Gratis",
+           "Transfer",
+           "Stock Movement"
+         ]
+      },
+      "sale_type_ori": {
+         "type": "string",
+         "regex": "[a-zA-Z]*"
+      },
+      "sale_type": {
+         "type": "string",
+         "regex": "[a-zA-Z]*",
+         "allowed": [
+            "Purchase",
+            "Return"
+         ]
+      },
+      "product_type": {
+         "type": "string",
+         "allowed": [
+            "Print"
+         ]
+      }
+   }
+}
