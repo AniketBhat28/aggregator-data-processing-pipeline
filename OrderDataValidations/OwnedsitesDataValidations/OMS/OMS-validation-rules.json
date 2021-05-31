@@ -1,0 +1,38 @@
+{
+   "schema": {
+      "aggregator_name": {
+         "type": "string",
+         "allowed": [
+            "EBSCO_GOBI",
+            "PQ_OASIS",
+            "TANDF",
+            "PQ_RIALTO"
+         ]
+      },
+      "product_type": {
+         "type": "string",
+         "allowed": [
+            "Electronic"
+         ]
+      },
+      "trans_type": {
+         "type": "string",
+         "allowed": [
+            "Sales"
+         ]
+      },
+      "sale_type": {
+         "type": "string",
+         "allowed": [
+            "Purchase",
+            "Return"
+         ]
+      },
+      "source": {
+         "type": "string",
+         "allowed": [
+            "OMS"
+         ]
+      }
+   }
+}

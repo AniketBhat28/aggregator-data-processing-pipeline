@@ -1,7 +1,3 @@
-#############################
-#        Imports            #
-#############################
-
 import logging as logger
 import os
 import json
@@ -21,48 +17,46 @@ validator = Validator()
 #       Class Functions     #
 #############################
 
-class EbscoAggregatorValidations:
+class UsptWarehouseValidations:
     def aggregator_data_validations(self,test_data):
-
-        logger.info("\n\t------Starting Ebsco Aggregator Data Validations------")
-        print("\n------Starting Ebsco Aggregator Data Validations------")
+        # Initialising the Dataframe with Aggregator Parquet File
+        logger.info("\n\t------Starting USPT Aggregator Data Validations------")
         load_data = test_data
 
         # Initialising the file with Aggregator Config Json
         with open(BASE_PATH + '/aggregator-specific-configData.json') as f:
             aggregator_config_json = json.load(f)
-        agg_list = aggregator_config_json["aggregator_list"]
 
-        # Initialising the file with Ebsco validation Rules Json
-        with open(BASE_PATH1 + '/Ebsco-validation-rules.json') as f:
-            Ebsco_val_rule_json = json.load(f)
-        Ebsco_val_rules = Ebsco_val_rule_json["schema"]
+        # Initialising the file with Aggregator validation Rules Json
+        with open(BASE_PATH1 + '/USPT-validation-rules.json') as f:
+            Uspt_val_rule_json = json.load(f)
+        Uspt_val_rules = Uspt_val_rule_json["schema"]
 
-        Ebsco_val_rules: dict
+        Uspt_val_rules: dict
 
         ############################################################
         #       Starting Data Validations
         ############################################################
 
-        # Running validation on entire frame based on Ebsco Validation Rules Json
+        # Running validation on entire frame based on Aggregator Rules Json
         cerberus_rule_val_df = load_data.to_dict('records')
         validator.allow_unknown = True
 
         for item in cerberus_rule_val_df:
-            success = validator.validate(item, Ebsco_val_rules)
+            success = validator.validate(item, Uspt_val_rules)
             if (success):
-                print("Ebsco aggregator specific rules are checked and no issues are found for this data row")
+                print("USPT aggregator specific rules are checked and no issues are found for this data row")
             else:
                 print(validator.errors)
                 print(item)
                 print("\n")
 
                 # Storing the failed values in a dataframe for Reporting purpose
-                failed_ebsco_val = pd.DataFrame.from_dict(item, orient='index')
-                ebsco_val_results = pd.DataFrame()
-                ebsco_val_results = ebsco_val_results.append(failed_ebsco_val)
-                ebsco_val_results['Validation Result'] = str(validator.errors)
+                failed_uspt_val = pd.DataFrame.from_dict(item, orient='index')
+                uspt_val_results = pd.DataFrame()
+                uspt_val_results = uspt_val_results.append(failed_uspt_val)
+                uspt_val_results['Validation Result'] = str(validator.errors)
 
-        # # Creating Final Data frame which failed Ebsco Validation Rules
-        # final_ebsco_val_results = pd.concat([ebsco_val_results], ignore_index=True, sort=True)
-        # return final_ebsco_val_results
+        # # Creating Final Data frame which failed validation
+        # final_uspt_val_results = pd.concat([uspt_val_results], ignore_index=True, sort=True)
+        # return final_uspt_val_results

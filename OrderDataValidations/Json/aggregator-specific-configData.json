@@ -1,11 +1,10 @@
 {
       "aggregator_list":                  [
-                                               "AMAZON",
                                                "BARNES",
                                                "FOLLETT",
-                                               "REDSHELF",
                                                "GARDNERS",
-                                               "PROQUEST"
+                                               "BLACKWELLS",
+                                                "OMS"
                                             ],
 
       "backup_isbn_agg_list":              [
@@ -34,11 +33,6 @@
                                                   "aggregator_name",
                                                   "source",
                                                   "source_id"
-                                              ],
-      "reporting_date_format": ["%d/%m/%Y"],
-
-  "schema": {
-            "aggregator_name":{"type": "string"}
-        }
+                                              ]
 }
 

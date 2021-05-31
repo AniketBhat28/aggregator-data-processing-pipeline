@@ -17,23 +17,22 @@ validator = Validator()
 #       Class Functions     #
 #############################
 
-class EbscoAggregatorValidations:
-    def ebsco_agg_validations(self,test_data):
+class UkbpWarehouseValidations:
+    def aggregator_data_validations(self,test_data):
         # Initialising the Dataframe with Aggregator Parquet File
-        logger.info("\n\t------Starting Ebsco Aggregator Data Validations------")
+        logger.info("\n\t------Starting UKBP Aggregator Data Validations------")
         load_data = test_data
 
         # Initialising the file with Aggregator Config Json
         with open(BASE_PATH + '/aggregator-specific-configData.json') as f:
             aggregator_config_json = json.load(f)
-        agg_list = aggregator_config_json["aggregator_list"]
 
         # Initialising the file with Aggregator validation Rules Json
-        with open(BASE_PATH1 + '/Ebsco-validation-rules.json') as f:
-            Ebsco_val_rule_json = json.load(f)
-        Ebsco_val_rules = Ebsco_val_rule_json["schema"]
+        with open(BASE_PATH1 + '/UKBP-validation-rules.json') as f:
+            Ukbp_val_rule_json = json.load(f)
+        Ukbp_val_rules = Ukbp_val_rule_json["schema"]
 
-        Ebsco_val_rules: dict
+        Ukbp_val_rules: dict
 
         ############################################################
         #       Starting Data Validations
@@ -42,13 +41,22 @@ class EbscoAggregatorValidations:
         # Running validation on entire frame based on Aggregator Rules Json
         cerberus_rule_val_df = load_data.to_dict('records')
         validator.allow_unknown = True
+
         for item in cerberus_rule_val_df:
-            success = validator.validate(item, Ebsco_val_rules)
-            if not success:
-                print(item)
+            success = validator.validate(item, Ukbp_val_rules)
+            if (success):
+                print("UKBP aggregator specific rules are checked and no issues are found for this data row")
+            else:
                 print(validator.errors)
+                print(item)
                 print("\n")
 
+                # Storing the failed values in a dataframe for Reporting purpose
+                failed_uspt_val = pd.DataFrame.from_dict(item, orient='index')
+                uspt_val_results = pd.DataFrame()
+                uspt_val_results = uspt_val_results.append(failed_uspt_val)
+                uspt_val_results['Validation Result'] = str(validator.errors)
+
         # # Creating Final Data frame which failed validation
-        # final_ebsco_val_results = pd.concat([invalid_agg_name, invalid_isbn], ignore_index=True, sort=True)
-        # return final_ebsco_val_results
+        # final_uspt_val_results = pd.concat([uspt_val_results], ignore_index=True, sort=True)
+        # return final_uspt_val_results

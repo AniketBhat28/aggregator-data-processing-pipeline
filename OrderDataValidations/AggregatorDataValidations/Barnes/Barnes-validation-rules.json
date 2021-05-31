@@ -1,0 +1,37 @@
+{
+   "schema": {
+      "product_type": {
+         "type": "string",
+         "allowed": [
+            "Electronic"
+         ]
+      },
+      "trans_type": {
+         "type": "string",
+         "allowed": [
+            "Sales"
+         ]
+      },
+     "sale_type": {
+         "type": "string",
+         "allowed": [
+            "Sales",
+            "Return",
+            "Purchase"
+         ]
+      },
+     "price_currency": {
+         "type": "string",
+         "allowed": [
+            "USD"
+         ]
+      },
+      "source": {
+         "type": "string",
+         "allowed": [
+            "BARNES",
+            "BARNES EBook"
+         ]
+      }
+   }
+}

@@ -1,0 +1,41 @@
+{
+   "schema": {
+      "aggregator_name": {
+         "type": "string",
+         "allowed": [
+            "CHEGG"
+         ]
+      },
+      "product_type": {
+         "type": "string",
+         "allowed": [
+            "Electronic"
+         ]
+      },
+      "trans_type": {
+         "type": "string",
+         "allowed": [
+            "Sales",
+            "Rental",
+            "subscription"
+         ]
+      },
+     "sale_type": {
+         "type": "string",
+         "allowed": [
+            "Purchase",
+            "Return",
+            "Checkout",
+            "Extension",
+            "Subscription",
+            "Cancellation"
+         ]
+      },
+      "source": {
+         "type": "string",
+         "allowed": [
+            "CHEGG EBook"
+         ]
+      }
+   }
+}

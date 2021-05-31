@@ -1,0 +1,36 @@
+{
+   "schema": {
+      "aggregator_name": {
+         "type": "string",
+         "allowed": [
+            "REDSHELF"
+         ]
+      },
+      "product_type": {
+         "type": "string",
+         "allowed": [
+            "Electronic"
+         ]
+      },
+      "trans_type": {
+         "type": "string",
+         "allowed": [
+            "Sales",
+            "Rental"
+         ]
+      },
+     "sale_type": {
+         "type": "string",
+         "allowed": [
+            "Return",
+            "Purchase"
+         ]
+      },
+      "source": {
+         "type": "string",
+         "allowed": [
+            "REDSHELF"
+         ]
+      }
+   }
+}

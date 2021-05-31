@@ -1,0 +1,43 @@
+{
+   "schema": {
+      "aggregator_name": {
+         "type": "string",
+         "allowed": [
+            "TANDF"
+         ]
+      },
+      "product_type": {
+         "type": "string",
+         "allowed": [
+            "Electronic",
+            "Print"
+         ]
+      },
+      "trans_type": {
+         "type": "string",
+         "allowed": [
+            "Sales",
+            "Rental"
+         ]
+      },
+      "sale_type": {
+         "type": "string",
+         "allowed": [
+            "Purchase",
+            "Checkout"
+         ]
+      },
+      "source": {
+         "type": "string",
+         "allowed": [
+            "UBW"
+         ]
+      },
+     "sub_domain": {
+         "type": "string",
+         "allowed": [
+            "Routelege.com"
+         ]
+      }
+   }
+}

@@ -1,12 +1,13 @@
 {
-	"aggregator_name": "EBSCO",
+	"aggregator_name": "SGBM",
 	"input_bucket_name": "s3-use1-ap-pe-df-orders-insights-storage-d",
 	"output_bucket_name" : "s3-use1-ap-pe-df-orders-insights-storage-d",
-	"aggregator_folder_name" : "EBSCO",
-	"year" : 2017,
+	"input_folder_name" : "SGBM",
+	"year" : 2018,
 	"month": "01",
 	"product_type": "Electronic",
 	"trans_type": "Sales",
 	"file_extension": ".parquet",
-	"isEnabled": "Y"
+	"isEnabled": "Y",
+	"input_layer": "staging_layer"
 }

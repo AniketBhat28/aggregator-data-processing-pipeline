@@ -1,3 +1,7 @@
+#############################
+#        Imports            #
+#############################
+
 import logging as logger
 import os
 import json
@@ -17,9 +21,9 @@ validator = Validator()
 #       Class Functions     #
 #############################
 
-class EbscoAggregatorValidations:
+class FollettAggregatorValidations:
     def aggregator_data_validations(self,test_data):
-        # Initialising the Dataframe with Aggregator Parquet File
+
         logger.info("\n\t------Starting Follett Aggregator Data Validations------")
         print("\n------Starting Follett Aggregator Data Validations------")
         load_data = test_data
@@ -29,7 +33,7 @@ class EbscoAggregatorValidations:
             aggregator_config_json = json.load(f)
         agg_list = aggregator_config_json["aggregator_list"]
 
-        # Initialising the file with Aggregator validation Rules Json
+        # Initialising the file with Follett validation Rules Json
         with open(BASE_PATH1 + '/Follett-validation-rules.json') as f:
             Follett_val_rule_json = json.load(f)
         Follett_val_rules = Follett_val_rule_json["schema"]
@@ -40,7 +44,7 @@ class EbscoAggregatorValidations:
         #       Starting Data Validations
         ############################################################
 
-        # Running validation on entire frame based on Aggregator Rules Json
+        # Running validation on entire frame based on Follett Validation Rules Json
         cerberus_rule_val_df = load_data.to_dict('records')
         validator.allow_unknown = True
 
@@ -59,6 +63,6 @@ class EbscoAggregatorValidations:
                 follett_val_results = follett_val_results.append(failed_follett_val)
                 follett_val_results['Validation Result'] = str(validator.errors)
 
-        # # Creating Final Data frame which failed validation
+        # # Creating Final Data frame which failed Follett validation rules
         # final_follett_val_results = pd.concat([follett_val_results], ignore_index=True, sort=True)
         # return final_follett_val_results
