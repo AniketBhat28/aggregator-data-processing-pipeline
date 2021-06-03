@@ -14,7 +14,6 @@ from Preprocessing.PreProcess import PreProcess
 from ReadWriteData.ConnectToS3 import ConnectToS3
 from AttributeGenerators.GenerateStagingAttributes import GenerateStagingAttributes
 
-# import country_converter as coco
 
 #################################
 #		GLOBAL VARIABLES		#
@@ -43,7 +42,6 @@ class MDAMappedProcessDataEbsco :
 
 
         logger.info("Processing transaction and sales types")
-        #extracted_data['sale_type_ori'] = extracted_data['sale_type']
         extracted_data['trans_type_ori'] = 'NA'
         if(file_type =='subs'):
 
@@ -64,6 +62,7 @@ class MDAMappedProcessDataEbsco :
     #							extracted_data - pr-processed_data
     # Return Values : 			extracted_data - extracted staging data
     def generate_staging_output(self, logger, filename, agg_rules, default_config, extracted_data,data) :
+
 
         ext = filename.split('.')[-1]
         file_type='NA'
@@ -99,22 +98,24 @@ class MDAMappedProcessDataEbsco :
 
 
 
-        # print(filename)
-        # print('reporting_date',extracted_data['reporting_date'])
+
+        extracted_data = extracted_data.replace(np.nan, 'NA')
 
         if extracted_data['reporting_date'].all()=='NA':
             extracted_data = self.process_subscription_transaction_date(logger, filename, extracted_data)
-        # print('date processed successfully')
+
         extracted_data = obj_gen_attrs.process_isbn(logger, extracted_data, 'digital_isbn', 'e_product_id',
                                                     'e_backup_product_id', 'NA')
         extracted_data = obj_gen_attrs.process_isbn(logger, extracted_data, 'physical_isbn', 'p_product_id',
                                                     'p_backup_product_id', 'NA')
         extracted_data = obj_gen_attrs.generate_misc_isbn(logger, extracted_data, 'digital_isbn', 'physical_isbn',
                                                           'misc_product_ids', 'NA')
-        extracted_data = extracted_data.replace('nan', 'NA')
+
         # print('replacing nans')
+        extracted_data = extracted_data.replace('nan', 'NA')
+
         extracted_data = self.process_trans_type(logger, extracted_data, file_type)
-        # print('trans type done')
+
         # new attributes addition
         extracted_data['source'] = "EBSCO"
 
@@ -141,7 +142,7 @@ class MDAMappedProcessDataEbsco :
 
         for each_file in files_in_s3 :
             if each_file != '' :
-                logger.info('\n+-+-+-+-+-+-+')
+                logger.info('\n+-+-+-+-+')
                 logger.info(each_file)
                 logger.info('\n+-+-+-+-+-+-+')
 
@@ -172,8 +173,8 @@ class MDAMappedProcessDataEbsco :
         # Grouping and storing data
         final_mapped_data = obj_gen_attrs.group_data(logger, final_staging_data,
                                                      default_config[0]['group_staging_data'])
-        #print('gourping done')
-        #obj_s3_connect.store_data(logger, app_config, final_grouped_data)
+
+
         final_mapped_data = final_mapped_data.applymap(str)
         obj_s3_connect.store_data_as_parquet(logger, app_config, final_mapped_data)
 
@@ -206,11 +207,6 @@ class MDAMappedProcessDataEbsco :
                                                                         final_staging_data,
                                                                         agg_reference, obj_pre_process,data,input_list)
 
-                # input_file_extn = each_file.split('.')[-1]
-                # if input_file_extn.lower() in ['xlsx', 'xls']:
-                #     final_staging_data['source_id'] = each_file.split('.')[0]+'/'+input_list[0]['input_sheet_name']
-                # else:
-                #     final_staging_data['source_id'] = each_file.split('.')[0]
         except KeyError as err :
             logger.error(f"KeyError error while processing the file {each_file}. The error message is :  ", err)
 
@@ -241,6 +237,7 @@ class MDAMappedProcessDataEbsco :
 
     def process_subscription_transaction_date(self,logger,filename,extracted_data):
         logger.info('Processing transaction_dates for subscription')
+        filename = filename.split('/')[-1]
         q1 = ["jan", "feb", "mar", "q1"]
         q2 = ["apr", "may", "jun","q2"]
         q3 = ["jul", "aug", "sep","q3"]
@@ -253,11 +250,10 @@ class MDAMappedProcessDataEbsco :
             extracted_data['reporting_date'] = '30-09-'+ filename.split('.')[0][-4:]
         elif any(x in filename.lower() for x in q4) :
             extracted_data['reporting_date'] = '31-12-'+ filename.split('.')[0][-4:]
-        #extracted_data['reporting_date'] = pd.to_datetime(extracted_data['reporting_date'])
         return extracted_data
 
     def check_csv_transaction_date(self,ext,extracted_data):
-        if ext == 'csv' and extracted_data['reporting_date'].all()=='NA':
+        if ext == 'csv' and extracted_data['reporting_date'].all()=='NA' :
             extracted_data['reporting_date'] = extracted_data["alternate_date"]
         return extracted_data
 
