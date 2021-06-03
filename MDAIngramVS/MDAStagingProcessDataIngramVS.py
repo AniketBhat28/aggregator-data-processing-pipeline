@@ -28,7 +28,7 @@ obj_process_core = ProcessCore()
 #################################
 
 
-class MDAStagingProcessDataIngramVS(GenerateStagingAttributes) :
+class MDAStagingProcessDataIngramVS:
 	"""
 		Class used to convert source data into mapped data
 	"""
