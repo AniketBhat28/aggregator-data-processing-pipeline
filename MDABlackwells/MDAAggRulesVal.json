@@ -1,0 +1,108 @@
+[
+	{
+		"name": "BLACKWELLS",
+		"filename_pattern": "",
+		"product_type": "Electronic",
+		"data_sheet":0,
+		"acceptable_currencies":["GBP"],
+		"file_type":"",
+		"header_row": 0,
+		"data_row": 1,
+		"discard_last_rows":0,
+		"attribute_mappings":[],
+
+		"missing_columns":["internal_order_number","internal_invoice_number","external_invoice_number","external_transaction_number","billing_customer_id","country"],
+		"relevant_attributes":	[
+									{"input_column_name": "Order Date", "staging_column_name":"reporting_date"},
+									{"input_column_name": "Customer Order ID", "staging_column_name":"external_purchase_order"},
+									{"input_column_name": "ISBN", "staging_column_name":"e_product_id"},
+									{"input_column_name": "TITLE", "staging_column_name":"product_title"},
+									{"input_column_name": "DLP", "staging_column_name":"price"},
+									{"input_column_name": "NET ex VAT", "staging_column_name":"payment_amount"},
+									{"input_column_name": "DISC%", "staging_column_name":"current_discount_percentage"},
+									{"input_column_name": "VAT %", "staging_column_name":"tax_percentage"},
+									{"input_column_name": "QTY", "staging_column_name":"units"},
+									{"input_column_name": "Blackwell's Shop", "staging_column_name":"bookstore code"}
+								],
+		"filters": {
+						"mandatory_columns": ["ISBN"],
+						"amount_column":"payment_amount",
+						"column_validations": [
+												{
+													"column_name": "payment_amount",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "units",
+													"dtype": "int",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 1
+																	}
+												},
+												{
+													"column_name": "price",
+													"dtype": "str",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "current_discount_percentage",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "tax_percentage",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "reporting_date",
+													"dtype": "date",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": "current_date"
+																	}
+												},
+												{
+													"column_name": "external_purchase_order",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "product_title",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "bookstore code",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												}
+											],
+						"convert_percentage": "no"
+					},
+		"date_formats":	["%d/%m/%Y"]
+	}
+]

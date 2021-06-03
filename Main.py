@@ -131,6 +131,12 @@ if __name__ == '__main__':
         else:
             module_path_relative = 'MDAEbsco.MDAMappedProcessDataEbsco'
 
+    elif aggregator == 'Blackwells':
+        if layer == 'staging':
+            module_path_relative = 'MDABlackwells.MDAStagingProcessDataBlackwells'
+        else:
+            module_path_relative = 'MDABlackwells.MDAMappedProcessDataBlackwells'
+
     elif aggregator == 'PROQUEST':
         if layer == 'staging':
             module_path_relative = 'MDAProquest.MDAStagingProcessDataProquest'
@@ -143,8 +149,11 @@ if __name__ == '__main__':
         else:
             module_path_relative = 'MDAChegg.MDAMappedProcessDataChegg'
             
-    elif aggregator == 'Ingram':
-        module_path_relative = 'StagingDataGenerators.ProcessDataIngram'
+    elif aggregator == 'IngramVS':
+        if layer == 'staging' :
+            module_path_relative = 'MDAIngramVS.MDAStagingProcessDataIngramVS'
+        else :
+            module_path_relative = 'MDAIngramVS.MDAMappedProcessDataIngramVS'
 
     elif aggregator == 'Gardners':
         if layer == 'staging' :
