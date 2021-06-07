@@ -66,7 +66,7 @@ class MDAStagingProcessDataBlackwells:
             final_mapped_data[(final_mapped_data.e_product_id == 'NA')].index)
 
         final_mapped_data['price'] = final_mapped_data.price.replace({u'\xa0' : '', '£' : ''}, regex=True).astype(float)
-        final_mapped_data['price'] = final_mapped_data['price'].astype('float')
+        
         final_mapped_data['payment_amount'] = final_mapped_data['payment_amount'].astype('float')
         final_mapped_data['current_discount_percentage'] = final_mapped_data['current_discount_percentage'].astype('float')
         final_mapped_data['tax_percentage'] = final_mapped_data['tax_percentage'].astype(
