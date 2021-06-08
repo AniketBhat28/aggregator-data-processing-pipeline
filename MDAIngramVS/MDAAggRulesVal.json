@@ -1,0 +1,193 @@
+[
+	{
+		"name": "INGRAM",
+		"fullname": "INGRAM/VitalSource",
+		"filename_pattern": "",
+		"product_type": "Electronic",
+		"data_sheet":"all",
+		"acceptable_currencies":[],
+		"file_type":"csv",
+		"header_row": 0,
+		"data_row": 1,
+		"discard_last_rows":0,
+
+		"attribute_mappings":	[
+									{"DATE":"TRANSACTION_DATE"},
+									{"Date":"TRANSACTION_DATE"},
+									{"Transaction Date":"TRANSACTION_DATE"},
+									{"INTERNAL_USE_INVOICE_#":"AP_INVOICE_NUMBER"},
+									{"PUBLISHER_ISBN":"EBOOK_ISBN"},
+									{"EISBN":"EBOOK_ISBN"},
+									{"eISBN":"EBOOK_ISBN"},
+									{"ISBN13":"EBOOK_ISBN"},
+									{"CUSTOM_ISBN":"HARD_COVER_ISBN"},
+									{"VBID_ISBN":"VBID"},
+									{"VBID/ISBN":"VBID"},
+									{"EFFECTIVE_DISCOUNT":"DISCOUNT"},
+									{"Discount":"DISCOUNT"},
+									{"PUBLISHER_DISCOUNT":"DISCOUNT"},
+									{"LIST_PRICE_CURRENCY":"CURRENCY"},
+									{"Payment Currency":"CURRENCY"},
+									{"SOLD_TO_COUNTRY":"COUNTRY"},
+									{"QTY":"QUANTITY"},
+									{"List Price USD":"LIST_PRICE"},
+									{"ROYALTY":"TOTAL"},
+									{"PUB_COMP_TOTAL":"TOTAL"},
+									{"Total":"TOTAL"},
+									{"TRANSACTION_TYPE":"TRX_TYPE"}
+
+
+								],
+		"missing_columns":["CONTENT_TYPE", "DURATION", "CUSTOM_ISBN", "COUNTRY", "PUBLISHER","VBID","internal_order_number",
+			"internal_invoice_number","external_purchase_order","external_invoice_number","external_transaction_number","billing_customer_id",
+			"ISBN","AP_INVOICE_NUMBER","HARD_COVER_ISBN","SOFT_COVER_ISBN","PUBLISHER","DURATION","POSTAL_CODE",
+			"INSTITUTION","TERM_NAME","COST_MULTIPLIER","COST_FACTOR"],
+		"relevant_attributes":	[
+									{"input_column_name": "TRANSACTION_DATE", "staging_column_name":"reporting_date"},
+									{"input_column_name": "AP_INVOICE_NUMBER", "staging_column_name":"external_invoice_number"},
+									{"input_column_name": "EBOOK_ISBN", "staging_column_name":"e_product_id"},
+									{"input_column_name": "ISBN", "staging_column_name":"e_backup_product_id"},
+									{"input_column_name": "SOFT_COVER_ISBN", "staging_column_name":"p_backup_product_id"},
+									{"input_column_name": "HARD_COVER_ISBN", "staging_column_name":"p_product_id"},
+									{"input_column_name": "VBID", "staging_column_name":"external_product_id"},
+									{"input_column_name": "TITLE", "staging_column_name":"product_title"},
+			            			{"input_column_name": "PUBLISHER", "staging_column_name":"imprint"},
+									{"input_column_name": "LIST_PRICE", "staging_column_name":"price"},
+			                        {"input_column_name": "CURRENCY", "staging_column_name":"price_currency"},
+			                        {"input_column_name": "CURRENCY", "staging_column_name":"payment_amount_currency"},
+									{"input_column_name": "DISCOUNT", "staging_column_name":"current_discount_percentage"},
+									{"input_column_name": "COUNTRY", "staging_column_name":"country"},
+			                        {"input_column_name": "QUANTITY", "staging_column_name":"units"},
+									{"input_column_name": "TOTAL", "staging_column_name":"payment_amount"},
+									{"input_column_name": "DURATION", "staging_column_name":"rental_duration"},
+									{"input_column_name": "TRX_TYPE", "staging_column_name":"trans_type_ori"},
+									{"input_column_name": "POSTAL_CODE", "staging_column_name":"post_code"},
+									{"input_column_name": "INSTITUTION", "staging_column_name":"account_name"},
+									{"input_column_name": "TERM_NAME", "staging_column_name":"course_term"},
+									{"input_column_name": "COST_MULTIPLIER", "staging_column_name":"list_price_multiplier"},
+									{"input_column_name": "COST_FACTOR", "staging_column_name":"cost_factor"}
+		],
+
+		"filters":	{
+						"mandatory_columns": ["EBOOK_ISBN","VBID"],
+						"amount_column":"payment_amount",
+						"column_validations": [
+												{
+													"column_name": "payment_amount",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "price",
+													"dtype": "float",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "rental_duration",
+													"dtype": "int",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": 0
+																	}
+												},
+												{
+													"column_name": "reporting_date",
+													"dtype": "date",
+													"missing_data":	{
+																		"process_type": "process",
+																		"value": "current_date"
+																	}
+												},
+												{
+													"column_name": "payment_amount_currency",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},{
+													"column_name": "price_currency",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "current_discount_percentage",
+													"dtype": "float",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": 0.0
+																	}
+												},
+												{
+													"column_name": "list_price_multiplier",
+													"dtype": "float",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": 1.0
+																	}
+												},
+												{
+													"column_name": "cost_factor",
+													"dtype": "float",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": 1.0
+																	}
+												},
+												{
+													"column_name": "country",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "p_backup_product_id",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "e_backup_product_id",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "external_product_id",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												},
+												{
+													"column_name": "p_product_id",
+													"dtype": "str",
+													"missing_data": {
+																		"process_type": "process",
+																		"value": "NA"
+																	}
+												}
+
+											],
+						"convert_percentage": "no",
+						"country_iso_values" : {"Australia": "AU", "AUD": "AU", "AUS": "AU", "United States": "US", "USD": "US", "Canada": "CA", "CAD": "CA", "United Kingdom": "GB", "GBP": "GB", "EUR": "GB", "South Africa": "ZA", "ZAR": "ZA", "Saudi Arabia": "SA", "New Zealand": "NZ", "Ireland": "IE", "Spain":"ES", "Germany":"DE", "Denmark":"DK"}
+					},
+		"date_formats":	["%d-%b-%y","%d/%m/%Y","%b-%y","%d-%m-%Y","%d.%m.%Y"]
+	}
+]
