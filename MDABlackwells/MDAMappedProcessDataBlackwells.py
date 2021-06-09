@@ -70,7 +70,7 @@ class MDAMappedProcessDataBlackwells:
 		extracted_data = self.process_trans_type(logger, extracted_data)
 
 		# new attributes addition
-		extracted_data['source'] = "Blackwells"
+		extracted_data['source'] = "BLACKWELLS"
 		extracted_data = extracted_data.replace(np.nan, 'NA')
 
 		return extracted_data

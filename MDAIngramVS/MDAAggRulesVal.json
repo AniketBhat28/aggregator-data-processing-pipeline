@@ -1,7 +1,7 @@
 [
 	{
 		"name": "INGRAM",
-		"fullname": "INGRAM/VitalSource",
+		"fullname": "INGRAM/VITALSOURCE",
 		"filename_pattern": "",
 		"product_type": "Electronic",
 		"data_sheet":"all",
@@ -16,6 +16,7 @@
 									{"Date":"TRANSACTION_DATE"},
 									{"Transaction Date":"TRANSACTION_DATE"},
 									{"INTERNAL_USE_INVOICE_#":"AP_INVOICE_NUMBER"},
+									{"INVOICE_NUMBER":"AP_INVOICE_NUMBER"},
 									{"PUBLISHER_ISBN":"EBOOK_ISBN"},
 									{"EISBN":"EBOOK_ISBN"},
 									{"eISBN":"EBOOK_ISBN"},
@@ -41,7 +42,7 @@
 		"missing_columns":["CONTENT_TYPE", "DURATION", "CUSTOM_ISBN", "COUNTRY", "PUBLISHER","VBID","internal_order_number",
 			"internal_invoice_number","external_purchase_order","external_invoice_number","external_transaction_number","billing_customer_id",
 			"ISBN","AP_INVOICE_NUMBER","HARD_COVER_ISBN","SOFT_COVER_ISBN","PUBLISHER","DURATION","POSTAL_CODE",
-			"INSTITUTION","TERM_NAME","COST_MULTIPLIER","COST_FACTOR"],
+			"INSTITUTION","TERM_NAME","COST_MULTIPLIER","COST_FACTOR","TRX_TYPE"],
 		"relevant_attributes":	[
 									{"input_column_name": "TRANSACTION_DATE", "staging_column_name":"reporting_date"},
 									{"input_column_name": "AP_INVOICE_NUMBER", "staging_column_name":"external_invoice_number"},

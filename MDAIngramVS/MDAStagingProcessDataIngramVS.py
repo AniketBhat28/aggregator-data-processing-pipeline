@@ -11,6 +11,7 @@ from Preprocessing.PreProcess import PreProcess
 from Preprocessing.ProcessCore import ProcessCore
 from ReadWriteData.ConnectToS3 import ConnectToS3
 from AttributeGenerators.GenerateStagingAttributes import GenerateStagingAttributes
+import country_converter as coco
 
 #################################
 #		GLOBAL VARIABLES		#
@@ -21,7 +22,7 @@ obj_read_data = ReadData()
 obj_pre_process = PreProcess()
 obj_s3_connect = ConnectToS3()
 obj_process_core = ProcessCore()
-
+obj_gen_attrs = GenerateStagingAttributes()
 
 #################################
 #		CLASS FUNCTIONS			#
@@ -75,26 +76,37 @@ class MDAStagingProcessDataIngramVS:
 			)].index
 		)
 
+		final_mapped_data = final_mapped_data.reset_index()
+
+
 		# Hard coded values
 		final_mapped_data['aggregator_name'] = agg_rules['fullname']
 		final_mapped_data['product_type'] = agg_rules['product_type']
 
 		final_mapped_data['e_product_id'] = (final_mapped_data['e_product_id'])\
-			.replace('-','',regex=True)
+			.replace('-','',regex=True).replace('','NA',regex=True)
 		final_mapped_data['p_product_id'] = (final_mapped_data['p_product_id']) \
-			.replace('-', '', regex=True)
+			.replace('-', '', regex=True).replace('','NA',regex=True)
 		final_mapped_data['e_backup_product_id'] = (final_mapped_data['e_backup_product_id']) \
-			.replace('-', '', regex=True)
+			.replace('-', '', regex=True).replace('','NA',regex=True)
 		final_mapped_data['p_backup_product_id'] = (final_mapped_data['p_backup_product_id']) \
-			.replace('-', '', regex=True)
+			.replace('-', '', regex=True).replace('','NA',regex=True)
 		final_mapped_data['external_product_id'] = (final_mapped_data['external_product_id']) \
-			.replace('-', '', regex=True)
+			.replace('-', '', regex=True).replace('','NA',regex=True)
 
-		final_mapped_data['e_product_id'] = final_mapped_data.e_product_id.str.split('.', expand=True)
-		final_mapped_data['p_product_id'] = final_mapped_data.p_product_id.str.split('.', expand=True)
-		final_mapped_data['e_backup_product_id'] = final_mapped_data.e_backup_product_id.str.split('.', expand=True)
-		final_mapped_data['p_backup_product_id'] = final_mapped_data.p_backup_product_id.str.split('.', expand=True)
-		final_mapped_data['external_product_id'] = final_mapped_data.external_product_id.str.split('.', expand=True)
+		#added to test for scientific notation 9.23E+12
+		scientific_notation_regex = "-?\d\.\d+[Ee][+\-]\d\d?"
+		if not final_mapped_data.e_product_id.str.contains(scientific_notation_regex).any() :
+			final_mapped_data['e_product_id'] = final_mapped_data.e_product_id.str.split('.', expand=True)
+		if not final_mapped_data.p_product_id.str.contains(scientific_notation_regex).any() :
+			final_mapped_data['p_product_id'] = final_mapped_data.p_product_id.str.split('.', expand=True)
+		if not final_mapped_data.e_backup_product_id.str.contains(scientific_notation_regex).any() :
+			final_mapped_data['e_backup_product_id'] = final_mapped_data.e_backup_product_id.str.split('.', expand=True)
+		if not final_mapped_data.p_backup_product_id.str.contains(scientific_notation_regex).any() :
+			final_mapped_data['p_backup_product_id'] = final_mapped_data.p_backup_product_id.str.split('.', expand=True)
+		if not final_mapped_data.external_product_id.str.contains(scientific_notation_regex).any() :
+			final_mapped_data['external_product_id'] = final_mapped_data.external_product_id.str.split('.', expand=True)
+
 		final_mapped_data['external_invoice_number'] = final_mapped_data.external_invoice_number.str.split('.', expand=True)
 
 		final_mapped_data['post_code'] = final_mapped_data.post_code.str.split('.', expand=True)
@@ -109,6 +121,17 @@ class MDAStagingProcessDataIngramVS:
 		final_mapped_data['current_discount_percentage'] = round(final_mapped_data['current_discount_percentage'].astype('float'), 2).abs()
 		final_mapped_data['units'] = final_mapped_data['units'].astype('float').astype('int')
 		final_mapped_data['rental_duration'] = final_mapped_data['rental_duration'].astype('float').astype('int')
+
+		#deriving country name from currency
+		final_mapped_data['country'] = final_mapped_data.apply(
+			lambda row : (row['payment_amount_currency']) if (row['country'] == 'NA') else (row['country']), axis=1)
+		final_mapped_data['country'] = final_mapped_data['country'].map(
+			agg_rules['filters']['country_iso_values']).fillna(final_mapped_data['country'])
+
+		#converting UK to GB ISO code
+		final_mapped_data['country'] = (final_mapped_data['country']).replace('UK', 'GB', regex=True)
+		#converting country to ISO2 encoding
+		final_mapped_data = self.country_converter(logger, final_mapped_data)
 
 		final_mapped_data = self.process_trans_type(final_mapped_data)
 		final_mapped_data['reporting_date'] = pd.to_datetime(
@@ -153,8 +176,26 @@ class MDAStagingProcessDataIngramVS:
 				# Append staging data of current file into final staging dataframe
 				final_edw_data = pd.concat([final_edw_data, final_staging_data], ignore_index=True, sort=True)
 
-		final_edw_data = self.group_data(logger, final_edw_data, default_config[0]['group_staging_data'])
+		final_edw_data = obj_gen_attrs.group_data(logger, final_edw_data, default_config[0]['group_staging_data'])
+
 		obj_s3_connect.store_data_as_parquet(logger, app_config, final_edw_data)
 
 		logger.info('\n+-+-+-+-+-+-+Finished Processing Ingram files\n')
 
+	# Function Description :	This function generates country ISO 2 codes
+	# Input Parameters : 		logger - For the logging output file.
+	#							final_grouped_data - staging data
+	#
+	# Return Values : 			final_grouped_data - ISO2 country code converted staging data
+	def country_converter(self,logger, final_mapped_data) :
+		logger.info("************country conversion starts*****************")
+		cc = coco.CountryConverter()
+		iso_names = cc.convert(names=final_mapped_data['country'].tolist(), to="ISO2", enforce_list=True)
+		final_mapped_data['country'] = iso_names
+		iso_new = []
+
+		for i in range(len(final_mapped_data['country'])) :
+			iso_new.append(final_mapped_data['country'][i][0])
+		final_mapped_data['country'] = iso_new
+		logger.info("************country conversion ends*****************")
+		return final_mapped_data
