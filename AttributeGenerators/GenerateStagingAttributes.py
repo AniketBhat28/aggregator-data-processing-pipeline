@@ -147,7 +147,8 @@ class GenerateStagingAttributes:
 
             sheet_name = input_list[0]['input_sheet_name']
             filename = filename.split('/')[-1]
-            source_id = filename.split('.')[0]
+            print('source_id',filename.rsplit('.',1))
+            source_id = filename.rsplit('.',1)[0]
             extracted_data['source_id'] = "{}/{}".format(source_id, sheet_name) if sheet_name else source_id
 
             # Append staging data of current file into final staging dataframe

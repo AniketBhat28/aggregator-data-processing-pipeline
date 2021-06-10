@@ -22,7 +22,7 @@
 									{"input_column_name": "DISC%", "staging_column_name":"current_discount_percentage"},
 									{"input_column_name": "VAT %", "staging_column_name":"tax_percentage"},
 									{"input_column_name": "QTY", "staging_column_name":"units"},
-									{"input_column_name": "Blackwell's Shop", "staging_column_name":"bookstore code"}
+									{"input_column_name": "Blackwell's Shop", "staging_column_name":"bookstore_code"}
 								],
 		"filters": {
 						"mandatory_columns": ["ISBN"],
@@ -93,7 +93,7 @@
 																	}
 												},
 												{
-													"column_name": "bookstore code",
+													"column_name": "bookstore_code",
 													"dtype": "str",
 													"missing_data": {
 																		"process_type": "process",

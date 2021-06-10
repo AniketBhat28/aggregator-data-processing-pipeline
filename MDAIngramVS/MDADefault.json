@@ -5,7 +5,7 @@
 									"display_column_sequence":  ["aggregator_name","reporting_date","internal_order_number","internal_invoice_number",
 										"external_purchase_order","external_invoice_number","external_transaction_number","billing_customer_id",
 										"e_product_id", "e_backup_product_id","p_product_id","p_backup_product_id","external_product_id",
-										"product_title","product_type","price","price_currency","price_type","payment_amount","payment_amount_currency",
+										"product_title","imprint","product_type","price","price_currency","price_type","payment_amount","payment_amount_currency",
 										"current_discount_percentage","trans_type_ori","trans_type","sale_type","units","rental_duration", "country",
 										"post_code","account_name","course_term","list_price_multiplier","cost_factor","source", "source_id"]
 									}

@@ -57,7 +57,7 @@ class MDAMappedProcessDataIngramVS:
 	#							default_config - Default json
 	#							extracted_data - pr-processed_data
 	# Return Values : 			extracted_data - extracted staging data
-	def generate_staging_output(self, logger, agg_rules, default_config, extracted_data,):
+	def generate_staging_output(self, logger,filename, agg_rules, default_config, extracted_data,data):
 
 		extracted_data['aggregator_name'] = agg_rules['fullname']
 		extracted_data['product_type'] = agg_rules['product_type']
@@ -71,7 +71,7 @@ class MDAMappedProcessDataIngramVS:
 		extracted_data = self.process_trans_type(logger, extracted_data)
 
 		# new attributes addition
-		extracted_data['source'] = "Ingram/VitalSource"
+		extracted_data['source'] = "INGRAM/VITALSOURCE"
 		extracted_data = extracted_data.replace(np.nan, 'NA')
 
 		return extracted_data

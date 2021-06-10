@@ -58,7 +58,7 @@ class MDAStagingProcessDataBlackwells:
         final_mapped_data = final_mapped_data.replace('nan', 'NA')
         final_mapped_data['aggregator_name'] = agg_rules['name']
         final_mapped_data['product_type'] = agg_rules['product_type']
-        final_mapped_data['country'] = 'UK'
+        final_mapped_data['country'] = 'GB'
         final_mapped_data = self.process_trans_type(logger, final_mapped_data)
 
         # Drop invalid rows
