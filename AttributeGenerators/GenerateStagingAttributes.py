@@ -34,7 +34,6 @@ class GenerateStagingAttributes:
     #							default_val - Deafult value to be inserted
     # Return Values : 			data
     def process_isbn(self, logger, data, input_column, staging_column, bckp_staging_column, default_val):
-
         logger.info('Processing ISBN')
         data[input_column] = data[input_column].astype(str)
 
@@ -49,6 +48,28 @@ class GenerateStagingAttributes:
 
         return data
 
+    # Function Description :	This function is to remove decimal values from string.
+    # Input Parameters : 		logger - For the logging output file.
+    #							input_df - input data frame
+    #							column - staging column name
+    # Return Values : 			input_df
+    @staticmethod
+    def remove_str_decimals(logger, input_df, column):
+        str_decimal_regex = "[0-9]+\.[0]+"
+
+        logger.info('Process decimal values of %s', column)
+        # Filter decimal contained df
+        temp_df = input_df[input_df[column].str.contains(str_decimal_regex)].copy()
+        if not temp_df.empty:
+            temp_df[column] = temp_df[column].str.split('.', expand=True)
+            input_df.update(temp_df)
+        
+        # Delete temp df to avoid garbage collections
+        del temp_df
+
+        logger.info('Processed decimal values')
+        return input_df
+
     # Function Description :	This function is to process comma seperated miscellaneous isbn
     # Input Parameters : 		logger - For the logging output file.
     #							data - input data
@@ -58,7 +79,6 @@ class GenerateStagingAttributes:
     #							default_val - Deafult value to be inserted
     # Return Values : 			data
     def generate_misc_isbn(self, logger, data, e_column, p_column, staging_column, default_val):
-
         logger.info('Processing Miscellaneous ISBN')
 
         data['misc_e_product_id'] = data.apply(lambda row: (row[e_column].split(',')[2:]) if (
@@ -81,7 +101,6 @@ class GenerateStagingAttributes:
     #							input_string - input string to search
     # Return Values : 			data
     def extract_patterns(self, data, pattern_dict, input_string):
-
         pattern = pattern_dict['regex']
         temp_pattern_output = re.findall(fr"(?:{pattern})\b", input_string, re.IGNORECASE)
         if len(temp_pattern_output) != 0:
@@ -95,7 +114,6 @@ class GenerateStagingAttributes:
     #							groupby_object - includes agg_fn and columns to group
     # Return Values : 			final_grouped_data
     def group_data(self, logger, data, groupby_object):
-
         logger.info('Grouping staging data')
         final_grouped_data = data[groupby_object['display_column_sequence']]
 
@@ -108,7 +126,6 @@ class GenerateStagingAttributes:
     #							amount_column - name of the amount column
     # Return Values : 			data
     def process_net_unit_prices(self, logger, data, amount_column):
-
         logger.info('Computing aggregator and tnf net unit prices')
         data['tnf_net_price_per_unit'] = round(((1 - data['disc_percentage']) * data['publisher_price']), 2)
         data['agg_net_price_per_unit'] = round((data[amount_column] / data['net_units']), 2)
@@ -155,6 +172,7 @@ class GenerateStagingAttributes:
             final_staging_data = pd.concat([final_staging_data, extracted_data], ignore_index=True, sort=True)
         return final_staging_data
 
+
     def applying_aggregator_rules(self, logger, input_list, each_file, rule_config, default_config,
                                   final_staging_data, obj_read_data, obj_pre_process,
                                   agg_name, agg_reference):
@@ -188,13 +206,12 @@ class GenerateStagingAttributes:
                                                                default_config,
                                                                extracted_data, final_staging_data,
                                                                agg_reference, obj_pre_process, data, input_list)
-
-
         except KeyError as err:
             logger.error(f"KeyError error while processing the file {each_file}. The error message is :  ", err)
 
         logger.info('\n+-+-+-+-+-+-+Finished Processing ' + agg_name + ' files\n')
         return final_staging_data
+
 
     def applying_mapped_aggregator_rules(self, logger, input_list, each_file, rule_config, default_config,
                                          final_staging_data, obj_read_data, obj_pre_process,
