@@ -81,7 +81,7 @@ class MDAStagingProcessDataIngramVS:
 		product_columns = ('e_product_id', 'p_product_id', 'e_backup_product_id', 'p_backup_product_id', 'external_product_id')
 		for product_column in product_columns:
 			final_mapped_data[product_column] = final_mapped_data[product_column].replace('-','').replace('','NA')
-			obj_gen_attrs.remove_str_decimals(logger, final_mapped_data, product_column)
+			final_mapped_data = obj_gen_attrs.remove_str_decimals(logger, final_mapped_data, product_column)
 
 		final_mapped_data['external_invoice_number'] = final_mapped_data.external_invoice_number.str.split('.', expand=True)
 		final_mapped_data['post_code'] = final_mapped_data.post_code.str.split('.', expand=True)

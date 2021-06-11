@@ -21,6 +21,7 @@
 									{"EISBN":"EBOOK_ISBN"},
 									{"eISBN":"EBOOK_ISBN"},
 									{"ISBN13":"EBOOK_ISBN"},
+									{"SKU":"HARD_COVER_ISBN"},
 									{"CUSTOM_ISBN":"HARD_COVER_ISBN"},
 									{"VBID_ISBN":"VBID"},
 									{"VBID/ISBN":"VBID"},
