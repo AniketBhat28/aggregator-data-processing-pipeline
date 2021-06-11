@@ -94,10 +94,13 @@ class MDAStagingProcessDataIngramVS:
 
 		final_mapped_data.loc[(final_mapped_data['rental_duration'] == 'NA'), 'rental_duration'] = 0
 		final_mapped_data['rental_duration'] = final_mapped_data['rental_duration'].astype('float').astype('int')
-		
+
+		final_mapped_data.loc[(final_mapped_data['units'] == 'NA'), 'units'] = '1'
+		final_mapped_data['units'] = final_mapped_data['units'].astype('float').astype('int')
+		final_mapped_data.loc[(final_mapped_data['units'] == 0), 'units'] = 1
+
 		final_mapped_data['payment_amount'] = round(final_mapped_data['payment_amount'].astype('float'), 2)
 		final_mapped_data['price'] = round(final_mapped_data['price'].astype('float'), 2)
-		final_mapped_data['units'] = final_mapped_data['units'].astype('float').astype('int')
 		final_mapped_data['current_discount_percentage'] = round(final_mapped_data['current_discount_percentage'].astype('float'), 2).abs()
 
 		final_mapped_data['country'] = final_mapped_data.apply(
@@ -166,7 +169,7 @@ class MDAStagingProcessDataIngramVS:
 		logger.info("************country conversion starts*****************")
 		cc = coco.CountryConverter()
 		# Filter non iso2 formats country df
-		convertable_df = final_mapped_data[final_mapped_data['country'].str.len() > 2].copy()
+		convertable_df = final_mapped_data[final_mapped_data['country'].str.len() > 2].loc[:, ('country',)]
 
 		if not convertable_df.empty:
 			iso_names = cc.convert(names=convertable_df['country'].tolist(), to="ISO2")

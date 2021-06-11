@@ -59,7 +59,7 @@ class GenerateStagingAttributes:
 
         logger.info('Process decimal values of %s', column)
         # Filter decimal contained df
-        temp_df = input_df[input_df[column].str.contains(str_decimal_regex)].copy()
+        temp_df = input_df[input_df[column].str.contains(str_decimal_regex)].loc[:, (column,)]
         if not temp_df.empty:
             temp_df[column] = temp_df[column].str.split('.', expand=True)
             input_df.update(temp_df)
