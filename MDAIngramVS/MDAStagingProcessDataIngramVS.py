@@ -137,7 +137,6 @@ class MDAStagingProcessDataIngramVS:
 		# Processing for each file in the fiven folder
 		logger.info('\n+-+-+-+-+-+-+Starting Ingram files Processing\n')
 		agg_rules = next((item for item in rule_config if (item['name'] == agg_name)), None)
-		k = 0
 
 		files_in_s3 = obj_s3_connect.get_files(logger, input_list)
 		for each_file in files_in_s3 :
@@ -148,15 +147,12 @@ class MDAStagingProcessDataIngramVS:
 
 				final_mapped_data = pd.read_parquet(input_base_path + each_file, engine='pyarrow')
 
-				k += len(final_mapped_data)
-
 				final_staging_data = self.generate_edw_staging_data(logger, agg_rules, app_config, final_mapped_data)
 
 				# Append staging data of current file into final staging dataframe
 				final_edw_data = pd.concat([final_edw_data, final_staging_data], ignore_index=True, sort=True)
 
 		final_edw_data = obj_gen_attrs.group_data(logger, final_edw_data, default_config[0]['group_staging_data'])
-		k
 		obj_s3_connect.store_data_as_parquet(logger, app_config, final_edw_data)
 
 		logger.info('\n+-+-+-+-+-+-+Finished Processing Ingram files\n')
