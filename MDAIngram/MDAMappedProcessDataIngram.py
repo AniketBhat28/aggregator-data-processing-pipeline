@@ -33,7 +33,7 @@ obj_gen_attrs = GenerateStagingAttributes()
 #################################
 
 
-class MDAMappedProcessDataIngramVS:
+class MDAMappedProcessDataIngram:
 
 	# Function Description :	This function processes transaction and sales types
 	# Input Parameters : 		logger - For the logging output file.

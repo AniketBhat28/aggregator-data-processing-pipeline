@@ -5,13 +5,13 @@
 
 import pandas as pd
 import numpy as np
+import country_converter as coco
 
 from ReadWriteData.ReadData import ReadData
 from Preprocessing.PreProcess import PreProcess
 from Preprocessing.ProcessCore import ProcessCore
 from ReadWriteData.ConnectToS3 import ConnectToS3
 from AttributeGenerators.GenerateStagingAttributes import GenerateStagingAttributes
-import country_converter as coco
 
 #################################
 #		GLOBAL VARIABLES		#
@@ -29,7 +29,7 @@ obj_gen_attrs = GenerateStagingAttributes()
 #################################
 
 
-class MDAStagingProcessDataIngramVS:
+class MDAStagingProcessDataIngram:
 	"""
 		Class used to convert source data into mapped data
 	"""
@@ -42,7 +42,6 @@ class MDAStagingProcessDataIngramVS:
 	#							final_mapped_data - pr-processed_data
 	# Return Values : 			final_mapped_data - extracted staging data
 	def process_trans_type(self, final_mapped_data) :
-
 		self.LOGGER.info("Processing transaction type")
 		final_mapped_data['trans_type'] = final_mapped_data.apply(
             lambda row : ('Sales') if (row['rental_duration'] == 0) else 'Rental', axis=1)
@@ -50,7 +49,7 @@ class MDAStagingProcessDataIngramVS:
 		self.LOGGER.info("Transaction type is processed")
 		return final_mapped_data
 
-	# Function Description :	This function generates staging data for IngramVS files
+	# Function Description :	This function generates staging data for Ingram files
 	# Input Parameters : 		logger - For the logging output file.
 	#							filename - Name of the file
 	#							agg_rules - Rules json
@@ -58,7 +57,6 @@ class MDAStagingProcessDataIngramVS:
 	#							extracted_data - pr-processed_data
 	# Return Values : 			extracted_data - extracted staging data
 	def generate_edw_staging_data(self, logger, agg_rules, app_config, final_mapped_data) :
-
 		logger.info('***********generate staging data started*******************')
 
 		# Drop invalid rows
@@ -76,60 +74,46 @@ class MDAStagingProcessDataIngramVS:
 			)].index
 		)
 
-		final_mapped_data = final_mapped_data.reset_index()
-
-
 		# Hard coded values
 		final_mapped_data['aggregator_name'] = agg_rules['fullname']
 		final_mapped_data['product_type'] = agg_rules['product_type']
 
-		final_mapped_data['e_product_id'] = (final_mapped_data['e_product_id'])\
-			.replace('-','',regex=True).replace('','NA',regex=True)
-		final_mapped_data['p_product_id'] = (final_mapped_data['p_product_id']) \
-			.replace('-', '', regex=True).replace('','NA',regex=True)
-		final_mapped_data['e_backup_product_id'] = (final_mapped_data['e_backup_product_id']) \
-			.replace('-', '', regex=True).replace('','NA',regex=True)
-		final_mapped_data['p_backup_product_id'] = (final_mapped_data['p_backup_product_id']) \
-			.replace('-', '', regex=True).replace('','NA',regex=True)
-		final_mapped_data['external_product_id'] = (final_mapped_data['external_product_id']) \
-			.replace('-', '', regex=True).replace('','NA',regex=True)
-
-		#added to test for scientific notation 9.23E+12
-		scientific_notation_regex = "-?\d\.\d+[Ee][+\-]\d\d?"
-		if not final_mapped_data.e_product_id.str.contains(scientific_notation_regex).any() :
-			final_mapped_data['e_product_id'] = final_mapped_data.e_product_id.str.split('.', expand=True)
-		if not final_mapped_data.p_product_id.str.contains(scientific_notation_regex).any() :
-			final_mapped_data['p_product_id'] = final_mapped_data.p_product_id.str.split('.', expand=True)
-		if not final_mapped_data.e_backup_product_id.str.contains(scientific_notation_regex).any() :
-			final_mapped_data['e_backup_product_id'] = final_mapped_data.e_backup_product_id.str.split('.', expand=True)
-		if not final_mapped_data.p_backup_product_id.str.contains(scientific_notation_regex).any() :
-			final_mapped_data['p_backup_product_id'] = final_mapped_data.p_backup_product_id.str.split('.', expand=True)
-		if not final_mapped_data.external_product_id.str.contains(scientific_notation_regex).any() :
-			final_mapped_data['external_product_id'] = final_mapped_data.external_product_id.str.split('.', expand=True)
-
+		product_columns = ('e_product_id', 'p_product_id', 'e_backup_product_id', 'p_backup_product_id', 'external_product_id')
+		for product_column in product_columns:
+			final_mapped_data[product_column] = final_mapped_data[product_column].replace(
+				'-', '', regex=True
+				).replace(
+					'', 'NA', regex=True
+					)
+			final_mapped_data = obj_gen_attrs.remove_str_decimals(logger, final_mapped_data, product_column)
+			
 		final_mapped_data['external_invoice_number'] = final_mapped_data.external_invoice_number.str.split('.', expand=True)
-
 		final_mapped_data['post_code'] = final_mapped_data.post_code.str.split('.', expand=True)
-		final_mapped_data.loc[(final_mapped_data['list_price_multiplier'] == 'NA'), 'list_price_multiplier'] = 1
-		final_mapped_data.loc[(final_mapped_data['cost_factor'] == 'NA'), 'cost_factor'] = 1
-		final_mapped_data.loc[(final_mapped_data['rental_duration'] == 'NA'), 'rental_duration'] = 0
 
+		final_mapped_data.loc[(final_mapped_data['list_price_multiplier'] == 'NA'), 'list_price_multiplier'] = 1
 		final_mapped_data['list_price_multiplier'] = round(final_mapped_data['list_price_multiplier'].astype('float'), 2)
+
+		final_mapped_data.loc[(final_mapped_data['cost_factor'] == 'NA'), 'cost_factor'] = 1
 		final_mapped_data['cost_factor'] = round(final_mapped_data['cost_factor'].astype('float'), 2)
+
+		final_mapped_data.loc[(final_mapped_data['rental_duration'] == 'NA'), 'rental_duration'] = 0
+		final_mapped_data['rental_duration'] = final_mapped_data['rental_duration'].astype('float').astype('int')
+
+		final_mapped_data.loc[(final_mapped_data['units'] == 'NA'), 'units'] = '1'
+		final_mapped_data['units'] = final_mapped_data['units'].astype('float').astype('int')
+		final_mapped_data.loc[(final_mapped_data['units'] == 0), 'units'] = 1
+
 		final_mapped_data['payment_amount'] = round(final_mapped_data['payment_amount'].astype('float'), 2)
 		final_mapped_data['price'] = round(final_mapped_data['price'].astype('float'), 2)
 		final_mapped_data['current_discount_percentage'] = round(final_mapped_data['current_discount_percentage'].astype('float'), 2).abs()
-		final_mapped_data['units'] = final_mapped_data['units'].astype('float').astype('int')
-		final_mapped_data['rental_duration'] = final_mapped_data['rental_duration'].astype('float').astype('int')
 
-		#deriving country name from currency
 		final_mapped_data['country'] = final_mapped_data.apply(
 			lambda row : (row['payment_amount_currency']) if (row['country'] == 'NA') else (row['country']), axis=1)
 		final_mapped_data['country'] = final_mapped_data['country'].map(
 			agg_rules['filters']['country_iso_values']).fillna(final_mapped_data['country'])
 
 		#converting UK to GB ISO code
-		final_mapped_data['country'] = (final_mapped_data['country']).replace('UK', 'GB', regex=True)
+		final_mapped_data['country'] = final_mapped_data['country'].replace('UK', 'GB', regex=True)
 		#converting country to ISO2 encoding
 		final_mapped_data = self.country_converter(logger, final_mapped_data)
 
@@ -149,7 +133,6 @@ class MDAStagingProcessDataIngramVS:
 	#							default_config - Default json
 	# Return Values : 			None
 	def initialise_processing(self, logger, app_config, rule_config, default_config) :
-
 		# For the final staging output
 		agg_name = "INGRAM"
 		self.LOGGER = logger
@@ -177,7 +160,6 @@ class MDAStagingProcessDataIngramVS:
 				final_edw_data = pd.concat([final_edw_data, final_staging_data], ignore_index=True, sort=True)
 
 		final_edw_data = obj_gen_attrs.group_data(logger, final_edw_data, default_config[0]['group_staging_data'])
-
 		obj_s3_connect.store_data_as_parquet(logger, app_config, final_edw_data)
 
 		logger.info('\n+-+-+-+-+-+-+Finished Processing Ingram files\n')
@@ -190,12 +172,15 @@ class MDAStagingProcessDataIngramVS:
 	def country_converter(self,logger, final_mapped_data) :
 		logger.info("************country conversion starts*****************")
 		cc = coco.CountryConverter()
-		iso_names = cc.convert(names=final_mapped_data['country'].tolist(), to="ISO2", enforce_list=True)
-		final_mapped_data['country'] = iso_names
-		iso_new = []
+		# Filter non iso2 formats country df
+		convertable_df = final_mapped_data[final_mapped_data['country'].str.len() > 2].loc[:, ('country',)]
 
-		for i in range(len(final_mapped_data['country'])) :
-			iso_new.append(final_mapped_data['country'][i][0])
-		final_mapped_data['country'] = iso_new
+		if not convertable_df.empty:
+			iso_names = cc.convert(names=convertable_df['country'].tolist(), to="ISO2")
+			convertable_df['country'] = iso_names
+			final_mapped_data.update(convertable_df)
+
+		# Delete temp df to avoid garbage collections
+		del convertable_df
 		logger.info("************country conversion ends*****************")
 		return final_mapped_data
