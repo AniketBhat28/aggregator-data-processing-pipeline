@@ -29,7 +29,7 @@ obj_gen_attrs = GenerateStagingAttributes()
 #################################
 
 
-class MDAStagingProcessDataIngramVS:
+class MDAStagingProcessDataIngram:
 	"""
 		Class used to convert source data into mapped data
 	"""
@@ -49,7 +49,7 @@ class MDAStagingProcessDataIngramVS:
 		self.LOGGER.info("Transaction type is processed")
 		return final_mapped_data
 
-	# Function Description :	This function generates staging data for IngramVS files
+	# Function Description :	This function generates staging data for Ingram files
 	# Input Parameters : 		logger - For the logging output file.
 	#							filename - Name of the file
 	#							agg_rules - Rules json
@@ -80,9 +80,13 @@ class MDAStagingProcessDataIngramVS:
 
 		product_columns = ('e_product_id', 'p_product_id', 'e_backup_product_id', 'p_backup_product_id', 'external_product_id')
 		for product_column in product_columns:
-			final_mapped_data[product_column] = final_mapped_data[product_column].replace('-','').replace('','NA')
+			final_mapped_data[product_column] = final_mapped_data[product_column].replace(
+				'-', '', regex=True
+				).replace(
+					'', 'NA', regex=True
+					)
 			final_mapped_data = obj_gen_attrs.remove_str_decimals(logger, final_mapped_data, product_column)
-
+			
 		final_mapped_data['external_invoice_number'] = final_mapped_data.external_invoice_number.str.split('.', expand=True)
 		final_mapped_data['post_code'] = final_mapped_data.post_code.str.split('.', expand=True)
 
@@ -109,7 +113,7 @@ class MDAStagingProcessDataIngramVS:
 			agg_rules['filters']['country_iso_values']).fillna(final_mapped_data['country'])
 
 		#converting UK to GB ISO code
-		final_mapped_data['country'] = final_mapped_data['country'].replace('UK', 'GB')
+		final_mapped_data['country'] = final_mapped_data['country'].replace('UK', 'GB', regex=True)
 		#converting country to ISO2 encoding
 		final_mapped_data = self.country_converter(logger, final_mapped_data)
 
