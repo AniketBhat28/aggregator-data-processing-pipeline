@@ -1,9 +1,10 @@
 {
-	"aggregator_name": "Chegg",
-	"input_bucket_name": "s3-use1-ap-pe-df-orders-insights-storage-d",
+	"aggregator_name": "EBSCO",
+	"input_bucket_name": "s3-euw1-ap-pe-orders-worker-agg-storage-etl",
 	"output_bucket_name": "s3-use1-ap-pe-df-orders-insights-storage-d",
-	"input_folder_name": "CHEGG",
+	"input_folder_name": "EBSCO_HOST",
 	"month": "",
 	"year": 2020,
-	"layer": "staging"
+	"layer": "mapped",
+	"_comment": "s3-euw1-ap-pe-orders-worker-agg-storage-etl"
 }
