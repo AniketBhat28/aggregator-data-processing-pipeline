@@ -212,8 +212,8 @@ class MDAMappedProcessDataEbsco :
 
         return final_staging_data
 
-    def process_only_quarter_and_subscription_file(self, filename,logger) :
-        matches = ["q1", "q2", "q3", "q4","roy","sub"]
+    def process_only_quarter_and_subscription_file(self, filename, logger) :
+        matches = ["q1", "q2", "q3", "q4", "roy", "sub"]
         if any(x in filename.lower() for x in matches) :
             return True
         else:

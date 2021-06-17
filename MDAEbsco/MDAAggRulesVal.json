@@ -17,7 +17,8 @@
 									{"royalty": "royalty due"},
 									{"pub. list mult.": "lpm"},
 									{"royalty currency" :"transaction currency"},
-									{"publisher name" : "imprint"}
+									{"publisher name" : "imprint"},
+									{"ORDER ID" : "order id"}
 								],
 
 		"missing_columns":["adj list price","consortia","list disc","model","order id","bill to","imprint","isbn","sale type",

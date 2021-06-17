@@ -35,14 +35,17 @@ class PreProcess:
 	#							mandatory_columns - list of mandatory columns
 	# Return Values : 			data
 	def process_header_templates(self, logger, data, mandatory_columns):
-		
+
 		logger.info('Removing metadata and blanks')
-		raw_data = data
-		# print(data.columns)
-		# print(mandatory_columns)
-		# input()
+		# drop columns where all elements are NaN:
+		raw_data = data.dropna(axis=1, how='all')
+		len_required_cols = len(mandatory_columns)
+		
 		for i, row in raw_data.iterrows():
-			if row.notnull().all():
+			if (
+				row.notnull().all() 
+				and sum(row.str.upper().isin(mandatory_columns)) >= len_required_cols
+			):
 				data = raw_data.iloc[(i+1):].reset_index(drop=True)
 				data.columns = list(raw_data.iloc[i])
 				break
