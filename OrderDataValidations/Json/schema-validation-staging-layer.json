@@ -69,6 +69,8 @@
                   "product_format": {"type": "string"},
                   "rental_duration_measure": {"type": "string"},
                   "sales_net_unit": {"type": "number"},
-                  "business_model": {"type": "string"}
+                  "business_model": {"type": "string"},
+                  "cost_factor": {"type": "number"},
+                  "course_term": {"type": "string"}
   }
 }

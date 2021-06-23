@@ -25,13 +25,9 @@ BASE_PATH = os.path.dirname('/Users/aniketbhatt/Desktop/GitHub Repo/Order Insigh
 class ReadStagingData:
 
     # Function to connect to S3 Bucket#
-    def read_staging_bucket(self):
+    def read_staging_bucket(self, config_json):
 
         # Read Config Data Json to get input for S3 Bucket Name, Aggregator, fileExtension etc
-        with open(BASE_PATH + '/configData.json') as f:
-            config_json = json.load(f)
-
-        # Saving all the input values in respective variables
         input_bucket_name = config_json['input_bucket_name']
         output_bucket_name = config_json['output_bucket_name']
         aggregator = config_json['aggregator_name']
@@ -44,6 +40,7 @@ class ReadStagingData:
         is_aggregator_enabled = config_json['isEnabled']
         input_layer = config_json['input_layer']
 
+        # Defined app_config dictionary
         app_config, input_dict = {}, {}
         app_config['input_params'], app_config['output_params'] = [], {}
 
@@ -51,7 +48,7 @@ class ReadStagingData:
         fileName = 'data-validation-report-' + aggregator + '-' + str(year) + '.csv'
 
         # Creating Input Directory path to read parquet file based on channel: Aggregator, Warehouse , Direct Sales
-        if input_folder_name in ['AMAZON', 'BARNES', 'EBSCO', 'FOLLETT', 'GARDNERS', 'PROQUEST', 'REDSHELF', 'FOLLET', 'CHEGG']:
+        if input_folder_name in ['AMAZON', 'BARNES', 'EBSCO', 'FOLLETT', 'GARDNERS', 'PROQUEST', 'REDSHELF', 'FOLLET', 'CHEGG', 'BLACKWELLS', 'INGRAM']:
             input_directory = input_layer + '/revenue/aggregator/' + input_folder_name + '/' + 'year=' + str(year) + '/'
         else:
             if input_folder_name in ['USPT', 'UKBP', 'SGBM', 'AUSTLD']:
@@ -63,7 +60,7 @@ class ReadStagingData:
         # Creating output directory path to upload the data validation test result report based on aggregator
         output_directory = 'data_validation_scripts/revenue/aggregator/' + aggregator.upper() + '/' + 'year=' + str(year) + '/' + fileName
 
-        # Saving all the input config data like S3 Bucket Name, Aggregator name etc in App Config
+        # Saving all the input config data like S3 Bucket Name, Aggregator name etc in app_config dictionary
         input_dict['input_base_path'] = 's3://' + input_bucket_name + '/' + input_directory + '/'
         input_dict['input_bucket_name'] = input_bucket_name
         input_dict['input_directory'] = input_directory
@@ -71,6 +68,7 @@ class ReadStagingData:
         input_dict['input_file_extension'] = file_extension
         input_dict['aggregator_name'] = aggregator
         input_dict['is_aggregator_enabled'] = is_aggregator_enabled
+        input_dict['input_layer'] = input_layer
 
         app_config['input_params'].append(input_dict)
         app_config['output_params']['output_bucket_name'] = output_bucket_name

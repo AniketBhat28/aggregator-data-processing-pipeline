@@ -1,0 +1,52 @@
+{
+   "schema": {
+      "product_type": {
+         "type": "string",
+         "allowed": [
+            "Electronic"
+         ]
+      },
+      "trans_type": {
+         "type": "string",
+         "allowed": [
+            "Sales"
+         ]
+      },
+     "sale_type": {
+         "type": "string",
+         "allowed": [
+            "Purchase"
+         ]
+      },
+     "price_currency": {
+         "type": "string",
+         "allowed": [
+            "GBP"
+         ]
+      },
+     "price_type": {
+         "type": "string",
+         "allowed": [
+            "Retail Price"
+         ]
+      },
+     "payment_amount_currency": {
+         "type": "string",
+         "allowed": [
+            "GBP"
+         ]
+      },
+     "country":{
+         "type":"string",
+          "allowed": [
+            "GB"
+         ]
+      },
+      "source": {
+         "type": "string",
+         "allowed": [
+            "BLACKWELLS"
+         ]
+      }
+   }
+}
