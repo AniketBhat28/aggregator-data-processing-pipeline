@@ -1,11 +1,5 @@
 {
    "schema": {
-      "aggregator_name": {
-         "type": "string",
-         "allowed": [
-            "CHEGG"
-         ]
-      },
       "product_type": {
          "type": "string",
          "allowed": [
@@ -16,25 +10,26 @@
          "type": "string",
          "allowed": [
             "Sales",
-            "Rental",
-            "subscription"
+            "Rental"
          ]
       },
      "sale_type": {
          "type": "string",
          "allowed": [
             "Purchase",
-            "Return",
-            "Checkout",
-            "Extension",
-            "Subscription",
-            "Cancellation"
+            "Return"
+         ]
+      },
+     "price_type": {
+         "type": "string",
+         "allowed": [
+            "Retail Price"
          ]
       },
       "source": {
          "type": "string",
          "allowed": [
-            "CHEGG"
+            "Ingram/VitalSource"
          ]
       }
    }

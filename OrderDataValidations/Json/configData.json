@@ -1,9 +1,9 @@
 {
-	"aggregator_name": "SGBM",
+	"aggregator_name": "INGRAMVS",
 	"input_bucket_name": "s3-use1-ap-pe-df-orders-insights-storage-d",
 	"output_bucket_name" : "s3-use1-ap-pe-df-orders-insights-storage-d",
-	"input_folder_name" : "SGBM",
-	"year" : 2018,
+	"input_folder_name" : "INGRAM",
+	"year" : 2017,
 	"month": "01",
 	"product_type": "Electronic",
 	"trans_type": "Sales",

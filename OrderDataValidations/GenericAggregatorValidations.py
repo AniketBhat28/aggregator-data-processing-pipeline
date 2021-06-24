@@ -28,30 +28,17 @@ validator = Validator()
 
 class GenericAggregatorValidations:
 
-    def generic_data_validations(self, test_data):
+    def generic_data_validations(self, test_data, schema_val_json, generic_val_json):
 
         logger.info("\n\t-+-+-+-Starting Generic Data Validations-+-+-+-")
 
-        # Initializing the file with input dataframe
+        # Initializing the file with parquet file data, schema rules and generic validation rules
         load_data = test_data
-
-        # Initialising the file with Aggregator specific config Json
-        with open(BASE_PATH + '/aggregator-specific-configData.json') as f:
-            aggregator_config_json = json.load(f)
-        agg_list = aggregator_config_json["aggregator_list"]
-
-        # Initialising the file with Schema validation rules json
-        with open(BASE_PATH + '/schema-validation-staging-layer.json') as f:
-            schema_val_json = json.load(f)
         schema_val_rules = schema_val_json["schema"]
-
-        # Initialising the file with Generic validation rules json
-        with open(BASE_PATH + '/generic-validation-rules.json') as f:
-            generic_val_rules_json = json.load(f)
-        generic_val_rules = generic_val_rules_json["schema"]
+        generic_val_rules = generic_val_json["schema"]
 
         ############################################################
-        #       Starting Generic Data Validations                          #
+        #       Starting Generic Data Validations                  #
         ############################################################
 
         # Validation 1 : Find for any Null or Empty values in the entire Dataframe
@@ -79,7 +66,7 @@ class GenericAggregatorValidations:
                 # schema_val_results = schema_val_results.append(failed_schema_val)
                 # schema_val_results['Validation Result'] = str(validator.errors)
 
-        # # Validation 3: Run generic validations on the dataframe
+        # Validation 3: Run generic validations on the dataframe
         print("\n-+-+-+-+-+-+ Starting Generic validations on Data File -+-+-+-+-+-+ \n")
         cerberus_rule_val_df = load_data.to_dict('records')
         validator.allow_unknown = True
@@ -100,6 +87,7 @@ class GenericAggregatorValidations:
         # Validation 4: Added a validation to check for Invalid ISBN's having trailing Zero's as part of POF-6917
         print("\n-+-+-+-+-+-+ Starting ISBN check for trailing zero's -+-+-+-+-+-+ \n")
         agg_name = load_data['source'][0]
+        agg_list = ['AMAZON', 'BARNES', 'CHEGG', 'EBSCO', 'FOLLETT', 'PROQUEST', 'GARDNERS', 'REDSHELF', 'BLACKWELLS', 'INGRAMVS']
         if agg_name in agg_list:
             for item in load_data['e_product_id']:
                 isbn_val = item

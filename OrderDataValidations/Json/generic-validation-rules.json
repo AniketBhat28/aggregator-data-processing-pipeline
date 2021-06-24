@@ -13,7 +13,9 @@
             "CHEGG",
             "OVERDRIVE",
             "GOOGLE",
-            "TANDF"
+            "TANDF",
+            "BLACKWELLS",
+            "INGRAM/VITALSOURCE"
          ]
       },
       "price_currency":{
@@ -56,7 +58,6 @@
             "REDSHELF",
             "GARDNERS",
             "PROQUEST",
-            "CHEGG",
             "OVERDRIVE",
             "GOOGLE",
             "OMS",
@@ -65,7 +66,9 @@
             "UKBP",
             "SGBM",
             "AUS_TLD",
-            "CHEGG EBook"
+            "CHEGG",
+            "INGRAM/VITALSOURCE",
+            "BLACKWELLS"
          ]
       },
       "reporting_date":{
@@ -74,29 +77,27 @@
       },
       "external_purchase_order":{
          "type":"string",
-         "regex":"[A-Z0-9.]*"
+         "regex":"[A-Z0-9]*"
       },
       "e_product_id":{
          "type":"string",
-         "regex":"[A-Z0-9.]{13,15}",
-         "excludes": ["NA"]
+         "regex":"[NA]{2}|97[89][0-9]{5}[0-9]{4}[0-9X]$"
       },
       "e_backup_product_id":{
          "type":"string",
-         "regex":"[A-Z0-9.]*"
+         "regex":"[A-Z0-9]*"
       },
       "p_product_id":{
          "type":"string",
-         "regex":"97[89][0-9]{5}[0-9]{4}[0-9X]$",
-         "excludes": ["NA"]
+         "regex":"[NA]{2}|97[89][0-9]{5}[0-9]{4}[0-9X]$"
       },
      "p_backup_product_id":{
       "type":"string",
-      "regex":"[A-Z0-9.]{2,13}"
+      "regex":"[A-Z0-9]{2,13}"
       },
       "misc_product_ids":{
          "type":"string",
-         "regex":"[A-Z0-9.]{2,13}"
+         "regex":"[A-Z0-9]{2,13}"
       },
       "external_product_id_type":{
          "type":"string"
@@ -158,6 +159,12 @@
       "regex": "[a-zA-Z0-9\\s]"
    },
    "sub_domain":{
+      "type":"string"
+   },
+   "cost_factor":{
+      "type":"number"
+   },
+   "course_term":{
       "type":"string"
    }
 }
