@@ -9,7 +9,7 @@ from cerberus import Validator
 #      Global Variables     #
 #############################
 
-BASE_PATH  = os.path.dirname('/Users/aniketbhatt/Desktop/GitHub Repo/Order Insights/aggregator-data-processing-pipeline/OrderDataValidations/Json/')
+BASE_PATH  = os.path.dirname('/Users/aniketbhatt/Desktop/GitHub Repo/Order Insights/aggregator-data-processing-pipeline/OrderDataValidations/WarehouseDataValidations/UKBP/')
 BASE_PATH1 = os.path.dirname(os.path.realpath(__file__))
 obj_read_data = ReadStagingData()
 validator = Validator()
@@ -18,32 +18,27 @@ validator = Validator()
 #############################
 
 class UkbpWarehouseValidations:
-    def aggregator_data_validations(self,test_data):
-        # Initialising the Dataframe with Aggregator Parquet File
-        logger.info("\n\t------Starting UKBP Aggregator Data Validations------")
-        load_data = test_data
+    def warehouse_specific_validations(self, input_data, agg_specific_rules):
+        logger.info("\n\t-+-+-+-Starting Ukbp warehouse specific data validations-+-+-+-")
+        print("\n-+-+-+-Starting Ukbp warehouse specific data validations-+-+-+-")
+        load_data = input_data
 
-        # Initialising the file with Aggregator Config Json
-        with open(BASE_PATH + '/aggregator-specific-configData.json') as f:
-            aggregator_config_json = json.load(f)
+        # Reading Ukbp warehouse specific rules from json when running locally
+        if not agg_specific_rules:
+            with open(BASE_PATH + '/UKBP-validation-rules.json') as f:
+                ukbp_val_rule_json = json.load(f)
+        else:
+            ukbp_val_rule_json = agg_specific_rules
+        # Initialising with ukbp_val_rules with ukbp_val_rule_json
+        ukbp_val_rules = ukbp_val_rule_json["schema"]
+        ukbp_val_rules: dict
 
-        # Initialising the file with Aggregator validation Rules Json
-        with open(BASE_PATH1 + '/UKBP-validation-rules.json') as f:
-            Ukbp_val_rule_json = json.load(f)
-        Ukbp_val_rules = Ukbp_val_rule_json["schema"]
-
-        Ukbp_val_rules: dict
-
-        ############################################################
-        #       Starting Data Validations
-        ############################################################
-
-        # Running validation on entire frame based on Aggregator Rules Json
+        # Ukbp warehouse validations for input_data against ukbp_val_rules using cerberus
         cerberus_rule_val_df = load_data.to_dict('records')
         validator.allow_unknown = True
 
         for item in cerberus_rule_val_df:
-            success = validator.validate(item, Ukbp_val_rules)
+            success = validator.validate(item, ukbp_val_rules)
             if (success):
                 print("UKBP aggregator specific rules are checked and no issues are found for this data row")
             else:

@@ -13,7 +13,7 @@ from cerberus import Validator
 #      Global Variables     #
 #############################
 
-BASE_PATH  = os.path.dirname('/Users/aniketbhatt/Desktop/GitHub Repo/Order Insights/aggregator-data-processing-pipeline/OrderDataValidations/Json/')
+BASE_PATH  = os.path.dirname('/Users/aniketbhatt/Desktop/GitHub Repo/Order Insights/aggregator-data-processing-pipeline/OrderDataValidations/AggregatorDataValidations/Blackwells/')
 BASE_PATH1 = os.path.dirname(os.path.realpath(__file__))
 obj_read_data = ReadStagingData()
 validator = Validator()
@@ -22,35 +22,27 @@ validator = Validator()
 #############################
 
 class BlackwellsAggregatorValidations:
-    def aggregator_data_validations(self, test_data, agg_val_json):
+    # Function to run Blackwells specific aggregator validations against input data
+    def aggregator_specific_validations(self, input_data, agg_specific_rules):
+        logger.info("\n\t-+-+-+-Starting Blackwells aggregator specific data validations-+-+-+-")
+        print("\n-+-+-+-Starting Blackwells aggregator specific data validations-+-+-+-")
+        load_data = input_data
 
-        logger.info("\n\t------Starting Blackwells Aggregator Data Validations------")
-        print("\n------Starting Blackwells Aggregator Data Validations------")
-        load_data = test_data
+        # Reading Blackwells aggregator specific rules from json when running locally
+        if not agg_specific_rules:
+            with open(BASE_PATH + '/Blackwells-validation-rules.json') as f:
+                blackwells_val_rule_json = json.load(f)
+        else:
+            blackwells_val_rule_json = agg_specific_rules
+        # Initialising with blackwells_val_rules with blackwells_val_rule_json
+        blackwells_val_rules = blackwells_val_rule_json["schema"]
+        blackwells_val_rules: dict
 
-        # Initialising the file with Aggregator Config Json
-        # with open(BASE_PATH + '/aggregator-specific-configData.json') as f:
-        #     aggregator_config_json = json.load(f)
-        # agg_list = aggregator_config_json["aggregator_list"]
-
-        # Initialising the file with Barnes Validation Rules Json
-        if not agg_val_json:
-            with open(BASE_PATH1 + '/Blackwells-validation-rules.json') as f:
-                agg_val_json = json.load(f)
-
-        Blackwells_val_rules = agg_val_json["schema"]
-        Blackwells_val_rules: dict
-
-        ############################################################
-        #       Starting Data Validations
-        ############################################################
-
-        # Running validation on entire frame based on Blackwells validation rules
+        # Blackwells aggregator validations for input_data against blackwells_val_rules using cerberus
         cerberus_rule_val_df = load_data.to_dict('records')
         validator.allow_unknown = True
-
         for item in cerberus_rule_val_df:
-            success = validator.validate(item, Blackwells_val_rules)
+            success = validator.validate(item, blackwells_val_rules)
             if (success):
                 print("Blackwells aggregator specific rules are checked and no issues are found for this data row")
             else:
