@@ -61,17 +61,17 @@ class DataValidationsMain:
             extracted_data = obj_read_data.read_parquet_file(key=aggFile, bucket_name=input_bucket_name)
             print("\n------Starting Data validations on file: " + aggFile + "------")
 
-        # # Validation 1: Start Schema validations if input layer is staging layer
-        #     if input_layer == 'staging_layer':
-        #         obj_schema_data_val.schema_data_validations(test_data=extracted_data,schema_val_json=schema_val_rules)
-        #
-        # # Validation 2: Start Generic data validations on the parquet file
-        #     # Validation 2a: Check if any Null values are present in parquet file
-        #     obj_generic_data_val.null_check(test_data=extracted_data)
-        #     # Validation 2b: Check generic data validation rules against parquet file using Cerberus
-        #     obj_generic_data_val.generic_data_validations(test_data=extracted_data, generic_val_json=generic_val_rules)
-        #     # Validation 2c: Check if any invalid ISBN's are present in parquet file having trailing zero's
-        #     obj_generic_data_val.check_isbn_format(test_data=extracted_data)
+        # Validation 1: Start Schema validations if input layer is staging layer
+            if input_layer == 'staging_layer':
+                obj_schema_data_val.schema_data_validations(test_data=extracted_data,schema_val_json=schema_val_rules)
+
+        # Validation 2: Start Generic data validations on the parquet file
+            # Validation 2a: Check if any Null values are present in parquet file
+            obj_generic_data_val.null_check(test_data=extracted_data)
+            # Validation 2b: Check generic data validation rules against parquet file using Cerberus
+            obj_generic_data_val.generic_data_validations(test_data=extracted_data, generic_val_json=generic_val_rules)
+            # Validation 2c: Check if any invalid ISBN's are present in parquet file having trailing zero's
+            obj_generic_data_val.check_isbn_format(test_data=extracted_data)
 
         # Validation 3: Start Aggregator specific data validations on the parquet file
             obj_aggregator_data_val.aggregator_data_validations(test_data=extracted_data,aggregator=aggregator_name,agg_val_json=agg_val_rules)
