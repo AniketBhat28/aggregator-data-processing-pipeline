@@ -17,13 +17,18 @@ from OrderDataValidations.AggregatorValidations import AggregatorValidations
 #############################
 #      Global Variables     #
 #############################
-
+# Creating object for ReadStagingData class
 obj_read_data = ReadStagingData()
-obj_generic_data_val = GenericValidations()
+# Creating object for SchemaValidations class
 obj_schema_data_val = SchemaValidations()
+# Creating object for GenericValidations class
+obj_generic_data_val = GenericValidations()
+# Creating object for AggregatorValidations class
 obj_aggregator_data_val = AggregatorValidations()
+# Defining variable to store s3
 s3 = boto3.resource("s3")
-BASE_PATH = os.path.dirname('/Users/aniketbhatt/Desktop/GitHub Repo/Order Insights/aggregator-data-processing-pipeline/OrderDataValidations/Json/')
+# Defining variable to store validation rules json local path
+val_rules_json_local_path = os.path.dirname(os.path.realpath(__file__))
 
 #############################
 #     Class Functions       #
@@ -34,14 +39,14 @@ class DataValidationsMain:
     def order_data_validation_main(self, app_config, schema_val_rules, generic_val_rules, agg_val_rules):
         # Reading schema rules from json when running locally
         if not schema_val_rules:
-            with open(BASE_PATH + '/schema-validation-staging-layer.json') as f:
+            with open(val_rules_json_local_path + '/Json' + '/schema-validation-staging-layer.json') as f:
                 schema_val_rules = json.load(f)
         # Reading generic rules from json when running locally
         if not generic_val_rules:
-            with open(BASE_PATH + '/generic-validation-rules.json') as f:
+            with open(val_rules_json_local_path + '/Json' + '/generic-validation-rules.json') as f:
                 generic_val_rules = json.load(f)
         if not app_config:
-            with open(BASE_PATH + '/configData.json') as f:
+            with open(val_rules_json_local_path + '/Json' + '/configData.json') as f:
                 config_json = json.load(f)
             app_config = obj_read_data.read_staging_bucket(config_json)
 

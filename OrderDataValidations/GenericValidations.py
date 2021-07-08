@@ -15,19 +15,16 @@ from collections import Counter
 #############################
 #      Global Variables     #
 #############################
-
-BASE_PATH = os.path.dirname(
-    '/Users/aniketbhatt/Desktop/GitHub Repo/Order Insights/aggregator-data-processing-pipeline/OrderDataValidations/Json/')
+# Creating object for ReadStagingData class
 obj_read_data = ReadStagingData()
+# Creating object for Cerberus validator class
 validator = Validator()
-
 
 #############################
 #     Class Functions       #
 #############################
 
 class GenericValidations:
-
     # Function to check if there are any Null values present in the data file
     def null_check(self, test_data):
         logger.info("\n\t-+-+-+-Starting Null check on the data file-+-+-+-")

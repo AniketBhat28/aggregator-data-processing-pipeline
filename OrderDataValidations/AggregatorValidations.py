@@ -32,12 +32,11 @@ from OrderDataValidations.WarehouseDataValidations.USPT.UsptWarehouseValidations
 #############################
 #      Global Variables     #
 #############################
-
-BASE_PATH = os.path.dirname(
-'/Users/aniketbhatt/Desktop/GitHub Repo/Order Insights/aggregator-data-processing-pipeline/OrderDataValidations/Json/')
+# Creating object for ReadStagingData class
 obj_read_data = ReadStagingData()
+# Creating object for Cerberus validator class
 validator = Validator()
-
+# Creating objects for all aggregator, owned sites and warehouse data validation classes
 obj_amazon_aggregator_validations = AmazonAggregatorValidations()
 obj_barnes_aggregator_validations = BarnesAggregatorValidations()
 obj_blackwells_aggregator_validations = BlackwellsAggregatorValidations()
@@ -48,10 +47,8 @@ obj_gardners_aggregator_validations = GardnersAggregatorValidations()
 obj_ingram_aggregator_validations = IngramvsAggregatorValidations()
 obj_proquest_aggregator_validations = ProquestAggregatorValidations()
 obj_redshelf_aggregator_validations = RedshelfAggregatorValidations()
-
 obj_oms_ownedsites_validations = OMSAOwnedSitesValidations()
 obj_ubw_ownedsites_validations = UBWOwnedSitesValidations()
-
 obj_austld_warehouse_validations = AustldWarehouseValidations()
 obj_sgbm_warehouse_validations = SgbmWarehouseValidations()
 obj_ukbp_warehouse_validations = UkbpWarehouseValidations()

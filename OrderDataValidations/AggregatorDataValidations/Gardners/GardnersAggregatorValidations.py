@@ -8,10 +8,11 @@ from cerberus import Validator
 #############################
 #      Global Variables     #
 #############################
-
-BASE_PATH  = os.path.dirname('/Users/aniketbhatt/Desktop/GitHub Repo/Order Insights/aggregator-data-processing-pipeline/OrderDataValidations/AggregatorDataValidations/Gardners/')
-BASE_PATH1 = os.path.dirname(os.path.realpath(__file__))
+# Defining variable to store aggregator validation rules json local path
+agg_specific_rules_json_local_path = os.path.dirname(os.path.realpath(__file__))
+# Creating object for ReadStagingData class
 obj_read_data = ReadStagingData()
+# Creating object for Cerberus validator class
 validator = Validator()
 #############################
 #       Class Functions     #
@@ -24,9 +25,9 @@ class GardnersAggregatorValidations:
         print("\n-+-+-+-Starting Gardners aggregator specific data validations-+-+-+-")
         load_data = input_data
 
-        # Reading Gardners aggregator specific rules from json when running locally
+        # Initialising with aggregator specific validation rules based on if it is running locally or through glue job
         if not agg_specific_rules:
-            with open(BASE_PATH + '/Gardners-validation-rules.json') as f:
+            with open(agg_specific_rules_json_local_path + '/Gardners-validation-rules.json') as f:
                 gardners_val_rule_json = json.load(f)
         else:
             Gardners_val_rule_json = agg_specific_rules

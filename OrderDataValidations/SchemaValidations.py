@@ -13,12 +13,10 @@ from cerberus import Validator
 #############################
 #      Global Variables     #
 #############################
-
-BASE_PATH = os.path.dirname(
-    '/Users/aniketbhatt/Desktop/GitHub Repo/Order Insights/aggregator-data-processing-pipeline/OrderDataValidations/Json/')
+# Creating object for ReadStagingData class
 obj_read_data = ReadStagingData()
+# Creating object for Cerberus validator class
 validator = Validator()
-
 
 #############################
 #     Class Functions       #
@@ -27,7 +25,6 @@ validator = Validator()
 class SchemaValidations:
 
     def schema_data_validations(self, test_data, schema_val_json):
-
         logger.info("\n\t-+-+-+-Starting Generic Data Validations-+-+-+-")
 
         # Initializing the function with parquet file data and schema rules
