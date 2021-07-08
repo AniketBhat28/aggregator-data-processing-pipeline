@@ -1,7 +1,8 @@
 import os
+import re
 import sys
 import boto3
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta
 
 from awsglue.transforms import *
 from awsglue.utils import getResolvedOptions
@@ -9,9 +10,8 @@ from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
 
-from pyspark.sql.functions import col
-from pyspark.sql.functions import unix_timestamp
-from pyspark.sql.functions import col, to_date, date_format
+from pyspark.sql.functions import col, unix_timestamp, to_date, date_format
+from pyspark.sql.utils import AnalysisException
 
 from mda_utils.utils import gen_time_frame_list
 
@@ -93,8 +93,13 @@ def save_parquet(invoices_file, invoices_item_file, output_dir_path):
     '''
     create_view_currencies()
     create_view_application()
-    create_view_invoices(invoices_file)
-    create_view_invoices_item(invoices_item_file)
+    
+    try:
+        create_view_invoices(invoices_file)
+        create_view_invoices_item(invoices_item_file)
+    except AnalysisException:
+        print("Data source does not exist for the file: ", invoices_file)
+        return False
 
     result_df = spark.sql("""
     SELECT
@@ -178,18 +183,9 @@ def initialise():
         time_frame = custom_args['time_frame']
         end_time_frame = custom_args['end_time_frame']
         print('generating the historical data for : ', time_frame, ' - ', end_time_frame)
-        
-        # Loop the start and end years to fetch and store all the records at once
-        date_strings = ['%Y', '%Y%m', '%Y%m%d']
-        for date_string in date_strings:
-            try:
-                time_frame = datetime.strptime(time_frame, date_string)
-                end_time_frame = datetime.strptime(end_time_frame, date_string)
-                break
-            except ValueError:
-                pass
 
         time_frame_list = gen_time_frame_list(time_frame, end_time_frame)
+        print('time_frame_list: ', time_frame_list)
 
     output_dir_path  = f"mapped_layer/revenue/direct_sales/{s3_base_dir}"
     for time_frame in time_frame_list:

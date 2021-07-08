@@ -1,15 +1,16 @@
 import os
 import sys
 import boto3
-from datetime import date, timedelta, datetime
+from datetime import date, timedelta
+
 from awsglue.transforms import *
 from awsglue.utils import getResolvedOptions
 from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
 
-from pyspark.sql.functions import input_file_name, regexp_replace, expr
-from pyspark.sql.functions import lit
+from pyspark.sql.functions import lit, input_file_name, regexp_replace, expr
+from pyspark.sql.utils import AnalysisException
 
 from mda_utils.utils import gen_time_frame_list
 
@@ -72,11 +73,15 @@ def save_parquet(time_frame, year, output_dir_path):
     '''
     input_s3_uri = os.path.join('s3://' + input_bucket_name, input_dir_path, '')
     input_s3_dir = input_s3_uri + time_frame + '*/*sales*'
-    
-    # Read the input data
-    datasource0 = spark.read.option("header", "false").csv(input_s3_dir)
-    if datasource0.count() == 0:
-        print("Data does not exist for today")
+
+    try:
+        # Read the input data
+        datasource0 = spark.read.option("header", "false").csv(input_s3_dir)
+        if datasource0.count() == 0:
+            raise AnalysisException
+            
+    except AnalysisException:
+        print("Data source does not exist for the time frame: ", time_frame)
         return False
 
     print("Data is present at AUSTRALIA location. Started processing the sales files for given period")
@@ -150,18 +155,9 @@ def initialise():
         time_frame = custom_args['time_frame']
         end_time_frame = custom_args['end_time_frame']
         print('generating the historical data for : ', time_frame, ' - ', end_time_frame)
-        
-        # Loop the start and end years to fetch and store all the records at once
-        date_strings = ['%Y', '%Y%m', '%Y%m%d']
-        for date_string in date_strings:
-            try:
-                time_frame = datetime.strptime(time_frame, date_string)
-                end_time_frame = datetime.strptime(end_time_frame, date_string)
-                break
-            except ValueError:
-                pass
 
         time_frame_list = gen_time_frame_list(time_frame, end_time_frame)
+        print('time_frame_list: ', time_frame_list)
 
     for time_frame in time_frame_list:
         year = time_frame[:4]

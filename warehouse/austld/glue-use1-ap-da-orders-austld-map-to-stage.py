@@ -1,6 +1,6 @@
 import sys
 import boto3
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 from awsglue.transforms import *
 from awsglue.utils import getResolvedOptions
@@ -8,9 +8,7 @@ from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
 
-from pyspark.sql.functions import col ,lit
-from pyspark.sql.functions import unix_timestamp
-from pyspark.sql.functions import col, to_date
+from pyspark.sql.functions import col, lit, unix_timestamp, to_date
 
 from mda_utils.utils import gen_time_frame_list
 
@@ -147,21 +145,12 @@ def initialise():
         time_frame = (date.today()-timedelta(days=1)).strftime('%Y%m%d')
         time_frame_list = [time_frame]
     else:
-        time_frame = custom_args['time_frame']
-        end_time_frame = custom_args['end_time_frame']
+        time_frame = custom_args['time_frame'][:4]
+        end_time_frame = custom_args['end_time_frame'][:4]
         print('generating the historical data for : ', time_frame, ' - ', end_time_frame)
-        
-        # Loop the start and end years to fetch and store all the records at once
-        date_strings = ['%Y', '%Y%m', '%Y%m%d']
-        for date_string in date_strings:
-            try:
-                time_frame = datetime.strptime(time_frame, date_string)
-                end_time_frame = datetime.strptime(end_time_frame, date_string)
-                break
-            except ValueError:
-                pass
 
         time_frame_list = gen_time_frame_list(time_frame, end_time_frame)
+        print('time_frame_list: ', time_frame_list)
 
     for time_frame in time_frame_list:
         year = time_frame[:4]

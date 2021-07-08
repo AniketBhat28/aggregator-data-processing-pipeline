@@ -1,7 +1,6 @@
-import os
 import sys
 import boto3
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 from awsglue.transforms import *
 from awsglue.utils import getResolvedOptions
@@ -44,17 +43,17 @@ input_bucket_name = 's3-use1-ap-pe-df-orders-insights-storage-d'
 output_bucket_name ='s3-use1-ap-pe-df-orders-insights-storage-d'
 
 
-def create_view_input_tab(input_dir_path):
-    input_s3_uri = os.path.join('s3://' + input_bucket_name, input_dir_path)
+def create_view_input_tab(year, input_dir_path):
+    input_s3_uri = 's3://' + input_bucket_name + '/' + input_dir_path + '/year=' + year + '/*'
     input_df = spark.read.option("header", "true").parquet(input_s3_uri)
     input_df.createOrReplaceTempView("input_tab")
     spark.sql("select * from input_tab").show()
 
 
-def save_parquet(input_dir_path, output_dir_path):
+def save_parquet(year, input_dir_path, output_dir_path):
     '''
     '''
-    create_view_input_tab(input_dir_path)
+    create_view_input_tab(year, input_dir_path)
 
     result_df = spark.sql("""select
             aggregator_name, cast(reporting_date as date
@@ -96,20 +95,11 @@ def initialise():
         end_time_frame = custom_args['end_time_frame']
         print('generating the historical data for : ', time_frame, ' - ', end_time_frame)
 
-        # Loop the start and end years to fetch and store all the records at once
-        date_strings = ['%Y', '%Y%m', '%Y%m%d']
-        for date_string in date_strings:
-            try:
-                time_frame = datetime.strptime(time_frame, date_string)
-                end_time_frame = datetime.strptime(end_time_frame, date_string)
-                break
-            except ValueError:
-                pass
-
         time_frame_list = gen_time_frame_list(time_frame, end_time_frame)
+        print('time_frame_list: ', time_frame_list)
 
     for time_frame in time_frame_list:
-        save_parquet(input_dir_path, output_dir_path)
+        save_parquet(time_frame, input_dir_path, output_dir_path)
         print(f"< successfully processed job for the time frame: {time_frame}")
 
 initialise()
