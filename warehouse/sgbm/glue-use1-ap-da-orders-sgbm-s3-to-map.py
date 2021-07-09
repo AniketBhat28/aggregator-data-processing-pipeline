@@ -62,7 +62,7 @@ def save_parquet(time_frame, year, output_dir_path):
     input_s3_dir = input_s3_uri + time_frame + '*/*sales*'
     try:
         # Read the input data
-        datasource0 = spark.read.option("header", "false").csv(input_s3_dir)
+        datasource0 = spark.read.option("header", "true").csv(input_s3_dir)
         if datasource0.count() == 0:
             raise AnalysisException
             
@@ -86,7 +86,7 @@ def save_parquet(time_frame, year, output_dir_path):
     
     stg_query = """
     SELECT
-        t.reporting_date, t.internal_invoice_number, t.internal_order_number, t.external_purchase_order, t.external_invoice_number, t.external_transaction_number, t.shipping_customer_id, t.billing_customer_id, t.p_product_id, t.p_backup_product_id, t.product_type, t.price, t.price_currency, t.publisher_price_ori, t.publisher_price_ori_currency, t.payment_amount, t.payment_amount_currency, t.ex_currencies, t.ex_rate, t.current_discount_percentage, t.tax, t.pod_ori, t.pod, t.demand_units, t.units, t.trans_type_ori, t.sale_type_ori, t.trans_type, t.sale_type, t.source, t.source_id 
+        t.reporting_date, t.internal_invoice_number, t.internal_order_number, t.external_purchase_order, t.external_invoice_number, t.external_transaction_number, t.shipping_customer_id, t.billing_customer_id, t.p_product_id, t.p_backup_product_id, t.product_type, t.price, t.price_currency, t.publisher_price_ori, t.publisher_price_ori_currency, t.payment_amount, t.payment_amount_currency, t.ex_currencies, t.ex_rate, t.current_discount_percentage, t.tax, t.pod_ori, t.pod, t.demand_units, t.units, t.trans_type_ori, t.sale_type_ori, t.trans_type, t.sale_type, t.source, t.source_id
     from
         (SELECT
             `DOC-DATE` as reporting_date, 'NA' as internal_invoice_number, 'NA' as internal_order_number, 'NA' as external_purchase_order, `DOC-REF` as external_invoice_number, 'NA' as external_transaction_number, `STA-CUST` as shipping_customer_id, CUST as billing_customer_id, `13 ISBN` as p_product_id, `10 ISBN` as p_backup_product_id, 'PRINT' as product_type, `PUB-VAL` as price, 'SGD' as price_currency, `PUB-PRICE` as publisher_price_ori, 'NA' as publisher_price_ori_currency, `NET-VAL` as payment_amount, 'SGD' payment_amount_currency, 
@@ -111,14 +111,15 @@ def save_parquet(time_frame, year, output_dir_path):
         )t"""
         
     staging_df_interim = spark.sql(stg_query)
-    staging_df_date=staging_df_interim.withColumn('reporting_date', to_date(unix_timestamp(col('reporting_date'), 'dd-MM-yy').cast("timestamp")))
-                           
+    staging_df_date = staging_df_interim.withColumn(
+        'reporting_date', to_date(unix_timestamp(col('reporting_date'), 'dd-MM-yy').cast("timestamp"))
+        )
     staging_df = staging_df_date.withColumn('reporting_date', date_format(col('reporting_date'), 'yyyy-MM-dd'))
     staging_df = staging_df.withColumn("year",lit(year))
-    staging_df.createOrReplaceTempView('sgbm_preagg')
     
     staging_df.show()
     staging_df.printSchema()
+    
     staging_df.coalesce(1).write.option("header",True).partitionBy(
         "year","product_type","trans_type"
         ).mode(

@@ -73,7 +73,11 @@ def save_parquet(time_frame, year, input_dir_path, output_dir_path):
 
     staging_df_interim = spark.sql("""
     SELECT
-        t.reporting_date, t.internal_invoice_number, t.internal_order_number, t.external_purchase_order, t.external_invoice_number, t.external_transaction_number, t.other_order_ref, t.shipping_customer_id, t.billing_customer_id, t.p_product_id, t.p_backup_product_id, t.price, t.price_currency, t.publisher_price_ori, t.publisher_price_ori_currency, t.payment_amount, t.payment_amount_currency, t.ex_currencies, t.ex_rate, t.current_discount_percentage, t.tax, t.pod_ori, t.pod, t.demand_units, t.units, t.trans_type_ori, t.trans_type, t.sale_type_ori, t.sale_type, t.source, t.source_id, t.sa_pack_flag
+        t.reporting_date, t.internal_invoice_number, t.internal_order_number, t.external_purchase_order, t.external_invoice_number, 
+        t.external_transaction_number, t.other_order_ref, t.shipping_customer_id, t.billing_customer_id, t.p_product_id, t.p_backup_product_id, 
+        t.price, t.price_currency, t.publisher_price_ori, t.publisher_price_ori_currency, t.payment_amount, t.payment_amount_currency, 
+        t.ex_currencies, t.ex_rate, t.current_discount_percentage, t.tax, t.pod_ori, t.pod, t.demand_units, t.units, t.trans_type_ori, 
+        t.trans_type, t.sale_type_ori, t.sale_type, t.source, t.source_id
     from
         (SELECT
             reporting_date, internal_invoice_number, internal_order_number, external_purchase_order, 
@@ -93,25 +97,20 @@ def save_parquet(time_frame, year, input_dir_path, output_dir_path):
                 when trans_type_ori = 'Z' then 'Gratis'  
                 when trans_type_ori = 'T' then 'Transfer' 
             end as trans_type, 
-            sale_type_ori, NVL(sale_type, 'NA') as sale_type, source, source_id, sa_pack_flag
+            sale_type_ori, NVL(sale_type, 'NA') as sale_type, source, source_id
         from
             salesdata
         )t""")
 
     staging_df_date = staging_df_interim.withColumn(
-        'reporting_date', 
-        to_date(unix_timestamp(col('reporting_date'), 'yyyy-MM-dd').cast("timestamp"))
+        'reporting_date', to_date(unix_timestamp(col('reporting_date'), 'yyyy-MM-dd').cast("timestamp"))
         )
-    print(">>>>>df1",staging_df_interim.columns)
-
     staging_df = staging_df_date.withColumn('year', lit(time_frame))
     staging_df = staging_df.withColumn('product_type', lit("Print"))
 
-    print(">>>>>df1",staging_df_interim.columns)
-    staging_df.createOrReplaceTempView('UKBP_preagg')
-
     staging_df.show()
     staging_df.printSchema()
+
     staging_df.write.option("header", True).partitionBy(
         "year", "product_type", "trans_type"
         ).mode(
@@ -139,11 +138,12 @@ def initialise():
         print('generating the historical data for : ', time_frame, ' - ', end_time_frame)
 
         time_frame_list = gen_time_frame_list(time_frame, end_time_frame)
-        print('time_frame_list: ', time_frame_list)
 
     for time_frame in time_frame_list:
+        print('Processing time_frame: ', time_frame)
         year = time_frame[:4]
         save_parquet(time_frame, year, input_dir_path, output_dir_path)
+        
         print(f"< successfully processed job for the time frame: {time_frame}")
 
 initialise()

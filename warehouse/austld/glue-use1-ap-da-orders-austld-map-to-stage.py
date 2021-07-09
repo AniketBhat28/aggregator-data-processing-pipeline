@@ -75,55 +75,38 @@ def save_parquet(year, input_dir_path, output_dir_path):
     print(">>>>>df1",datasource0.columns)
     print(datasource0.head(10))          
                 
-    stg_query = f"""SELECT t.reporting_date,t.internal_invoice_number,t.internal_order_number,t.external_invoice_number,t.external_transaction_number,t.external_purchase_order,
-            t.billing_customer_id,t.p_product_id,t.p_backup_product_id, t.product_type, t.price, t.price_currency, 
-            t.publisher_price_ori,t.publisher_price_ori_currency,t.payment_amount,t.payment_amount_currency,t.ex_currencies,t.ex_rate,t.current_discount_percentage,
-            t.tax_percentage,t.demand_units,t.units,t.trans_type_ori,t.sale_type_ori,t.doc_type_attribute,t.trans_type, t.sale_type,t.pod,
-            t.source,t.source_id FROM 
-    
-        (SELECT reporting_date,
-            internal_Invoice_number,
-            internal_order_number,
-            external_invoice_number,
-            external_transaction_number,
-            external_purchase_order,
-            billing_customer_id,
-            trim(p_product_id) as p_product_id,
-            trim(p_backup_product_id) as p_backup_product_id, 
-            'Print' as product_type,
-            round(cast(price as double),2) as price, 
-            price_currency,
-            round(cast(publisher_price_ori as double),2) as publisher_price_ori,
-            publisher_price_ori_currency,
-            round(cast(payment_amount as double),2) as payment_amount,
-            case when payment_amount_currency = 'A' then 'AUD' when payment_amount_currency = 'N' then 'NZD' end as payment_amount_currency,
-            ex_currencies,
-            round(cast(ex_rate as double),2) as ex_rate,
-            round(cast(current_discount_percentage as double),2) as current_discount_percentage,
-            round(cast(tax_percentage as double),2) as tax_percentage,
-            cast(cast(demand_units as double) as int) as demand_units,
-            cast(cast(demand_units as double) as int) as units,
-            trans_type_ori,
-            sale_type_ori,
-            doc_type_attribute,
+    stg_query = f"""
+    SELECT
+    t.reporting_date, t.internal_invoice_number, t.internal_order_number, t.external_invoice_number, t.external_transaction_number, t.external_purchase_order,  t.billing_customer_id, t.p_product_id, t.p_backup_product_id, t.product_type, t.price, t.price_currency,  t.publisher_price_ori, t.publisher_price_ori_currency, t.payment_amount, t.payment_amount_currency, t.ex_currencies, t.ex_rate, t.current_discount_percentage, t.tax_percentage, t.demand_units, t.units, t.trans_type_ori, t.sale_type_ori, t.doc_type_attribute, t.trans_type, t.sale_type, t.pod, t.source, t.source_id
+    FROM
+        (SELECT
+            reporting_date, internal_Invoice_number, internal_order_number, external_invoice_number, external_transaction_number,  external_purchase_order,  billing_customer_id, trim(p_product_id) as p_product_id, trim(p_backup_product_id) as p_backup_product_id, 'Print' as product_type,  
+            round(cast(price as double), 2) as price, price_currency, round(cast(publisher_price_ori as double), 2) as publisher_price_ori, publisher_price_ori_currency, round(cast(payment_amount as double), 2) as payment_amount,  
             case 
-                when concat(trim(trans_type_ori),trim(sale_type_ori),trim(doc_type_attribute)) in ({sales_options}) then 'Sales'
-                when concat(trim(trans_type_ori),trim(sale_type_ori),trim(doc_type_attribute)) in ({gratis_options}) then 'Gratis' else 'Sales' 
-            end as trans_type,
-            sale_type,
-            pod,
-            source, source_id FROM salesdata
+                when payment_amount_currency = 'A' then 'AUD' 
+                when payment_amount_currency = 'N' then 'NZD' 
+            end as payment_amount_currency,  
+            ex_currencies, round(cast(ex_rate as double), 2) as ex_rate, 
+            round(cast(current_discount_percentage as double), 2) as current_discount_percentage, round(cast(tax_percentage as double), 2) as tax_percentage,  
+            cast(cast(demand_units as double) as int) as demand_units, cast(cast(demand_units as double) as int) as units,  trans_type_ori, sale_type_ori, doc_type_attribute,  
+            case  
+                when concat(trim(trans_type_ori), trim(sale_type_ori), trim(doc_type_attribute)) in ({sales_options}) then 'Sales' 
+                when concat(trim(trans_type_ori), trim(sale_type_ori), trim(doc_type_attribute)) in ({gratis_options}) then 'Gratis' 
+                else 'Sales'  
+            end as trans_type, sale_type, pod, source, source_id
+        FROM
+            salesdata 
         ) t"""
     
     staging_df_interim = spark.sql(stg_query)
-    staging_df_date=staging_df_interim.withColumn('reporting_date',to_date(unix_timestamp(col('reporting_date'), 'yyyy-MM-dd').cast("timestamp")))
-    print(">>>>>df1",staging_df_interim.columns)
-
+    staging_df_date = staging_df_interim.withColumn(
+        'reporting_date', to_date(unix_timestamp(col('reporting_date'), 'yyyy-MM-dd').cast("timestamp"))
+        )
     staging_df = staging_df_date.withColumn('year', lit(year))
-    print(">>>>>df1",staging_df_interim.columns)
     
     staging_df.show()
     staging_df.printSchema()
+
     staging_df.coalesce(1).write.option("header",True).partitionBy(
         "year","product_type","trans_type"
         ).mode(

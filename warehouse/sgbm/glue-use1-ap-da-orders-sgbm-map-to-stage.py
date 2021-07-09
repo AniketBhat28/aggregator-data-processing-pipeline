@@ -67,13 +67,13 @@ def save_parquet(year, input_dir_path, output_dir_path):
     print(datasource0.head(10))
                 
     stg_query = """select
-        t.reporting_date, t.internal_invoice_number, t.internal_order_number, t.external_purchase_order, t.external_invoice_number, t.external_transaction_number, t.shipping_customer_id, t.billing_customer_id, t.p_product_id, t.p_backup_product_id, t.product_type, t.price, t.price_currency, t.publisher_price_ori, t.publisher_price_ori_currency, t.payment_amount, t.payment_amount_currency, t.ex_currencies, t.ex_rate, t.current_discount_percentage, t.tax, t.pod_ori, t.pod, t.demand_units, t.units, t.trans_type_ori, t.sale_type_ori, t.trans_type, t.sale_type, t.source, t.source_id 
+        t.reporting_date, t.internal_invoice_number, t.internal_order_number, t.external_purchase_order, t.external_invoice_number, t.external_transaction_number, t.shipping_customer_id, t.billing_customer_id, t.p_product_id, t.p_backup_product_id, t.product_type, t.price, t.price_currency, t.publisher_price_ori, t.publisher_price_ori_currency, t.payment_amount, t.payment_amount_currency, t.ex_currencies, t.ex_rate, t.current_discount_percentage, t.tax, t.pod_ori, t.pod, t.demand_units, t.units, t.trans_type_ori, t.sale_type_ori, t.trans_type, t.sale_type, t.source, t.source_id
     from
         (select
             reporting_date, internal_invoice_number, internal_order_number, external_purchase_order, 
             NVL(external_invoice_number, 'NA') as external_invoice_number, external_transaction_number, 
             NVL(shipping_customer_id, 'NA') as shipping_customer_id, 
-            NVL(billing_customer_id, 'NA) as billing_customer_id, 
+            NVL(billing_customer_id, 'NA') as billing_customer_id, 
             trim(p_product_id) as p_product_id, trim(p_backup_product_id) as p_backup_product_id, 'PRINT' as product_type, 
             cast(price as double) as price, price_currency, 
             cast( publisher_price_ori as double) as publisher_price_ori, publisher_price_ori_currency, 
@@ -85,18 +85,19 @@ def save_parquet(year, input_dir_path, output_dir_path):
                 when trans_type_ori = 'S' then 'Sale' 
                 when trans_type_ori = 'Z' then 'Gratis' 
             end as trans_type, 
-            sale_type, source, source_id 
+            sale_type, source, source_id
         from
             salesdata)t"""
     
     staging_df_interim = spark.sql(stg_query)
-    staging_df_date=staging_df_interim.withColumn('reporting_date',to_date(unix_timestamp(col('reporting_date'), 'yyyy-MM-dd').cast("timestamp")))
-    print(">>>>>df1",staging_df_interim.columns)
+    staging_df_date = staging_df_interim.withColumn(
+        'reporting_date', to_date(unix_timestamp(col('reporting_date'), 'yyyy-MM-dd').cast("timestamp"))
+        )
+
     staging_df = staging_df_date.withColumn('year', lit(year))
-    print(">>>>>df1",staging_df_interim.columns)
-    
     staging_df.show()
     staging_df.printSchema()
+
     staging_df.coalesce(1).write.option("header",True).partitionBy(
         "year","product_type","trans_type"
         ).mode(
@@ -123,9 +124,9 @@ def initialise():
         print('generating the historical data for : ', time_frame, ' - ', end_time_frame)
 
         time_frame_list = gen_time_frame_list(time_frame, end_time_frame)
-        print('time_frame_list: ', time_frame_list)
 
     for time_frame in time_frame_list:
+        print('Processing time_frame: ', time_frame)
         year = time_frame[:4]
         save_parquet(year, input_dir_path, output_dir_path)
         

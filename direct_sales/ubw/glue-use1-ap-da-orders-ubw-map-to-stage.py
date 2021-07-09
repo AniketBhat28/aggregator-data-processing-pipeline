@@ -8,6 +8,8 @@ from pyspark.context import SparkContext
 from awsglue.context import GlueContext
 from awsglue.job import Job
 
+from pyspark.sql.functions import lit
+
 from mda_utils.utils import gen_time_frame_list
 
 
@@ -44,10 +46,9 @@ output_bucket_name ='s3-use1-ap-pe-df-orders-insights-storage-d'
 
 
 def create_view_input_tab(year, input_dir_path):
-    input_s3_uri = 's3://' + input_bucket_name + '/' + input_dir_path + '/year=' + year + '/*'
+    input_s3_uri = 's3://' + input_bucket_name + '/' + input_dir_path + '/year=' + year
     input_df = spark.read.option("header", "true").parquet(input_s3_uri)
     input_df.createOrReplaceTempView("input_tab")
-    spark.sql("select * from input_tab").show()
 
 
 def save_parquet(year, input_dir_path, output_dir_path):
@@ -55,27 +56,29 @@ def save_parquet(year, input_dir_path, output_dir_path):
     '''
     create_view_input_tab(year, input_dir_path)
 
-    result_df = spark.sql("""select
-            aggregator_name, cast(reporting_date as date
-            ) as reporting_date, cast(internal_Invoice_number as bigint
-            ) as internal_Invoice_number, other_order_ref, year, e_product_id, e_backup_product_id, p_product_id, p_backup_product_id, product_title, product_type, cast( price as double
-            ) as price,  price_currency, cast(payment_amount as double
-            ) as payment_amount, payment_amount_currency, cast(current_discount_percentage as double
-            ) as current_discount_percentage, disc_code,new_rental_duration,rental_duration_measure, cast(units as int
-            ) as units, trans_type_ori,trans_type, sale_type,country,source, sub_domain,source_id,external_invoice_number , external_purchase_order,internal_order_number, external_transaction_number, billing_customer_id 
+    staging_df = spark.sql("""
+        SELECT
+            aggregator_name, cast(reporting_date as date) as reporting_date, cast(internal_Invoice_number as bigint) as internal_Invoice_number, 
+            other_order_ref, e_product_id, e_backup_product_id, p_product_id, p_backup_product_id, product_title, product_type, 
+            cast( price as double) as price,  price_currency, cast(payment_amount as double) as payment_amount, payment_amount_currency, 
+            cast(current_discount_percentage as double) as current_discount_percentage, disc_code, new_rental_duration,rental_duration_measure, 
+            cast(units as int) as units, trans_type_ori, trans_type, sale_type, country, source, sub_domain, source_id, external_invoice_number, 
+            external_purchase_order, internal_order_number, external_transaction_number, billing_customer_id 
         from
             input_tab
         """)
-    print("preresult_df count : ",result_df.count())
-    result_df.createOrReplaceTempView("result_df_tab")
-    result_df.show()
+    print("preresult_df count : ",staging_df.count())
+    staging_df = staging_df.withColumn('year', lit(year))
+    staging_df.show()
+    staging_df.printSchema()
 
-    result_df.show()
-    result_df.coalesce(1).write.option("header",True).mode('overwrite').partitionBy(
-        'year', 'product_type', 'trans_type'
-        ).parquet(
-            's3://' + output_bucket_name + '/' + output_dir_path
-        )
+    staging_df.coalesce(1).write.option("header",True).partitionBy(
+        "year", "product_type", "trans_type"
+        ).mode(
+            'append'
+            ).parquet(
+                's3://' + output_bucket_name + '/' + output_dir_path
+                )
 
 
 def initialise():
@@ -91,8 +94,8 @@ def initialise():
         time_frame = (date.today()-timedelta(days=1)).strftime('%Y%m%d')
         time_frame_list = [time_frame]
     else:
-        time_frame = custom_args['time_frame']
-        end_time_frame = custom_args['end_time_frame']
+        time_frame = custom_args['time_frame'][:4]
+        end_time_frame = custom_args['end_time_frame'][:4]
         print('generating the historical data for : ', time_frame, ' - ', end_time_frame)
 
         time_frame_list = gen_time_frame_list(time_frame, end_time_frame)

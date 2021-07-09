@@ -81,8 +81,8 @@ def fetch_map_data(year, input_dir_path):
         's3://' + input_bucket_name + '/' + input_dir_path + '/year=' + year + '/*'
         )        
     datasource0.createOrReplaceTempView('USPTsalesdata')
-    datasource0.show()
-    datasource0.printSchema()    
+    print('Printing USPT sales data')
+    datasource0.show(5)
 
 
 def fetch_customer_data():
@@ -107,17 +107,17 @@ def fetch_corrtab_data():
             on t.shipping_customer_id = b.cust 
         """)
 
-    corr_df = corr_df.withColumn("country",
-                when(col("country").isNull(), col("cmcountry"))
-                .otherwise(col("country")))
-    corr_df = corr_df.withColumn("country",
-                when(col("country").isNull(), lit('US'))
-                .otherwise(col("country")))
-                
+    corr_df = corr_df.withColumn(
+        "country", 
+        when(col("country").isNull(), col("cmcountry")).otherwise(col("country"))
+        )
+    corr_df = corr_df.withColumn(
+        "country",
+        when(col("country").isNull(), lit('US')).otherwise(col("country"))
+        )    
     corr_df.createOrReplaceTempView('corrtab')
+    print(">>>>>corr_df", corr_df.columns)
     corr_df.show()
-    corr_df.printSchema()
-    print(">>>>>corr_df",corr_df.columns)
 
 
 def save_parquet(year, input_dir_path, output_dir_path):
@@ -140,57 +140,49 @@ def save_parquet(year, input_dir_path, output_dir_path):
         t.p_product_id,t.p_backup_product_id, t.price, t.price_currency, t.publisher_price_ori, t.publisher_price_ori_currency, 
         t.payment_amount, t.payment_amount_currency, t.current_discount_percentage, t.tax, t.pod, t.demand_units, t.units, 
         t.trans_type_ori, t.trans_type, t.sale_type, t.country, t.state, t.quote, t.source, t.source_id,
-        '{year}' as year, 
-        '{product_type}' as product_type, doc_type
-        FROM
-            (SELECT 
-                reporting_date, ori_trans_date, internal_invoice_number, internal_order_number, external_purchase_order, external_invoice_number,
-                external_transaction_number, other_order_ref, shipping_customer_id, billing_customer_id, p_product_id, p_backup_product_id,
-                abs(cast(price as double)) as price, price_currency, cast(publisher_price_ori as double) as publisher_price_ori,
-                publisher_price_ori_currency, cast(payment_amount as double) as payment_amount,
-                NVL(payment_amount_currency,'USD') as payment_amount_currency,
-                cast(current_discount_percentage as double) as current_discount_percentage,
-                cast(tax as double) as tax, pod,
-                cast(demand_units as int) as demand_units, cast(units as int) as units,
-                trans_type_ori,
-                case 
-                    when (trans_type_ori = 'S' or trans_type_ori = 'R') then 'Sales' 
-                    when trans_type_ori = 'Z' then 'Gratis' 
-                    when trans_type_ori = 'T' then 'Transfer'
-                    when trans_type_ori = 'A' then 'Stock Movement'
-                    else 'NA'
-                    end as trans_type,
-                sale_type,
-                NVL(country,'NA') as country,
-                NVL(state,'NA') as state,
-                NVL(quote,'NA') as quote,
-                source, source_id, doc_type
-            FROM corrtab
-            ) t""".format(year=year, product_type='Print')
+        '{year}' as year, '{product_type}' as product_type
+    FROM
+        (SELECT 
+            reporting_date, ori_trans_date, internal_invoice_number, internal_order_number, external_purchase_order, external_invoice_number,
+            external_transaction_number, other_order_ref, shipping_customer_id, billing_customer_id, p_product_id, p_backup_product_id,
+            abs(cast(price as double)) as price, price_currency, cast(publisher_price_ori as double) as publisher_price_ori,
+            publisher_price_ori_currency, cast(payment_amount as double) as payment_amount,
+            NVL(payment_amount_currency,'USD') as payment_amount_currency,
+            cast(current_discount_percentage as double) as current_discount_percentage,
+            cast(tax as double) as tax, pod,
+            cast(demand_units as int) as demand_units, cast(units as int) as units,
+            trans_type_ori,
+            case 
+                when (trans_type_ori = 'S' or trans_type_ori = 'R') then 'Sales' 
+                when trans_type_ori = 'Z' then 'Gratis' 
+                when trans_type_ori = 'T' then 'Transfer'
+                when trans_type_ori = 'A' then 'Stock Movement'
+                else 'NA'
+                end as trans_type,
+            sale_type,
+            NVL(country,'NA') as country,
+            NVL(state,'NA') as state,
+            NVL(quote,'NA') as quote,
+            source, source_id
+        FROM corrtab
+        ) t""".format(year=year, product_type='Print')
 
     staging_df = spark.sql(stg_query)
     staging_df = staging_df.withColumn(
-        'reporting_date', to_date(
-            unix_timestamp(
-                col('reporting_date'), 'yyyy-MM-dd'
-                ).cast("timestamp")
-            )
+        'reporting_date', 
+        to_date(unix_timestamp(col('reporting_date'), 'yyyy-MM-dd').cast("timestamp"))
         )
     staging_df = staging_df.withColumn(
-        'ori_trans_date', to_date(
-            unix_timestamp(
-                col('ori_trans_date'), 'yyyy-MM-dd'
-                ).cast("timestamp")
-            )
+        'ori_trans_date', 
+        to_date(unix_timestamp(col('ori_trans_date'), 'yyyy-MM-dd').cast("timestamp"))
         )
-            
     staging_df = staging_df.replace(to_replace=country_mapping, subset=['country'])
     staging_df.show()
     staging_df.printSchema()
 
     print("> staging_df count > ", staging_df.count())
     staging_df.repartition(1).write.option("header",True).partitionBy(
-        "year","product_type","trans_type"
+        "year", "product_type", "trans_type"
         ).mode(
             'append'
             ).parquet(
@@ -216,13 +208,14 @@ def initialise():
         print('generating the historical data for : ', time_frame, ' - ', end_time_frame)
 
         time_frame_list = gen_time_frame_list(time_frame, end_time_frame)
-        print('time_frame_list: ', time_frame_list)
 
     for time_frame in time_frame_list:
+        print('Processing time_frame: ', time_frame)
         year = time_frame[:4]
         save_parquet(year, input_dir_path, output_dir_path)
 
         print(f"< successfully processed job for the time frame: {time_frame}")
+
 
 initialise()
 job.commit()

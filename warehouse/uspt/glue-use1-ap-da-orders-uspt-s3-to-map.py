@@ -57,7 +57,7 @@ def read_default_data(time_frame):
     :param time_frame: s3 source dir structure
     :return: None
     '''
-    datasource0 = spark.read.option("header", "false").csv(input_s3_uri + time_frame + '*/*SALES*')
+    datasource0 = spark.read.option("header", "true").csv(input_s3_uri + time_frame + '*/*SALES*')
     return datasource0
 
 
@@ -168,7 +168,7 @@ def read_data(year, time_frame):
     '''
     datasource = read_year_data(year, time_frame)
     if datasource.count() == 0:
-        raise AnalysisException
+        raise AnalysisException(None, None)
 
     print("datasource count : ", datasource.count())
 
@@ -176,7 +176,6 @@ def read_data(year, time_frame):
     datasource = datasource.withColumn('source_id', regexp_replace('source_id', input_s3_uri, ''))
     datasource = datasource.withColumn("source_id",expr("substring(source_id, 10, length(source_id)-4)"))
     datasource = datasource.withColumn('source_id', regexp_replace('source_id', '.csv', ''))
-
     datasource.createOrReplaceTempView('salesdata')
 
     #datasource0.coalesce(1).write.option("header",True).mode('append').csv('s3://s3-use1-ap-pe-df-orders-insights-storage-d/raw_layer/uspt/'+time_frame+'/')
@@ -199,7 +198,11 @@ def save_parquet(time_frame, year, output_dir_path):
 
     staging_df_interim = spark.sql("""
     SELECT
-        t.reporting_date, t.ori_trans_date, t.internal_invoice_number, t.internal_order_number, t.external_purchase_order, t.external_invoice_number, t.external_transaction_number, t.other_order_ref, t.shipping_customer_id, t.billing_customer_id, t.p_product_id, t.p_backup_product_id, t.product_type, t.price, t.price_currency, t.publisher_price_ori, t.publisher_price_ori_currency, t.payment_amount, t.payment_amount_currency, t.current_discount_percentage, t.tax, t.pod, t.demand_units, t.units, t.trans_type_ori, t.trans_type, t.sale_type, t.country, t.state, t.quote, t.source, t.source_id
+        t.reporting_date, t.ori_trans_date, t.internal_invoice_number, t.internal_order_number, t.external_purchase_order, t.external_invoice_number, 
+        t.external_transaction_number, t.other_order_ref, t.shipping_customer_id, t.billing_customer_id, t.p_product_id, t.p_backup_product_id, 
+        t.product_type, t.price, t.price_currency, t.publisher_price_ori, t.publisher_price_ori_currency, t.payment_amount, t.payment_amount_currency, 
+        t.current_discount_percentage, t.tax, t.pod, t.demand_units, t.units, t.trans_type_ori, t.trans_type, t.sale_type, t.country, t.state, 
+        t.quote, t.source, t.source_id
     from
         (SELECT
             doc_date as reporting_date, ori_docdt as ori_trans_date, 'NA' as internal_Invoice_number, 'NA' as Internal_order_number, 'NA' as External_Purchase_Order, invno as external_invoice_number, 'NA' as External_Transaction_number, custpono as other_order_ref, ship_cust as shipping_customer_id, bill_cust as billing_customer_id, isbn_13 as p_product_id, isbn_10 as p_backup_product_id, 'PRINT' as product_type, sale_price as price, 'USD' as price_currency, pub_price as publisher_price_ori, 'USD' as publisher_price_ori_currency, net_value as payment_amount, currency as payment_amount_currency, discount as current_discount_percentage, tax_amount as tax, pod as pod, demandqty as demand_units, del_qty as units, tran_type as trans_type_ori, 
@@ -224,15 +227,17 @@ def save_parquet(time_frame, year, output_dir_path):
         to_date(unix_timestamp(col('reporting_date'), 'dd-MMM-yyyy').cast("timestamp"))
     )                    
     staging_df = staging_df_date.withColumn('reporting_date', date_format(col('reporting_date'), 'yyyy-MM-dd'))
-    staging_df = staging_df.withColumn('ori_trans_date', to_date(unix_timestamp(col('ori_trans_date'), 'dd-MMM-yyyy').cast("timestamp")))  
+    staging_df = staging_df.withColumn(
+        'ori_trans_date', to_date(unix_timestamp(col('ori_trans_date'), 'dd-MMM-yyyy').cast("timestamp"))
+        )  
     staging_df = staging_df.withColumn('ori_trans_date', date_format(col('ori_trans_date'), 'yyyy-MM-dd'))
-    staging_df = staging_df.withColumn("year",lit(year))
+    staging_df = staging_df.withColumn("year", lit(year))
 
     staging_df.show()
     staging_df.printSchema()
 
     staging_df.coalesce(1).write.option("header",True).partitionBy(
-        "year","product_type","trans_type"
+        "year", "product_type", "trans_type"
         ).mode(
             'append'
             ).parquet(
@@ -256,13 +261,14 @@ def initialise():
         print('generating the historical data for : ', time_frame, ' - ', end_time_frame)
 
         time_frame_list = gen_time_frame_list(time_frame, end_time_frame)
-        print('time_frame_list: ', time_frame_list)
 
     for time_frame in time_frame_list:
+        print('Processing time_frame: ', time_frame)
         year = time_frame[:4]
         save_parquet(time_frame, year, output_dir_path)
 
         print(f"< successfully processed job for the time frame: {time_frame}")
+
 
 initialise()
 job.commit()

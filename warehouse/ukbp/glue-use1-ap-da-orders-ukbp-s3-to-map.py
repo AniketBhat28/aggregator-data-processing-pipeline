@@ -60,6 +60,8 @@ def read_data(time_frame):
     input_s3_dir = input_s3_uri + time_frame + '*/*sales*'
 
     datasource0 = spark.read.option("header", "true").csv(input_s3_dir)
+    if datasource0.count() == 0:
+        raise AnalysisException(None, None)
     print("> datasource0 count > ", datasource0.count())
 
     df1= datasource0.withColumn("input_filename",input_file_name())
@@ -86,7 +88,11 @@ def save_parquet(time_frame, year, output_dir_path):
 
     staging_df_interim = spark.sql("""
     SELECT
-        t.reporting_date, t.internal_invoice_number, t.internal_order_number, t.external_purchase_order, t.external_invoice_number, t.external_transaction_number, t.other_order_ref, t.shipping_customer_id, t.billing_customer_id, t.p_product_id, t.p_backup_product_id, t.product_type, t.price, t.price_currency, t.publisher_price_ori, t.publisher_price_ori_currency, t.payment_amount, t.payment_amount_currency, t.ex_currencies, t.ex_rate, t.current_discount_percentage, t.tax, t.pod_ori, t.pod, t.demand_units, t.units, t.trans_type_ori, t.trans_type, t.sale_type_ori, t.sale_type, t.source, t.source_id
+        t.reporting_date, t.internal_invoice_number, t.internal_order_number, t.external_purchase_order, t.external_invoice_number, 
+        t.external_transaction_number, t.other_order_ref, t.shipping_customer_id, t.billing_customer_id, t.p_product_id, t.p_backup_product_id, 
+        t.product_type, t.price, t.price_currency, t.publisher_price_ori, t.publisher_price_ori_currency, t.payment_amount, t.payment_amount_currency, 
+        t.ex_currencies, t.ex_rate, t.current_discount_percentage, t.tax, t.pod_ori, t.pod, t.demand_units, t.units, t.trans_type_ori, t.trans_type, 
+        t.sale_type_ori, t.sale_type, t.source, t.source_id
     from
         (SELECT
             doc_date as reporting_date, 'NA' as internal_Invoice_number, 'NA' as Internal_order_number, 'NA' as External_Purchase_Order, batch_no as external_invoice_number, 'NA' as External_Transaction_number, cust_ref as other_order_ref, mail_cust as shipping_customer_id, inv_sta_cust as billing_customer_id, sbn13 as p_product_id, sbn as p_backup_product_id, 'Print' as product_type, pub_price as price, 'GBP' as price_currency, pub_price_orig as publisher_price_ori, 'GBP' as publisher_price_ori_currency, equiv_val as payment_amount, currency as payment_amount_currency, 
@@ -113,7 +119,7 @@ def save_parquet(time_frame, year, output_dir_path):
                 when INV_C_N_PRO = 'I' then 'Purchase' 
                 when INV_C_N_PRO = 'C' then 'Return' 
             end as sale_type, 
-            'UKBP' as source, input_filename as source_id 
+            'UKBP' as source, input_filename as source_id
         from
             salesdata
         )t""")
@@ -122,11 +128,11 @@ def save_parquet(time_frame, year, output_dir_path):
                     
     staging_df = staging_df_date.withColumn('reporting_date', date_format(col('reporting_date'), 'yyyy-MM-dd'))
     staging_df = staging_df.withColumn('year', lit(year))
-
     staging_df.show()
     staging_df.printSchema()
-    staging_df.coalesce(1).write.option("header",True).partitionBy(
-        "year","product_type","trans_type"
+
+    staging_df.coalesce(1).write.option("header", True).partitionBy(
+        "year", "product_type", "trans_type"
         ).mode(
             'append'
             ).parquet(
@@ -151,13 +157,14 @@ def initialise():
         print('generating the historical data for : ', time_frame, ' - ', end_time_frame)
 
         time_frame_list = gen_time_frame_list(time_frame, end_time_frame)
-        print('time_frame_list: ', time_frame_list)
 
     for time_frame in time_frame_list:
+        print('Processing time_frame: ', time_frame)
         year = time_frame[:4]
         save_parquet(time_frame, year, output_dir_path)
 
         print(f"< successfully processed job for the time frame: {time_frame}")
+
 
 initialise()
 job.commit()
