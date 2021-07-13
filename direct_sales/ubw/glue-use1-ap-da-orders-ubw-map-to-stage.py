@@ -102,7 +102,8 @@ def initialise():
         print('time_frame_list: ', time_frame_list)
 
     for time_frame in time_frame_list:
-        save_parquet(time_frame, input_dir_path, output_dir_path)
+        year = time_frame[:4]
+        save_parquet(year, input_dir_path, output_dir_path)
         print(f"< successfully processed job for the time frame: {time_frame}")
 
 initialise()

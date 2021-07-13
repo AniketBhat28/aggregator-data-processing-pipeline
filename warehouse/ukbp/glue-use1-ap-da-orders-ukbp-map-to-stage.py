@@ -59,10 +59,9 @@ def read_data(year, input_dir_path):
     datasource0.createOrReplaceTempView('salesdata')
 
 
-def save_parquet(time_frame, year, input_dir_path, output_dir_path):
+def save_parquet(year, input_dir_path, output_dir_path):
     '''
     To process source data and store it in parquet files
-    :param time_frame: s3 source dir structure
     :param year: reporting source year
     :param input_dir_path: s3 path to fetch data
     :param output_dir_path: s3 path to store parquet file
@@ -105,7 +104,7 @@ def save_parquet(time_frame, year, input_dir_path, output_dir_path):
     staging_df_date = staging_df_interim.withColumn(
         'reporting_date', to_date(unix_timestamp(col('reporting_date'), 'yyyy-MM-dd').cast("timestamp"))
         )
-    staging_df = staging_df_date.withColumn('year', lit(time_frame))
+    staging_df = staging_df_date.withColumn('year', lit(year))
     staging_df = staging_df.withColumn('product_type', lit("Print"))
 
     staging_df.show()
@@ -142,7 +141,7 @@ def initialise():
     for time_frame in time_frame_list:
         print('Processing time_frame: ', time_frame)
         year = time_frame[:4]
-        save_parquet(time_frame, year, input_dir_path, output_dir_path)
+        save_parquet(year, input_dir_path, output_dir_path)
         
         print(f"< successfully processed job for the time frame: {time_frame}")
 

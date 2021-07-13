@@ -133,15 +133,30 @@ def create_view_dimorder(aggregator_name, connection_options):
     order_df.createOrReplaceTempView('dimorder_temp')
 
 
-def insert_fact_order_line(staging_fol_table):
+def get_location_skey():
     '''
     '''
-    FactOrderLine_df = spark.sql(sql_json['FactOrderLine_sql'])
-    print("FactOrderLine_df", FactOrderLine_df)
-    FactOrderLine_df.show(truncate = False)
+    if env == 'prod':
+        location_skey = {'UKBP':1770, 'SGBM':1546, 'AUSTLD':1874}
+    elif env == 'uat':
+        location_skey = {'UKBP':444, 'SGBM':388, 'AUSTLD':470}
+    else:
+        location_skey = {'UKBP':444, 'SGBM':388, 'AUSTLD':470}
+
+    return location_skey.get(aggregator_name, '')
+
+
+def insert_fact_order_line(staging_fol_table, location_skey):
+    '''
+    '''
+    location_skey = get_location_skey()
+
+    fact_order_line_df = spark.sql(sql_json['FactOrderLine_sql'])
+    print("FactOrderLine_df", fact_order_line_df)
+    fact_order_line_df.show(truncate = False)
 
     Dyanamic_DataFrameForGlue_FactOrderLine = DynamicFrame.fromDF(
-        FactOrderLine_df, glueContext,"Dyanamic_DataFrameForGlue_FactOrderLine"
+        fact_order_line_df, glueContext, "Dyanamic_DataFrameForGlue_FactOrderLine"
         )
     resolvechoice4 = ResolveChoice.apply(
         frame=Dyanamic_DataFrameForGlue_FactOrderLine, choice="make_cols", transformation_ctx="resolvechoice4"
@@ -149,8 +164,11 @@ def insert_fact_order_line(staging_fol_table):
 
     print("< insertion started >")
     pre_queries = f"TRUNCATE TABLE {staging_fol_table}"
-    post_queries = sql_json['fact_orderline_post_operation'].format(staging_fol_table=staging_fol_table)
-    #post_queries += "; REFRESH MATERIALIZED VIEW edw.vw_monthly_Fact_Order_Line;"
+    post_queries = sql_json['fact_orderline_post_operation'].format(
+        staging_fol_table=staging_fol_table,
+        location_skey=location_skey
+        )
+    post_queries += "; REFRESH MATERIALIZED VIEW edw.vw_monthly_Fact_Order_Line;"
 
     print("pre_queries: ", pre_queries)
     print("post_queries: ", post_queries)
@@ -161,7 +179,6 @@ def insert_fact_order_line(staging_fol_table):
         redshift_tmp_dir=args["TempDir"], transformation_ctx="datasink7"
         )
     print("< inserting to redshift Fact_Order_Line table is successful >")
-
 
 def initialise():
     '''
