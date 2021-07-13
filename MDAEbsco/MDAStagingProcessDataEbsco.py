@@ -56,105 +56,97 @@ class MDAStagingProcessDataEbsco :
     #							default_config - Default json
     #							extracted_data - pr-processed_data
     # Return Values : 			extracted_data - extracted staging data
-
     def generate_edw_staging_data(self,logger, agg_rules, default_config, app_config,final_mapped_data) :
 
-
         final_mapped_data = self.ebsco_price_cal(final_mapped_data)
-
         final_mapped_data = self.process_trans_type(logger, final_mapped_data)
-
         final_mapped_data = self.calculate_final_discount_percentage(final_mapped_data, logger)
 
         currency_suffix = '[\$£,()-]'
 
-        final_mapped_data['publisher_price_ori'] = (final_mapped_data['publisher_price_ori']).replace(currency_suffix, '',
-                                                                                            regex=True)
+        final_mapped_data['publisher_price_ori'] = final_mapped_data['publisher_price_ori'].replace(
+            currency_suffix, '', regex=True)
         final_mapped_data['publisher_price_ori'] = final_mapped_data['publisher_price_ori'].astype('str')
-        final_mapped_data['publisher_price_ori'] = (final_mapped_data['publisher_price_ori']).str.rstrip()
+        final_mapped_data['publisher_price_ori'] = final_mapped_data['publisher_price_ori'].str.rstrip()
         final_mapped_data['publisher_price_ori'] = pd.to_numeric(final_mapped_data['publisher_price_ori'])
+        final_mapped_data['publisher_price_ori'] = final_mapped_data['publisher_price_ori'].astype('float')
 
-        final_mapped_data['payment_amount'] = (final_mapped_data['payment_amount']).replace(currency_suffix, '',
-                                                                                            regex=True)
+        final_mapped_data['payment_amount'] = (final_mapped_data['payment_amount']).replace(
+            currency_suffix, '', regex=True)
         final_mapped_data['payment_amount'] = final_mapped_data['payment_amount'].astype('str')
         final_mapped_data['payment_amount'] = (final_mapped_data['payment_amount']).str.rstrip()
         final_mapped_data['payment_amount'] = pd.to_numeric(final_mapped_data['payment_amount'])
+        final_mapped_data['payment_amount'] = final_mapped_data['payment_amount'].astype('float')
 
         final_mapped_data['price'] = (final_mapped_data['price']).replace(currency_suffix, '', regex=True)
         final_mapped_data['price'] = final_mapped_data['price'].astype('str')
         final_mapped_data['price'] = (final_mapped_data['price']).str.rstrip()
         final_mapped_data['price'] = pd.to_numeric(final_mapped_data['price'])
+        final_mapped_data['price'] = final_mapped_data['price'].astype('float')
 
-        final_mapped_data['units'] = final_mapped_data.apply(lambda row : 1 if row['units'] == 'NA' else row['units'],axis=1)
-
-
+        final_mapped_data.loc[(final_mapped_data['units'] == 'NA'), 'units'] = '1'
         final_mapped_data['units'] = final_mapped_data['units'].astype('float').astype('int')
-
+        final_mapped_data.loc[(final_mapped_data['units'] == 0), 'units'] = 1
 
         final_mapped_data['list_price_multiplier'] = final_mapped_data['list_price_multiplier'].astype('float')
 
-
         final_mapped_data['sale_type'] =  final_mapped_data['sale_type'].replace('NA', 'NA_Test', regex=True)
-        #vectorization
-        final_mapped_data.loc[(final_mapped_data['sale_type'] == 'NA_Test') &
-                                                  ((final_mapped_data['units']<0) | (final_mapped_data['payment_amount']<0)),'sale_type']='Returns'
-        final_mapped_data.loc[(final_mapped_data['sale_type'] == 'NA_Test') &
-                              ((final_mapped_data['units'] > 0) | (
-                                          final_mapped_data['payment_amount'] > 0)), 'sale_type'] = 'Purchase'
+        # vectorization
+        final_mapped_data.loc[
+            (
+                (final_mapped_data['sale_type'] == 'NA_Test') &
+                (
+                    (final_mapped_data['units'] < 0) | (final_mapped_data['payment_amount'] < 0)
+                ), 'sale_type'
+            )] = 'Returns'
 
-        # final_mapped_data['sale_type'] = final_mapped_data.apply(
-        #     lambda row: 'Return' if (row['sale_type'] == 'NA_Test' and (row['units'] <0 or row['payment_amount'] <0) ) else 'Purchase', axis=1)
+        final_mapped_data.loc[
+            (
+                (final_mapped_data['sale_type'] == 'NA_Test') & 
+                (
+                    (final_mapped_data['units'] > 0) | (final_mapped_data['payment_amount'] > 0)
+                ), 'sale_type'
+            )] = 'Purchase'
 
-        final_mapped_data['country'] = final_mapped_data.apply(
-            lambda row : ('US') if row['country'] == 'NA' else row['country'], axis=1)
+        final_mapped_data.loc[(final_mapped_data['payment_amount_currency'] == 'NA'), 'payment_amount_currency'] = 'USD'
+        final_mapped_data.loc[(final_mapped_data['price_currency'] == 'NA'), 'price_currency'] = 'USD'
 
-        final_mapped_data['payment_amount_currency'] = final_mapped_data.apply(
-            lambda row : ('USD') if row['payment_amount_currency'] == 'NA' else row['payment_amount_currency'], axis=1)
-
-        final_mapped_data['price_currency'] = final_mapped_data.apply(
-            lambda row : ('USD') if row['price_currency'] == 'NA' else row['price_currency'], axis=1)
-
-        final_mapped_data['current_discount_percentage'] = (final_mapped_data['current_discount_percentage']).replace(
+        final_mapped_data['current_discount_percentage'] = final_mapped_data['current_discount_percentage'].replace(
             '%', '', regex=True)
-        final_mapped_data['current_discount_percentage'] = final_mapped_data['current_discount_percentage'].astype(
-            'str')
-        final_mapped_data['current_discount_percentage'] = (final_mapped_data['current_discount_percentage']).str.rstrip()
+        final_mapped_data['current_discount_percentage'] = final_mapped_data['current_discount_percentage'].astype('str')
+        final_mapped_data['current_discount_percentage'] = final_mapped_data['current_discount_percentage'].str.rstrip()
         final_mapped_data['current_discount_percentage'] = pd.to_numeric(final_mapped_data['current_discount_percentage'])
-
         final_mapped_data['current_discount_percentage'] = final_mapped_data.apply(
             lambda row : row['current_discount_percentage'] * 100 if (row['current_discount_percentage'] < 1) else row[
                 'current_discount_percentage'],
             axis=1)
+        final_mapped_data['current_discount_percentage'] = final_mapped_data['current_discount_percentage'].astype('float')
 
-        final_mapped_data['units'] = final_mapped_data['units'].astype('float').astype('int')
-        final_mapped_data['list_price_multiplier'] = final_mapped_data['list_price_multiplier'].astype('float')
         final_mapped_data['p_product_id'] = final_mapped_data.p_product_id.str.split('.', expand=True)
         final_mapped_data['e_product_id'] = final_mapped_data.e_product_id.str.split('.', expand=True)
         final_mapped_data['p_backup_product_id'] = final_mapped_data.p_product_id.str.split('.', expand=True)
         final_mapped_data['e_backup_product_id'] = final_mapped_data.e_product_id.str.split('.', expand=True)
         final_mapped_data['misc_product_ids'] = final_mapped_data.misc_product_ids.str.split('.', expand=True)
-        final_mapped_data['price'] = final_mapped_data['price'].astype('float')
-        final_mapped_data['publisher_price_ori'] = final_mapped_data['publisher_price_ori'].astype('float')
-        final_mapped_data['payment_amount'] = final_mapped_data['payment_amount'].astype('float')
-        final_mapped_data['current_discount_percentage'] = final_mapped_data['current_discount_percentage'].astype('float')
 
         current_date_format = agg_rules['date_formats']
-
-        final_mapped_data = obj_pre_process.process_dates(logger, final_mapped_data, current_date_format, 'reporting_date',
-        default_config)
+        final_mapped_data = obj_pre_process.process_dates(
+            logger, final_mapped_data, current_date_format, 'reporting_date', default_config
+            )
 
         final_mapped_data['reporting_date'] = pd.to_datetime(final_mapped_data['reporting_date'],
                                                              format='%d-%m-%Y', infer_datetime_format=True)
-
         final_mapped_data['reporting_date'] = final_mapped_data['reporting_date'].dt.date
 
+        final_mapped_data.loc[(final_mapped_data['country'] == 'NA'), 'country'] = 'US'
+        #converting ISO code from old to trending format
+        final_mapped_data['country'] = final_mapped_data['country'].replace('UK', 'GB', regex=True)
+        final_mapped_data['country'] = final_mapped_data['country'].replace('ROM', 'RO', regex=True)
+
+		#converting country to ISO2 encoding
+        final_mapped_data = self.country_converter(logger, final_mapped_data)
+
         final_mapped_data['product_type'] = agg_rules['product_type']
-
-        final_mapped_data = self.country_converter(final_mapped_data)
-
         return final_mapped_data
-
-
 
 
     # Function Description :	This function processes data for all Ebsco files
@@ -183,26 +175,24 @@ class MDAStagingProcessDataEbsco :
                 logger.info(each_file)
                 logger.info('\n+-+-+-+-+-+-+')
 
-
                 final_mapped_data = pd.read_parquet(input_base_path + each_file, engine='pyarrow')
 
-                final_staging_data = self.generate_edw_staging_data(logger, agg_rules, default_config, app_config,
-                                                                    final_mapped_data)
+                final_staging_data = self.generate_edw_staging_data(
+                    logger, agg_rules, default_config, app_config, final_mapped_data
+                    )
                 # Append staging data of current file into final staging dataframe
                 final_edw_data = pd.concat([final_edw_data, final_staging_data], ignore_index=True, sort=True)
 
-
         # Grouping and storing data
-        final_edw_data = obj_gen_attrs.group_data(logger, final_edw_data,
-                                                     default_config[0]['group_staging_data'])
-
+        final_edw_data = obj_gen_attrs.group_data(
+            logger, final_edw_data, default_config[0]['group_staging_data']
+            )
         obj_s3_connect.store_data_as_parquet(logger, app_config, final_edw_data)
 
         logger.info('\n+-+-+-+-+-+-+Finished Processing Ebsco files\n')
 
 
     def ebsco_price_cal(self, extracted_data) :
-
         extracted_data['price'] = extracted_data.apply(
             lambda row : 0.0 if row['price'] == 'NA' else row['price'], axis=1)
 
@@ -215,19 +205,24 @@ class MDAStagingProcessDataEbsco :
         extracted_data['list_price_multiplier'] = extracted_data.apply(
             lambda row : 1 if row['list_price_multiplier'] == 'NA' else row['list_price_multiplier'], axis=1)
 
-
         return extracted_data
 
-    def country_converter(self, final_grouped_data) :
 
+    def country_converter(self, logger, final_mapped_data) :
+        logger.info("************country conversion starts*****************")
         cc = coco.CountryConverter()
-        iso_names = cc.convert(names=final_grouped_data['country'].tolist(), to="ISO2", enforce_list=True)
-        final_grouped_data['country'] = iso_names
-        iso_new = []
-        for i in range(len(final_grouped_data['country'])) :
-            iso_new.append(final_grouped_data['country'][i][0])
-        final_grouped_data['country'] = iso_new
-        return final_grouped_data
+        # Filter non iso2 formats country df
+        convertable_df = final_mapped_data[final_mapped_data['country'].str.len() > 2].loc[:, ('country',)]
+
+        if not convertable_df.empty:
+            iso_names = cc.convert(names=convertable_df['country'].tolist(), to="ISO2")
+            convertable_df['country'] = iso_names
+            final_mapped_data.update(convertable_df)
+
+        # Delete temp df to avoid garbage collections
+        del convertable_df
+        logger.info("************country conversion ends*****************")
+        return final_mapped_data
 
 
     def calculate_final_discount_percentage(self, extracted_data, logger) :
