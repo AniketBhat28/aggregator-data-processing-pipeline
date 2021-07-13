@@ -157,6 +157,8 @@ class MDAStagingProcessDataAmazon:
         extracted_data['e_product_id'] = extracted_data.e_product_id.str.replace('\W', '', regex=True)
 
         extracted_data['country'] = extracted_data.country.str.upper()
+        #converting ISO code from UK to GB
+        extracted_data['country'] = extracted_data['country'].replace('UK', 'GB', regex=True)
 
         extracted_data['old_discount_percentage'].fillna(0.0, inplace=True)
         extracted_data.loc[(extracted_data['old_discount_percentage'] == 'NA'), 'old_discount_percentage'] = '0.0'
