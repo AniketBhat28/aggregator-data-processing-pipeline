@@ -29,7 +29,7 @@
       "source": {
          "type": "string",
          "allowed": [
-            "Ingram/VitalSource"
+            "INGRAM/VITALSOURCE"
          ]
       }
    }

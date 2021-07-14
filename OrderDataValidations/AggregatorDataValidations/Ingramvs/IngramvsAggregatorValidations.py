@@ -12,51 +12,44 @@ from cerberus import Validator
 #############################
 #      Global Variables     #
 #############################
-
-BASE_PATH  = os.path.dirname('/Users/aniketbhatt/Desktop/GitHub Repo/Order Insights/aggregator-data-processing-pipeline/OrderDataValidations/Json/')
-BASE_PATH1 = os.path.dirname(os.path.realpath(__file__))
+# Defining variable to store aggregator validation rules json local path
+agg_specific_rules_json_local_path = os.path.dirname(os.path.realpath(__file__))
+# Creating object for ReadStagingData class
 obj_read_data = ReadStagingData()
+# Creating object for Cerberus validator class
 validator = Validator()
 #############################
 #       Class Functions     #
 #############################
 
 class IngramvsAggregatorValidations:
-    def aggregator_data_validations(self,test_data):
+    # Function to run Ingram specific aggregator validations against input data
+    def aggregator_specific_validations(self, input_data, agg_specific_rules):
+        logger.info("\n\t-+-+-+-Starting Ingram aggregator specific data validations-+-+-+-")
+        print("\n-+-+-+-Starting Ingram aggregator specific data validations-+-+-+-")
+        load_data = input_data
 
-        logger.info("\n\t------Starting Ingramvs Aggregator Data Validations------")
-        print("\n------Starting Ingramvs Aggregator Data Validations------")
-        load_data = test_data
+        # Initialising with aggregator specific validation rules based on if it is running locally or through glue job
+        if not agg_specific_rules:
+            with open(agg_specific_rules_json_local_path + '/Ingramvs-validation-rules.json') as f:
+                ingramvs_val_rule_json = json.load(f)
+        else:
+            ingramvs_val_rule_json = agg_specific_rules
+        # Initialising with ingramvs_val_rules with ingramvs_val_rule_json
+        ingramvs_val_rules = ingramvs_val_rule_json["schema"]
+        ingramvs_val_rules: dict
 
-        # Initialising the file with Aggregator Config Json
-        with open(BASE_PATH + '/aggregator-specific-configData.json') as f:
-            aggregator_config_json = json.load(f)
-        agg_list = aggregator_config_json["aggregator_list"]
-
-        # Initialising the file with Ingramvs validation Rules Json
-        with open(BASE_PATH1 + '/Ingramvs-validation-rules.json') as f:
-            Ingramvs_val_rule_json = json.load(f)
-        Ingramvs_val_rules = Ingramvs_val_rule_json["schema"]
-
-        Ingramvs_val_rules: dict
-
-        ############################################################
-        #       Starting Data Validations
-        ############################################################
-
-        # Running validation on entire frame based on Ingramvs Validation Rules Json
+        # Ingram aggregator validations for input_data against ingramvs_val_rules using cerberus
         cerberus_rule_val_df = load_data.to_dict('records')
         validator.allow_unknown = True
-
         for item in cerberus_rule_val_df:
-            success = validator.validate(item, Ingramvs_val_rules)
+            success = validator.validate(item, ingramvs_val_rules)
             if (success):
                 print("Ingramvs aggregator specific rules are checked and no issues are found for this data row")
             else:
                 print(validator.errors)
                 print(item)
                 print("\n")
-
                 # Storing the failed values in a dataframe for Reporting purpose
                 Ingramvs_follett_val = pd.DataFrame.from_dict(item, orient='index')
                 Ingramvs_val_results = pd.DataFrame()

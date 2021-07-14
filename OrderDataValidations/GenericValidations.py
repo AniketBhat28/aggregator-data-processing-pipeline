@@ -15,59 +15,36 @@ from collections import Counter
 #############################
 #      Global Variables     #
 #############################
-
-BASE_PATH = os.path.dirname(
-    '/Users/aniketbhatt/Desktop/GitHub Repo/Order Insights/aggregator-data-processing-pipeline/OrderDataValidations/Json/')
+# Creating object for ReadStagingData class
 obj_read_data = ReadStagingData()
+# Creating object for Cerberus validator class
 validator = Validator()
-
 
 #############################
 #     Class Functions       #
 #############################
 
-class GenericAggregatorValidations:
-
-    def generic_data_validations(self, test_data, schema_val_json, generic_val_json):
-
-        logger.info("\n\t-+-+-+-Starting Generic Data Validations-+-+-+-")
-
-        # Initializing the file with parquet file data, schema rules and generic validation rules
+class GenericValidations:
+    # Function to check if there are any Null values present in the data file
+    def null_check(self, test_data):
+        logger.info("\n\t-+-+-+-Starting Null check on the data file-+-+-+-")
         load_data = test_data
-        schema_val_rules = schema_val_json["schema"]
-        generic_val_rules = generic_val_json["schema"]
-
-        ############################################################
-        #       Starting Generic Data Validations                  #
-        ############################################################
-
-        # Validation 1 : Find for any Null or Empty values in the entire Dataframe
         null_Values = load_data[load_data.isnull().any(axis=1)]
         if null_Values.empty:
-            print("\n-+-+-+-There are no NULL values reported in the Data Frame-+-+-+-")
+            print("\n-+-+-+-There are no NULL values found in the data file-+-+-+-")
         else:
-            print(null_Values, "\n-+-+-+-These are Null values found in data file. Refer to Data validation Report-+-+-+-")
-            # null_Values['Validation Result'] = "Failed Null check"
+            print(null_Values,"\n-+-+-+-These are Null values found in data file. Refer to Data validation Report-+-+-+-")
+            null_Values['Validation Result'] = "Failed Null check"
 
-        # Validation 2: Running Schema validation on the dataframe
-        print("\n-+-+-+-+-+-+ Starting Schema validations on Data File -+-+-+-+-+-+ ")
-        cerberus_schema_val_df = load_data.to_dict('records')
-        schema_val_results = pd.DataFrame()
-        for item in cerberus_schema_val_df:
-            success = validator.validate(item, schema_val_rules)
-            if (success):
-                print("Schema validation is successful and no issues are found for this data row")
-            else:
-                print(validator.errors)
-                print(item)
-                print("\n")
-                # # Storing the failed values in a dataframe for Reporting purpose
-                # failed_schema_val = pd.DataFrame.from_dict(item)
-                # schema_val_results = schema_val_results.append(failed_schema_val)
-                # schema_val_results['Validation Result'] = str(validator.errors)
+    # Function to check data file against generic validation rules json using Cerberus
+    def generic_data_validations(self, test_data, generic_val_json):
+        logger.info("\n\t-+-+-+-Starting Generic Data Validations-+-+-+-")
+        # Initializing the function with parquet file data and generic validation rules
+        load_data = test_data
+        generic_val_rules = generic_val_json["schema"]
 
-        # Validation 3: Run generic validations on the dataframe
-        print("\n-+-+-+-+-+-+ Starting Generic validations on Data File -+-+-+-+-+-+ \n")
+        # Generic data validation
+        logger.info("\n-+-+-+-+-+-+ Starting Generic validations on Data File -+-+-+-+-+-+ \n")
         cerberus_rule_val_df = load_data.to_dict('records')
         validator.allow_unknown = True
         generic_val_results = pd.DataFrame()
@@ -84,8 +61,10 @@ class GenericAggregatorValidations:
                 # generic_val_results = generic_val_results.append(failed_generic_val)
                 # generic_val_results['Validation Result'] = str(validator.errors)
 
-        # Validation 4: Added a validation to check for Invalid ISBN's having trailing Zero's as part of POF-6917
-        print("\n-+-+-+-+-+-+ Starting ISBN check for trailing zero's -+-+-+-+-+-+ \n")
+    # Function to check ISBN format for any trailing zero's
+    def check_isbn_format(self, test_data):
+        logger.info("\n-+-+-+-+-+-+ Starting ISBN check for trailing zero's -+-+-+-+-+-+ \n")
+        load_data = test_data
         agg_name = load_data['source'][0]
         agg_list = ['AMAZON', 'BARNES', 'CHEGG', 'EBSCO', 'FOLLETT', 'PROQUEST', 'GARDNERS', 'REDSHELF', 'BLACKWELLS', 'INGRAMVS']
         if agg_name in agg_list:
@@ -113,6 +92,7 @@ class GenericAggregatorValidations:
                 else:
                     print("ISBN does not have any trailing zero's and ISBN check is successful for this data row")
 
+        ############## Move Reporting to a separate class #######################
         # # Creating a final dataframe with failed order validation results
         # final_generic_val_results = pd.concat([schema_val_results, generic_val_results, invalid_isbn_format], ignore_index=True, sort=True)
         #

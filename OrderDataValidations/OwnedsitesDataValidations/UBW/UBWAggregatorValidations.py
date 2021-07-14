@@ -8,44 +8,37 @@ from cerberus import Validator
 #############################
 #      Global Variables     #
 #############################
-
-BASE_PATH  = os.path.dirname('/OrderDataValidations/Json/')
-BASE_PATH1 = os.path.dirname(os.path.realpath(__file__))
+# Defining variable to store owned sites validation rules json local path
+agg_specific_rules_json_local_path = os.path.dirname(os.path.realpath(__file__))
+# Creating object for ReadStagingData class
 obj_read_data = ReadStagingData()
+# Creating object for Cerberus validator class
 validator = Validator()
 #############################
 #       Class Functions     #
 #############################
 
-class UBWAggregatorValidations:
-    def aggregator_data_validations(self,test_data):
-        # Initialising the Dataframe with Aggregator Parquet File
-        logger.info("\n\t------Starting UBW Aggregator Data Validations------")
-        print("\n------Starting UBW Aggregator Data Validations------")
-        load_data = test_data
+class UBWOwnedSitesValidations:
+    def ownedsites_specific_validations(self, input_data, agg_specific_rules):
+        logger.info("\n\t-+-+-+-Starting UBW owned sites specific data validations-+-+-+-")
+        print("\n-+-+-+-Starting UBW owned sites specific data validations-+-+-+-")
+        load_data = input_data
 
-        # Initialising the file with Aggregator Config Json
-        with open(BASE_PATH + '/aggregator-specific-configData.json') as f:
-            aggregator_config_json = json.load(f)
-        agg_list = aggregator_config_json["aggregator_list"]
+        # Initialising with owned sites specific validation rules based on if it is running locally or through glue job
+        if not agg_specific_rules:
+            with open(agg_specific_rules_json_local_path + '/UBW-validation-rules.json') as f:
+                ubw_val_rule_json = json.load(f)
+        else:
+            ubw_val_rule_json = agg_specific_rules
+        # Initialising with ubw_val_rules with ubw_val_rule_json
+        ubw_val_rules = ubw_val_rule_json["schema"]
+        ubw_val_rules: dict
 
-        # Initialising the file with UBW validation Rules Json
-        with open(BASE_PATH1 + '/UBW-validation-rules.json') as f:
-            UBW_val_rule_json = json.load(f)
-        UBW_val_rules = UBW_val_rule_json["schema"]
-
-        UBW_val_rules: dict
-
-        ############################################################
-        #       Starting Data Validations
-        ############################################################
-
-        # Running validation on entire frame based on UBW Rules Json
+        # UBW owned sites validations for input_data against ubw_val_rules using cerberus
         cerberus_rule_val_df = load_data.to_dict('records')
         validator.allow_unknown = True
-
         for item in cerberus_rule_val_df:
-            success = validator.validate(item, UBW_val_rules)
+            success = validator.validate(item, ubw_val_rules)
             if (success):
                 print("UBW aggregator specific rules are checked and no issues are found for this data row")
             else:
@@ -54,10 +47,10 @@ class UBWAggregatorValidations:
                 print("\n")
 
                 # Storing the failed values in a dataframe for Reporting purpose
-                failed_ubw_val = pd.DataFrame.from_dict(item, orient='index')
-                ubw_val_results = pd.DataFrame()
-                ubw_val_results = ubw_val_results.append(failed_ubw_val)
-                ubw_val_results['Validation Result'] = str(validator.errors)
+                # failed_ubw_val = pd.DataFrame.from_dict(item, orient='index')
+                # ubw_val_results = pd.DataFrame()
+                # ubw_val_results = ubw_val_results.append(failed_ubw_val)
+                # ubw_val_results['Validation Result'] = str(validator.errors)
 
         # # Creating Final Data frame which failed UBW validation Rules
         # final_ubw_val_results = pd.concat([ubw_val_results], ignore_index=True, sort=True)

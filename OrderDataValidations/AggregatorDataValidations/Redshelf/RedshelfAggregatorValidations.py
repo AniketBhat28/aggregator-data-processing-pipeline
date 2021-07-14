@@ -8,44 +8,37 @@ from cerberus import Validator
 #############################
 #      Global Variables     #
 #############################
-
-BASE_PATH  = os.path.dirname('/Users/aniketbhatt/Desktop/GitHub Repo/Order Insights/aggregator-data-processing-pipeline/OrderDataValidations/Json/')
-BASE_PATH1 = os.path.dirname(os.path.realpath(__file__))
+# Defining variable to store aggregator validation rules json local path
+agg_specific_rules_json_local_path = os.path.dirname(os.path.realpath(__file__))
+# Creating object for ReadStagingData class
 obj_read_data = ReadStagingData()
+# Creating object for Cerberus validator class
 validator = Validator()
 #############################
 #       Class Functions     #
 #############################
-
 class RedshelfAggregatorValidations:
-    def aggregator_data_validations(self,test_data):
+# Function to run Redshelf specific aggregator validations against input data
+    def aggregator_specific_validations(self, input_data, agg_specific_rules):
+        logger.info("\n\t-+-+-+-Starting Redshelf aggregator specific data validations-+-+-+-")
+        print("\n-+-+-+-Starting Redshelf aggregator specific data validations-+-+-+-")
+        load_data = input_data
 
-        logger.info("\n\t------Starting Redshelf Aggregator Data Validations------")
-        print("\n------Starting Redshelf Aggregator Data Validations------")
-        load_data = test_data
+        # Initialising with aggregator specific validation rules based on if it is running locally or through glue job
+        if not agg_specific_rules:
+            with open(agg_specific_rules_json_local_path + '/Redshelf-validation-rules.json') as f:
+                redshelf_val_rule_json = json.load(f)
+        else:
+            Redshelf_val_rule_json = agg_specific_rules
+        # Initialising with redshelf_val_rules with redshelf_val_rule_json
+        redshelf_val_rules = redshelf_val_rule_json["schema"]
+        redshelf_val_rules: dict
 
-        # Initialising the file with Aggregator Config Json
-        with open(BASE_PATH + '/aggregator-specific-configData.json') as f:
-            aggregator_config_json = json.load(f)
-        agg_list = aggregator_config_json["aggregator_list"]
-
-        # Initialising the file with Redshelf validation Rules Json
-        with open(BASE_PATH1 + '/Redshelf-validation-rules.json') as f:
-            Redshelf_val_rule_json = json.load(f)
-        Redshelf_val_rules = Redshelf_val_rule_json["schema"]
-
-        Redshelf_val_rules: dict
-
-        ############################################################
-        #       Starting Data Validations
-        ############################################################
-
-        # Running validation on entire frame based on Redshelf Rules Json
+        # Redshelf aggregator validations for input_data against Redshelf_val_rules using cerberus
         cerberus_rule_val_df = load_data.to_dict('records')
         validator.allow_unknown = True
-
         for item in cerberus_rule_val_df:
-            success = validator.validate(item, Redshelf_val_rules)
+            success = validator.validate(item, redshelf_val_rules)
             if (success):
                 print("Redshelf aggregator specific rules are checked and no issues are found for this data row")
             else:
@@ -54,11 +47,11 @@ class RedshelfAggregatorValidations:
                 print("\n")
 
                 # Storing the failed values in a dataframe for Reporting purpose
-                failed_redshelf_val = pd.DataFrame.from_dict(item, orient='index')
-                redshelf_val_results = pd.DataFrame()
-                redshelf_val_results = redshelf_val_results.append(failed_redshelf_val)
-                redshelf_val_results['Validation Result'] = str(validator.errors)
+                # failed_redshelf_val = pd.DataFrame.from_dict(item, orient='index')
+                # redshelf_val_results = pd.DataFrame()
+                # redshelf_val_results = redshelf_val_results.append(failed_redshelf_val)
+                # redshelf_val_results['Validation Result'] = str(validator.errors)
 
-        # # Creating Final Data frame which failed Redshelf validation rules
-        # final_redshelf_val_results = pd.concat([redshelf_val_results], ignore_index=True, sort=True)
-        # return final_redshelf_val_results
+            # # Creating Final Data frame which failed Redshelf validation rules
+            # final_redshelf_val_results = pd.concat([redshelf_val_results], ignore_index=True, sort=True)
+            # return final_redshelf_val_results

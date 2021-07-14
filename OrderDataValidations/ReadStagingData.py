@@ -48,7 +48,7 @@ class ReadStagingData:
         fileName = 'data-validation-report-' + aggregator + '-' + str(year) + '.csv'
 
         # Creating Input Directory path to read parquet file based on channel: Aggregator, Warehouse , Direct Sales
-        if input_folder_name in ['AMAZON', 'BARNES', 'EBSCO', 'FOLLETT', 'GARDNERS', 'PROQUEST', 'REDSHELF', 'FOLLET', 'CHEGG', 'BLACKWELLS', 'INGRAM']:
+        if input_folder_name in ['AMAZON', 'BARNES', 'EBSCO', 'FOLLETT', 'GARDNERS', 'PROQUEST', 'REDSHELF', 'CHEGG', 'BLACKWELLS', 'INGRAM']:
             input_directory = input_layer + '/revenue/aggregator/' + input_folder_name + '/' + 'year=' + str(year) + '/'
         else:
             if input_folder_name in ['USPT', 'UKBP', 'SGBM', 'AUSTLD']:
@@ -75,6 +75,22 @@ class ReadStagingData:
         app_config['output_params']['output_directory'] = output_directory
 
         return app_config
+
+    def get_parquet_files_list (self, bucket_name, path, file_extension):
+        s3_bucket = s3.Bucket(bucket_name)
+        file_list = {item.key for item in s3_bucket.objects.filter(Prefix=path) if item.key.endswith(file_extension)}
+        if not file_list:
+            print('No parquet file found in S3 bucket path', bucket_name, path + '------')
+        else:
+            print("\n-+-+-+-+-Connected to S3 Bucket:  " + bucket_name + '-+-+-+-+-')
+        print("\n-+-+-+-+-Following is the list of parquet files found in s3 bucket-+-+-+-+-")
+        return file_list
+
+    def read_parquet_file(self, key, bucket_name, s3_client=None):
+        if s3_client is None:
+            s3_client = boto3.client('s3')
+        obj = s3_client.get_object(Bucket=bucket_name, Key=key)
+        return pd.read_parquet(io.BytesIO(obj['Body'].read()))
 
     # Function to save order data validation test results report to S3 Bucket
     def store_data_validation_report(self, logger, app_config, final_data):
