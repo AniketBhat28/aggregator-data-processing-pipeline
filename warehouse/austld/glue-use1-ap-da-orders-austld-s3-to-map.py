@@ -125,7 +125,7 @@ def save_parquet(time_frame, year, output_dir_path):
                 FROM salesdata
             ) t"""    
     staging_df_interim = spark.sql(stg_query)
-    staging_df = staging_df_interim.withColumn("year",lit(year))
+    staging_df = staging_df_interim.withColumn("year", lit(year))
     print('total count',staging_df.count())
     staging_df.show()
     staging_df.printSchema()
@@ -157,9 +157,9 @@ def initialise():
         print('generating the historical data for : ', time_frame, ' - ', end_time_frame)
 
         time_frame_list = gen_time_frame_list(time_frame, end_time_frame)
-        print('time_frame_list: ', time_frame_list)
 
     for time_frame in time_frame_list:
+        print('Processing time_frame: ', time_frame)
         year = time_frame[:4]
         save_parquet(time_frame, year, output_dir_path)
 

@@ -98,7 +98,7 @@ def update_seller_party_skey(staging_table, connection_options):
     '''
     dimparty_party_skey = get_dimparty_party_skey(connection_options)
 
-    connection_options['query'] = f"""SELECT * from {staging_table} limit 1"""  
+    connection_options['query'] = f"""SELECT * from {staging_table} limit 1"""
     stg_pbk_edw_gdf = glueContext.create_dynamic_frame_from_options("redshift",connection_options)
     stg_pbk_edw_df = stg_pbk_edw_gdf.toDF()
     stg_pbk_edw_df.createOrReplaceTempView('stg_pbk_tab')
