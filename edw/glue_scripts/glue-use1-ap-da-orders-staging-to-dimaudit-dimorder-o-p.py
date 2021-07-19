@@ -114,25 +114,22 @@ def get_or_create_dim_audit(connection_options):
         :param connection_options: DB connection configs
         :return: audit key
     '''
+    DimAudit_df = spark.sql(sql_json['DimAudit_sql'].format(aggregator_name, etljobName))
+    DimAudit_df.show(truncate = False)
+    
+    Dyanamic_DataFrameForGlue_DimAudit = DynamicFrame.fromDF(DimAudit_df, glueContext,"Dyanamic_DataFrameForGlue_DimAudit")
+    resolvechoice2 = ResolveChoice.apply(frame=Dyanamic_DataFrameForGlue_DimAudit, choice="make_cols", transformation_ctx="resolvechoice2")
+    
+    print("> insertion started >")
+    glueContext.write_dynamic_frame.from_jdbc_conf(
+        frame=resolvechoice2, catalog_connection=db_variables['db_connection'], 
+        connection_options={"dbtable": "edw.dim_audit", "database": db_variables['database']}, 
+        redshift_tmp_dir=args["TempDir"], transformation_ctx="datasink5"
+        )
+    print("> inserting to redshift dim_audit table is successful >")
+    
+    # Fetch audit key from the table
     audit_key = get_dim_audit_key(connection_options)
-
-    if not audit_key:
-        DimAudit_df = spark.sql(sql_json['DimAudit_sql'].format(aggregator_name, etljobName))
-        DimAudit_df.show(truncate = False)
-        
-        Dyanamic_DataFrameForGlue_DimAudit = DynamicFrame.fromDF(DimAudit_df, glueContext,"Dyanamic_DataFrameForGlue_DimAudit")
-        resolvechoice2 = ResolveChoice.apply(frame=Dyanamic_DataFrameForGlue_DimAudit, choice="make_cols", transformation_ctx="resolvechoice2")
-        
-        print("> insertion started >")
-        glueContext.write_dynamic_frame.from_jdbc_conf(
-            frame=resolvechoice2, catalog_connection=db_variables['db_connection'], 
-            connection_options={"dbtable": "edw.dim_audit", "database": db_variables['database']}, 
-            redshift_tmp_dir=args["TempDir"], transformation_ctx="datasink5"
-            )
-        print("> inserting to redshift dim_audit table is successful >")
-        
-        # Fetch audit key from the table
-        audit_key = get_dim_audit_key(connection_options)
 
     print("Audit key: ", audit_key)
     return audit_key

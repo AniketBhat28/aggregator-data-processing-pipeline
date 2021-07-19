@@ -15,7 +15,7 @@ from mda_utils.utils import gen_time_frame_list
 
 ## @params: [JOB_NAME]
 args = getResolvedOptions(sys.argv, ['JOB_NAME', 'TempDir'])
-required_args = {'job_type', 'time_frame', 'end_time_frame', 's3_base_dir'}
+required_args = {'job_type', 'time_frame', 'end_time_frame', 's3_base_dir', 'input_bucket_name', 'output_bucket_name'}
 
 if '--WORKFLOW_RUN_ID' in sys.argv:
     workflow_args = getResolvedOptions(sys.argv, ['WORKFLOW_NAME', 'WORKFLOW_RUN_ID'])
@@ -25,6 +25,10 @@ if '--WORKFLOW_RUN_ID' in sys.argv:
     glue_client = boto3.client("glue")
     workflow_params = glue_client.get_workflow_run_properties(Name=workflow_name, RunId=workflow_run_id)["RunProperties"]
 
+    ## Updating glue workflow param in run time
+    workflow_params['input_layer'] = 'staging_layer'
+    glue_client.put_workflow_run_properties(Name=workflow_name, RunId=workflow_run_id, RunProperties=workflow_params)
+
     missing_params = required_args - set(workflow_params.keys())
     custom_args = getResolvedOptions(sys.argv, missing_params)
     custom_args.update(workflow_params)
@@ -33,16 +37,14 @@ else:
 
 job_type = custom_args['job_type'].lower()
 s3_base_dir = custom_args['s3_base_dir']
+input_bucket_name = custom_args['input_bucket_name']
+output_bucket_name = custom_args['output_bucket_name']
 
 sc = SparkContext()
 glueContext = GlueContext(sc)
 spark = glueContext.spark_session
 job = Job(glueContext)
 job.init(args['JOB_NAME'], args)
-
-## CONSTANTS ##
-input_bucket_name = 's3-use1-ap-pe-df-orders-insights-storage-d'
-output_bucket_name ='s3-use1-ap-pe-df-orders-insights-storage-d'
 
 
 def save_parquet(year, input_dir_path, output_dir_path):

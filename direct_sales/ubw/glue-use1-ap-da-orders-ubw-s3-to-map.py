@@ -146,20 +146,24 @@ def save_parquet(invoices_file, invoices_item_file, output_dir_path):
     left join
         currencies_tab c  on a.CURRENCY_ID = c.ID
     """)
-
-    print("preresult_df count : ", result_df.count())
-    result_df.createOrReplaceTempView("result_df_tab")
     result_df = result_df.withColumn(
         'reporting_date', 
         to_date(unix_timestamp(col('reporting_date'), 'yyyy-MM-dd HH:mm:ss.SSS').cast("timestamp"))
         )
     result_df = result_df.withColumn('reporting_date', date_format(col('reporting_date'), 'yyyy-MM-dd'))
+
+    print("preresult_df count : ", result_df.count())
     result_df.show(5)
-    result_df.coalesce(1).write.option("header",True).mode('overwrite').partitionBy(
-        'year', 'product_type', 'trans_type'
-        ).parquet(
-            's3://' + output_bucket_name + '/' + output_dir_path
-        )
+    result_df.printSchema()
+
+    result_df.coalesce(1).write.option("header", True).partitionBy(
+        "year", "product_type", "trans_type"
+        ).mode(
+            'append'
+            ).parquet(
+                's3://' + output_bucket_name + '/' + output_dir_path
+                )   
+
 
 def initialise():
     '''
@@ -185,10 +189,11 @@ def initialise():
         print('generating the historical data for : ', time_frame, ' - ', end_time_frame)
 
         time_frame_list = gen_time_frame_list(time_frame, end_time_frame)
-        print('time_frame_list: ', time_frame_list)
 
     output_dir_path  = f"mapped_layer/revenue/direct_sales/{s3_base_dir}"
+
     for time_frame in time_frame_list:
+        print('Processing time_frame: ', time_frame)
         input_s3_uri = os.path.join('s3://' + input_bucket_name, input_dir_path, '')
         invoices_file = input_s3_uri + time_frame + '*/' + 'TBL_INVOICES.csv'
         invoices_item_file = input_s3_uri + time_frame + '*/' + 'TBL_INVOICE_ITEMS.csv'
