@@ -61,7 +61,7 @@ obj_uspt_warehouse_validations = UsptWarehouseValidations()
 class AggregatorValidations:
 
     def aggregator_data_validations(self, test_data, aggregator, agg_val_json):
-        logger.info("\n\t-+-+-+-Invoking aggregator data validations based on aggregator_name-+-+-+-")
+        logger.info("\n-+-+-+-+-Invoking aggregator data validations based on aggregator_name-+-+-+-+-")
 
         # Calling aggregator validations function based on aggregator_name
         if aggregator == 'AMAZON':
@@ -100,5 +100,3 @@ class AggregatorValidations:
             obj_ukbp_warehouse_validations.warehouse_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
         elif aggregator == 'USPT':
             obj_uspt_warehouse_validations.warehouse_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
-
-

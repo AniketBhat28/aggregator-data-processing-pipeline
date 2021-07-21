@@ -37,14 +37,7 @@ val_rules_json_local_path = os.path.dirname(os.path.realpath(__file__))
 class DataValidationsMain:
     # Starting Order Data Validations script Main function
     def order_data_validation_main(self, app_config, schema_val_rules, generic_val_rules, agg_val_rules):
-        # Reading schema rules from json when running locally
-        if not schema_val_rules:
-            with open(val_rules_json_local_path + '/Json' + '/schema-validation-staging-layer.json') as f:
-                schema_val_rules = json.load(f)
-        # Reading generic rules from json when running locally
-        if not generic_val_rules:
-            with open(val_rules_json_local_path + '/Json' + '/generic-validation-rules.json') as f:
-                generic_val_rules = json.load(f)
+        # Reading config (job parameter data) from json when running locally
         if not app_config:
             with open(val_rules_json_local_path + '/Json' + '/configData.json') as f:
                 config_json = json.load(f)
@@ -53,10 +46,22 @@ class DataValidationsMain:
         # Reading data from app_config and extracting all required information
         input_bucket_name = app_config['input_params'][0]['input_bucket_name']
         aggregator_name = app_config['input_params'][0]['aggregator_name']
-        is_aggregator_enabled = app_config['input_params'][0]['is_aggregator_enabled']
         input_file_extension = app_config['input_params'][0]['input_file_extension']
         dir_path = app_config['input_params'][0]['input_directory']
         input_layer = app_config['input_params'][0]['input_layer']
+
+        # Reading schema rules from json when running locally
+        if not schema_val_rules:
+            with open(val_rules_json_local_path + '/Json' + '/schema-validation-staging-layer.json') as f:
+                schema_val_rules = json.load(f)
+        # Reading generic rules from json when running locally
+        if not generic_val_rules:
+            if input_layer == "mapped_layer":
+                with open(val_rules_json_local_path + '/Json' + '/generic-validation-rules-mapped-layer.json') as f:
+                    generic_val_rules = json.load(f)
+            else:
+                with open(val_rules_json_local_path + '/Json' + '/generic-validation-rules-staging-layer.json') as f:
+                    generic_val_rules = json.load(f)
 
         # Get list of all parquet files present in the S3 Bucket
         file_list = obj_read_data.get_parquet_files_list(bucket_name=input_bucket_name, path=dir_path, file_extension=input_file_extension)
@@ -64,7 +69,7 @@ class DataValidationsMain:
         # Read each parquet file and start applying data validations on each file
         for aggFile in file_list:
             extracted_data = obj_read_data.read_parquet_file(key=aggFile, bucket_name=input_bucket_name)
-            print("\n------Starting Data validations on file: " + aggFile + "------")
+            print("\n-+-+-+-+-Invoking Data validations on file-+-+-+-+-" + aggFile)
 
         # Validation 1: Start Schema validations if input layer is staging layer
             if input_layer == 'staging_layer':

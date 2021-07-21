@@ -16,7 +16,6 @@ import pandas as pd
 ##################
 
 s3 = boto3.resource("s3")
-BASE_PATH = os.path.dirname('/Users/aniketbhatt/Desktop/GitHub Repo/Order Insights/aggregator-data-processing-pipeline/OrderDataValidations/Json/')
 
 #############################
 #     Class Functions       #
@@ -27,38 +26,41 @@ class ReadStagingData:
     # Function to connect to S3 Bucket#
     def read_staging_bucket(self, config_json):
 
-        # Read Config Data Json to get input for S3 Bucket Name, Aggregator, fileExtension etc
+        # Read Config Data Json to get input for S3 Bucket Name, Aggregator, Year etc
         input_bucket_name = config_json['input_bucket_name']
         output_bucket_name = config_json['output_bucket_name']
         aggregator = config_json['aggregator_name']
-        input_folder_name = config_json['input_folder_name']
-        month = config_json['month']
-        year = config_json['year']
-        product_type = config_json['product_type']
-        trans_type = config_json['trans_type']
-        file_extension = config_json['file_extension']
-        is_aggregator_enabled = config_json['isEnabled']
+        input_folder_name = config_json['s3_base_dir']
         input_layer = config_json['input_layer']
+        time_frame = config_json['time_frame'][:4]
+        end_time_frame = config_json['end_time_frame'][:4]
+        source_type = config_json['source_type']
 
-        # Defined app_config dictionary
-        app_config, input_dict = {}, {}
-        app_config['input_params'], app_config['output_params'] = [], {}
+        # Setting Year and file_extension value
+        year = time_frame[:4]
+        file_extension = '.parquet'
 
         # Creating Data Validation report output file name based on Aggregator name
         fileName = 'data-validation-report-' + aggregator + '-' + str(year) + '.csv'
 
-        # Creating Input Directory path to read parquet file based on channel: Aggregator, Warehouse , Direct Sales
-        if input_folder_name in ['AMAZON', 'BARNES', 'EBSCO', 'FOLLETT', 'GARDNERS', 'PROQUEST', 'REDSHELF', 'CHEGG', 'BLACKWELLS', 'INGRAM']:
-            input_directory = input_layer + '/revenue/aggregator/' + input_folder_name + '/' + 'year=' + str(year) + '/'
+        # Creating Input Directory path to read parquet file based on channel: Warehouse , Direct Sales and Aggregator
+        if source_type == "warehouse":
+            input_directory = input_layer + '/revenue/warehouse/' + input_folder_name + '/' + 'year=' + str(
+                    year) + '/'
         else:
-            if input_folder_name in ['USPT', 'UKBP', 'SGBM', 'AUSTLD']:
-                input_directory = input_layer + '/revenue/warehouse/' + input_folder_name + '/' + 'year=' + str(
+            if source_type == "direct_sales":
+                input_directory = input_layer + '/revenue/direct_sales/' + input_folder_name + '/' + 'year=' + str(
                     year) + '/'
             else:
-                input_directory = input_layer + '/revenue/direct_sales/' + input_folder_name + '/' + 'year=' + str(year) + '/'
+                input_directory = input_layer + '/revenue/aggregator/' + input_folder_name + '/' + 'year=' + str(
+                    year) + '/'
 
         # Creating output directory path to upload the data validation test result report based on aggregator
         output_directory = 'data_validation_scripts/revenue/aggregator/' + aggregator.upper() + '/' + 'year=' + str(year) + '/' + fileName
+
+        # Defined app_config dictionary
+        app_config, input_dict = {}, {}
+        app_config['input_params'], app_config['output_params'] = [], {}
 
         # Saving all the input config data like S3 Bucket Name, Aggregator name etc in app_config dictionary
         input_dict['input_base_path'] = 's3://' + input_bucket_name + '/' + input_directory + '/'
@@ -67,7 +69,6 @@ class ReadStagingData:
         input_dict['input_sheet_name'] = fileName
         input_dict['input_file_extension'] = file_extension
         input_dict['aggregator_name'] = aggregator
-        input_dict['is_aggregator_enabled'] = is_aggregator_enabled
         input_dict['input_layer'] = input_layer
 
         app_config['input_params'].append(input_dict)
@@ -81,6 +82,7 @@ class ReadStagingData:
         file_list = {item.key for item in s3_bucket.objects.filter(Prefix=path) if item.key.endswith(file_extension)}
         if not file_list:
             print('No parquet file found in S3 bucket path', bucket_name, path + '------')
+            raise FileNotFoundError
         else:
             print("\n-+-+-+-+-Connected to S3 Bucket:  " + bucket_name + '-+-+-+-+-')
         print("\n-+-+-+-+-Following is the list of parquet files found in s3 bucket-+-+-+-+-")

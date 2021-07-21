@@ -1,13 +1,11 @@
 {
-	"aggregator_name": "INGRAM",
+	"aggregator_name": "SGBM",
 	"input_bucket_name": "s3-use1-ap-pe-df-orders-insights-storage-d",
 	"output_bucket_name" : "s3-use1-ap-pe-df-orders-insights-storage-d",
-	"input_folder_name" : "INGRAM",
-	"year" : 2019,
-	"month": "01",
-	"product_type": "Electronic",
-	"trans_type": "Sales",
-	"file_extension": ".parquet",
-	"isEnabled": "Y",
-	"input_layer": "staging_layer"
+	"s3_base_dir" : "SGBM",
+	"job_type": "live",
+	"time_frame": "20170715",
+	"end_time_frame": "20170715",
+	"input_layer": "staging_layer",
+	"source_type": "warehouse"
 }
