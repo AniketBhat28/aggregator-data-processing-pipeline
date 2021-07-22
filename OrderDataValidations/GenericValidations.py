@@ -3,14 +3,10 @@
 ####################
 
 import logging as logger
-import os
-import json
 import pandas as pd
-import re
-import sys
 from OrderDataValidations.ReadStagingData import ReadStagingData
+from OrderDataValidations.DataValidationsErrorHandling import DataValidationsErrorHandling
 from cerberus import Validator
-from collections import Counter
 
 #############################
 #      Global Variables     #
@@ -19,7 +15,8 @@ from collections import Counter
 obj_read_data = ReadStagingData()
 # Creating object for Cerberus validator class
 validator = Validator()
-
+# Creating object for Data validations Error Handler class
+obj_error_handler = DataValidationsErrorHandling()
 #############################
 #     Class Functions       #
 #############################
@@ -27,24 +24,24 @@ validator = Validator()
 class GenericValidations:
     # Function to check if there are any Null values present in the data file
     def null_check(self, test_data):
-        logger.info("\n\t-+-+-+-Starting Null check on the data file-+-+-+-")
+        logger.info("\n-+-+-+-+-Starting Null check on the data file-+-+-+-+-")
         load_data = test_data
         null_Values = load_data[load_data.isnull().any(axis=1)]
         if null_Values.empty:
-            print("\n-+-+-+-There are no NULL values found in the data file-+-+-+-")
+            print("\n-+-+-+-+-There are no NULL values found in the data file-+-+-+-+-")
         else:
             print(null_Values,"\n-+-+-+-These are Null values found in data file. Refer to Data validation Report-+-+-+-")
             null_Values['Validation Result'] = "Failed Null check"
 
     # Function to check data file against generic validation rules json using Cerberus
     def generic_data_validations(self, test_data, generic_val_json):
-        logger.info("\n\t-+-+-+-Starting Generic Data Validations-+-+-+-")
+        logger.info("\n-+-+-+-+-Starting Generic Data Validations-+-+-+-+-")
         # Initializing the function with parquet file data and generic validation rules
         load_data = test_data
         generic_val_rules = generic_val_json["schema"]
 
         # Generic data validation
-        logger.info("\n-+-+-+-+-+-+ Starting Generic validations on Data File -+-+-+-+-+-+ \n")
+        logger.info("\n-+-+-+-+-Starting Generic validations on Data File-+-+-+-+-")
         cerberus_rule_val_df = load_data.to_dict('records')
         validator.allow_unknown = True
         generic_val_results = pd.DataFrame()
@@ -53,17 +50,20 @@ class GenericValidations:
             if(success):
                 print("Generic validation rules are checked and no issues are found for this data row")
             else:
-                print(validator.errors)
                 print(item)
                 print("\n")
-                # Storing the failed values in a dataframe for Reporting purpose
+                error = validator.errors
+                # Calling Error Handler class with reported to check if it is a forbidden error or not
+                obj_error_handler.glue_job_failure(error)
+
+                # # Storing the failed values in a dataframe for Reporting purpose
                 # failed_generic_val = pd.DataFrame.from_dict(item)
                 # generic_val_results = generic_val_results.append(failed_generic_val)
                 # generic_val_results['Validation Result'] = str(validator.errors)
 
     # Function to check ISBN format for any trailing zero's
     def check_isbn_format(self, test_data):
-        logger.info("\n-+-+-+-+-+-+ Starting ISBN check for trailing zero's -+-+-+-+-+-+ \n")
+        logger.info("\n-+-+-+-+-Starting ISBN check for trailing zero's-+-+-+-+-")
         load_data = test_data
         agg_name = load_data['source'][0]
         agg_list = ['AMAZON', 'BARNES', 'CHEGG', 'EBSCO', 'FOLLETT', 'PROQUEST', 'GARDNERS', 'REDSHELF', 'BLACKWELLS', 'INGRAMVS']
@@ -77,7 +77,8 @@ class GenericValidations:
                     # invalid_isbn_format = load_data[load_data['e_product_id'] == item]
                     # print(invalid_isbn_format[['e_product_id']])
                 else:
-                    print("ISBN does not have any trailing zero's and ISBN check is successful for this data row")
+                    isbn_val = item
+                    # print("ISBN does not have any trailing zero's and ISBN check is successful for this data row")
         else:
             for item in load_data['p_product_id']:
                 isbn_val = item

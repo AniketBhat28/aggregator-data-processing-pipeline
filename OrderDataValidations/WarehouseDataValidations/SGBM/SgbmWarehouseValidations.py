@@ -3,6 +3,7 @@ import os
 import json
 import pandas as pd
 from OrderDataValidations.ReadStagingData import ReadStagingData
+from OrderDataValidations.DataValidationsErrorHandling import DataValidationsErrorHandling
 from cerberus import Validator
 
 #############################
@@ -14,6 +15,8 @@ agg_specific_rules_json_local_path = os.path.dirname(os.path.realpath(__file__))
 obj_read_data = ReadStagingData()
 # Creating object for Cerberus validator class
 validator = Validator()
+# Creating object for Data validations Error Handler class
+obj_error_handler = DataValidationsErrorHandling()
 #############################
 #       Class Functions     #
 #############################
@@ -45,12 +48,15 @@ class SgbmWarehouseValidations:
                 print(validator.errors)
                 print(item)
                 print("\n")
+                error = validator.errors
+                # Calling Error Handler class with reported to check if it is a forbidden error or not
+                obj_error_handler.glue_job_failure(error)
 
-                # Storing the failed values in a dataframe for Reporting purpose
-                failed_sgbm_val = pd.DataFrame.from_dict(item, orient='index')
-                sgbm_val_results = pd.DataFrame()
-                sgbm_val_results = sgbm_val_results.append(failed_sgbm_val)
-                sgbm_val_results['Validation Result'] = str(validator.errors)
+                # # Storing the failed values in a dataframe for Reporting purpose
+                # failed_sgbm_val = pd.DataFrame.from_dict(item, orient='index')
+                # sgbm_val_results = pd.DataFrame()
+                # sgbm_val_results = sgbm_val_results.append(failed_sgbm_val)
+                # sgbm_val_results['Validation Result'] = str(validator.errors)
 
         # # Creating Final Data frame which failed validation
         # final_sgbm_val_results = pd.concat([sgbm_val_results], ignore_index=True, sort=True)
