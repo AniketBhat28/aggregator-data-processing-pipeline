@@ -27,14 +27,16 @@ class ReadStagingData:
     def read_staging_bucket(self, config_json):
 
         # Read Config Data Json to get input for S3 Bucket Name, Aggregator, Year etc
-        input_bucket_name = config_json['input_bucket_name']
-        output_bucket_name = config_json['output_bucket_name']
+        input_bucket_name = config_json['orders_bucket']
+        output_bucket_name = config_json['orders_bucket']
         aggregator = config_json['aggregator_name']
-        input_folder_name = config_json['s3_base_dir']
+        input_folder_name = config_json['s3_temp_dir']
         input_layer = config_json['input_layer']
-        time_frame = config_json['time_frame'][:4]
-        end_time_frame = config_json['end_time_frame'][:4]
+        time_frame = config_json['source_start_range'][:4]
+        end_time_frame = config_json['source_end_range'][:4]
         source_type = config_json['source_type']
+        env = config_json['env']
+        job_type = config_json['job_type']
 
         # Setting Year and file_extension value
         year = time_frame[:4]
@@ -70,6 +72,8 @@ class ReadStagingData:
         input_dict['input_file_extension'] = file_extension
         input_dict['aggregator_name'] = aggregator
         input_dict['input_layer'] = input_layer
+        input_dict['env'] = env
+        input_dict['job_type'] = job_type
 
         app_config['input_params'].append(input_dict)
         app_config['output_params']['output_bucket_name'] = output_bucket_name
@@ -85,7 +89,7 @@ class ReadStagingData:
             raise FileNotFoundError
         else:
             print("\n-+-+-+-+-Connected to S3 Bucket:  " + bucket_name + '-+-+-+-+-')
-        print("\n-+-+-+-+-Following is the list of parquet files found in s3 bucket-+-+-+-+-")
+        print("\n-+-+-+-+-Following is the list of parquet files found in s3 bucket-+-+-+-+-\n" + str(file_list))
         return file_list
 
     def read_parquet_file(self, key, bucket_name, s3_client=None):

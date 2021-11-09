@@ -19,6 +19,7 @@
       },
       "publisher_price_ori_currency": {
          "type": "string",
+         "nullable": true,
          "allowed": [
             "AUD"
          ]
@@ -32,6 +33,7 @@
       },
       "sale_type": {
          "type": "string",
+         "nullable": true,
          "regex": "[a-zA-Z]*",
          "allowed": [
             "Purchase",
@@ -40,6 +42,7 @@
       },
       "ex_currencies": {
          "type": "string",
+         "nullable": true,
          "allowed": [
             "AUD/NZD",
             "NA"
@@ -49,6 +52,12 @@
          "type": "string",
          "allowed": [
             "Print"
+         ]
+      },
+      "line_type": {
+         "type": "string",
+         "allowed": [
+            "S","E", "B", "I", "W", "G", "N"
          ]
       }
    }

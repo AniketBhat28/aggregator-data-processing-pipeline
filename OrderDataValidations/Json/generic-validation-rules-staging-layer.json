@@ -38,6 +38,7 @@
       },
       "sale_type":{
          "type":"string",
+         "nullable": true,
          "regex":"[a-zA-Z]*"
       },
       "DRM_model":{
@@ -79,26 +80,32 @@
       },
       "external_purchase_order":{
          "type":"string",
+         "nullable": true,
          "regex":"[A-Z0-9]*"
       },
       "e_product_id":{
          "type":"string",
+         "nullable": true,
          "regex":"[NA]{2}|97[89][0-9]{5}[0-9]{4}[0-9X]$"
       },
       "e_backup_product_id":{
          "type":"string",
+         "nullable": true,
          "regex":"[NA]{2}|[0-9]{13}|[0-9X]{10}"
       },
       "p_product_id":{
          "type":"string",
+         "nullable": true,
          "regex":"[NA]{2}|97[89][0-9]{5}[0-9]{4}[0-9X]$"
       },
      "p_backup_product_id":{
       "type":"string",
+        "nullable": true,
       "regex":"[NA]{2}|[0-9]{13}|[0-9X]{10}"
       },
       "misc_product_ids":{
          "type":"string",
+         "nullable": true,
          "regex":"[NA]{2}|[0-9]{13}|[0-9X]{10}"
       },
       "external_product_id_type":{
@@ -150,7 +157,8 @@
       "regex":"\\d*\\.?\\d*"
    },
    "billing_customer_id":{
-      "type":"string"
+      "type":"string",
+      "nullable": true
    },
    "list_discount_percentage":{
       "type":"number",

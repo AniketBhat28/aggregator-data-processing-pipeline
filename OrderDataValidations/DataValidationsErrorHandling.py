@@ -26,7 +26,7 @@ class DataValidationsErrorHandling:
         failed_data_row = list(dict.keys(input_error))
         error_list = list(dict.values(input_error))
 
-        forbidden_error_list = [['unknown field'], ['required field'], ['document is missing'], ['null value not allowed'], ['empty values not allowed']]
+        forbidden_error_list = [['unknown field'], ['required field'], ['document is missing'], ['empty values not allowed']]
         result = all(elem in forbidden_error_list for elem in error_list)
         if result:
             print("-+-+-+- Failing Glue Job because of Forbidden Error : " + error_list[0][0] + "-+-+-+-+-")

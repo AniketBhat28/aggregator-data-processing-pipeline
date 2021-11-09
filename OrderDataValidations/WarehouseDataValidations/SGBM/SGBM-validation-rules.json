@@ -19,6 +19,7 @@
       },
       "publisher_price_ori_currency": {
          "type": "string",
+         "nullable": true,
          "allowed": [
             "GBP",
             "NA"
@@ -32,6 +33,7 @@
       },
       "sale_type": {
          "type": "string",
+         "nullable": true,
          "regex": "[a-zA-Z]*",
          "allowed": [
             "Purchase",
@@ -40,6 +42,7 @@
       },
       "ex_currencies": {
          "type": "string",
+         "nullable": true,
          "allowed": [
             "SGD/USD",
             "SGD/GBP",
@@ -50,6 +53,12 @@
          "type": "string",
          "allowed": [
             "Print"
+         ]
+      },
+      "pub": {
+         "type": "string",
+         "allowed": [
+            "CU", "HC", "TF", "TU", "HW", "EU", "LA", "LR", "RL", "EE", "GP", "IN", "LH", "SM"
          ]
       }
    }

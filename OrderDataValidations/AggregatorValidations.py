@@ -65,38 +65,40 @@ class AggregatorValidations:
 
         # Calling aggregator validations function based on aggregator_name
         if aggregator == 'AMAZON':
-            obj_amazon_aggregator_validations.aggregator_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
+            agg_val_result = obj_amazon_aggregator_validations.aggregator_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
         elif aggregator == 'BARNES':
-            obj_barnes_aggregator_validations.aggregator_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
+            agg_val_result = obj_barnes_aggregator_validations.aggregator_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
         elif aggregator == 'CHEGG':
-            obj_chegg_aggregator_validations.aggregator_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
+            agg_val_result = obj_chegg_aggregator_validations.aggregator_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
         elif aggregator == 'EBSCO':
-            obj_ebsco_aggregator_validations.aggregator_specific_validations(input_data=test_data,agg_specific_rules=agg_val_json)
+            agg_val_result = obj_ebsco_aggregator_validations.aggregator_specific_validations(input_data=test_data,agg_specific_rules=agg_val_json)
         elif aggregator == 'FOLLETT':
-            obj_follett_aggregator_validations.aggregator_specific_validations(input_data=test_data,agg_specific_rules=agg_val_json)
+            agg_val_result = obj_follett_aggregator_validations.aggregator_specific_validations(input_data=test_data,agg_specific_rules=agg_val_json)
         elif aggregator == 'GARDNERS':
-            obj_gardners_aggregator_validations.aggregator_specific_validations(input_data=test_data,agg_specific_rules=agg_val_json)
+            agg_val_result = obj_gardners_aggregator_validations.aggregator_specific_validations(input_data=test_data,agg_specific_rules=agg_val_json)
         elif aggregator == 'PROQUEST':
-            obj_proquest_aggregator_validations.aggregator_specific_validations(input_data=test_data,agg_specific_rules=agg_val_json)
+            agg_val_result = obj_proquest_aggregator_validations.aggregator_specific_validations(input_data=test_data,agg_specific_rules=agg_val_json)
         elif aggregator == 'REDSHELF':
-            obj_redshelf_aggregator_validations.aggregator_specific_validations(input_data=test_data,agg_specific_rules=agg_val_json)
+            agg_val_result = obj_redshelf_aggregator_validations.aggregator_specific_validations(input_data=test_data,agg_specific_rules=agg_val_json)
         elif aggregator == 'BLACKWELLS':
-            obj_blackwells_aggregator_validations.aggregator_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
+            agg_val_result = obj_blackwells_aggregator_validations.aggregator_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
         elif aggregator == 'INGRAM':
-            obj_ingram_aggregator_validations.aggregator_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
+            agg_val_result = obj_ingram_aggregator_validations.aggregator_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
 
         # Calling owned sites validations function based on aggregator_name
         elif aggregator == 'OMS':
-            obj_oms_ownedsites_validations.ownedsites_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
+            agg_val_result = obj_oms_ownedsites_validations.ownedsites_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
         elif aggregator == 'UBW':
-            obj_ubw_ownedsites_validations.ownedsites_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
+            agg_val_result = obj_ubw_ownedsites_validations.ownedsites_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
 
         # Calling Warehouse validations function based on aggregator_name
         elif aggregator == 'AUSTLD':
-            obj_austld_warehouse_validations.warehouse_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
+            agg_val_result = obj_austld_warehouse_validations.warehouse_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
         elif aggregator == 'SGBM':
-            obj_sgbm_warehouse_validations.warehouse_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
+            agg_val_result = obj_sgbm_warehouse_validations.warehouse_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
         elif aggregator == 'UKBP':
-            obj_ukbp_warehouse_validations.warehouse_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
+            agg_val_result = obj_ukbp_warehouse_validations.warehouse_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
         elif aggregator == 'USPT':
-            obj_uspt_warehouse_validations.warehouse_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
+            agg_val_result = obj_uspt_warehouse_validations.warehouse_specific_validations(input_data=test_data, agg_specific_rules=agg_val_json)
+
+        return agg_val_result

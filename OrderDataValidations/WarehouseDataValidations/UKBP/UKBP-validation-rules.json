@@ -21,6 +21,7 @@
       },
       "publisher_price_ori_currency": {
          "type": "string",
+         "nullable": true,
          "allowed": [
             "GBP"
          ]
@@ -28,11 +29,14 @@
       "payment_amount_currency": {
          "type": "string",
          "allowed": [
-            "GBP"
+            "GBP",
+            "EUR",
+            "USD"
          ]
       },
       "sale_type": {
          "type": "string",
+         "nullable": true,
          "regex": "[a-zA-Z]*",
          "allowed": [
             "Purchase",
@@ -41,9 +45,11 @@
       },
       "ex_currencies": {
          "type": "string",
+         "nullable": true,
          "allowed": [
             "GBP/EUR",
-            "GBP/USD"
+            "GBP/USD",
+            "NA"
          ]
       },
       "sale_type_ori": {
@@ -57,6 +63,24 @@
          "type": "string",
          "allowed": [
             "Print"
+         ]
+      },
+      "pod_ori": {
+         "type": "string",
+         "allowed": [
+            "CPDT","CPTT","CRAR","CRCA","CRCN","CRCR","CRGC","CRIN","CRIS","CRNB","CRNE","CRNO","CRSG","CRSW","CRUG","CRUP","CRUR","CRXE","CRXN","CRXT","CXNS",
+            "EDRF","EDRS","EDTF","EDTS",
+            "GRXN","GXNS",
+            "IASP","IASS","IGRX","INCA","INCH","INCN","INCP","INCR","INGC","INGR","INSO","INST","INV","INXN","IPDT","IPGT","IPTT","IRIS","IRSW","IXNS",
+            "WRCN","WRCS","WRNB","WRUG"
+         ]
+      },
+      "sa_pack_flag": {
+         "type": "string",
+         "nullable": true,
+         "allowed": [
+            "P",
+            "C"
          ]
       }
    }

@@ -22,19 +22,25 @@ obj_error_handler = DataValidationsErrorHandling()
 #############################
 
 class GenericValidations:
-    # Function to check if there are any Null values present in the data file
-    def null_check(self, test_data):
-        logger.info("\n-+-+-+-+-Starting Null check on the data file-+-+-+-+-")
+    # Function to check if there are any NA values present in the data file
+    def na_check(self, test_data):
+        logger.info("\n-+-+-+-+-Starting NA check on the data file-+-+-+-+-")
         load_data = test_data
-        null_Values = load_data[load_data.isnull().any(axis=1)]
-        if null_Values.empty:
-            print("\n-+-+-+-+-There are no NULL values found in the data file-+-+-+-+-")
+        # null_Values = load_data[load_data.isnull().any(axis=1)]
+
+        if 'NA' in load_data.values:
+            print("\n-+-+-+-+-There are NA values found in the data lake-+-+-+-+-")
+            for row in load_data.head().itertuples():
+                for col in row:
+                    if str(col) == 'NA':
+                        print("[DATA ISSUE]: NA value is found in below data row")
+                        print(row)
         else:
-            print(null_Values,"\n-+-+-+-These are Null values found in data file. Refer to Data validation Report-+-+-+-")
-            null_Values['Validation Result'] = "Failed Null check"
+            print("\n-+-+-+-These are no NA values found in data file. Refer to Data validation Report-+-+-+-")
 
     # Function to check data file against generic validation rules json using Cerberus
     def generic_data_validations(self, test_data, generic_val_json):
+        print("\n-+-+-+-+-Starting Generic Data Validations-+-+-+-+-")
         logger.info("\n-+-+-+-+-Starting Generic Data Validations-+-+-+-+-")
         # Initializing the function with parquet file data and generic validation rules
         load_data = test_data
@@ -44,22 +50,31 @@ class GenericValidations:
         logger.info("\n-+-+-+-+-Starting Generic validations on Data File-+-+-+-+-")
         cerberus_rule_val_df = load_data.to_dict('records')
         validator.allow_unknown = True
-        generic_val_results = pd.DataFrame()
+        passed_data_val_df = pd.DataFrame()
+        failed_data_val_df = pd.DataFrame()
         for item in cerberus_rule_val_df:
             success = validator.validate(item, generic_val_rules)
-            if(success):
-                print("Generic validation rules are checked and no issues are found for this data row")
+            if (success):
+                item = {k: [v] for k, v in item.items()}
+                data_record_df = pd.DataFrame(item)
+                passed_data_val_df = pd.concat([passed_data_val_df, data_record_df], ignore_index=True)
+                passed_data_val_df['Validation Result'] = "PASS"
             else:
+                print(validator.errors)
                 print(item)
                 print("\n")
+                item = {k: [v] for k, v in item.items()}
+                data_record_df = pd.DataFrame(item)
+                failed_data_val_df = pd.concat([failed_data_val_df, data_record_df], ignore_index=True)
+                failed_data_val_df['Validation Result'] = "FAIL"
                 error = validator.errors
                 # Calling Error Handler class with reported to check if it is a forbidden error or not
                 obj_error_handler.glue_job_failure(error)
 
-                # # Storing the failed values in a dataframe for Reporting purpose
-                # failed_generic_val = pd.DataFrame.from_dict(item)
-                # generic_val_results = generic_val_results.append(failed_generic_val)
-                # generic_val_results['Validation Result'] = str(validator.errors)
+        # # Storing the data validation results in a dataframe for Reporting purpose
+        data_val_df = pd.concat([passed_data_val_df, failed_data_val_df])
+
+        return data_val_df
 
     # Function to check ISBN format for any trailing zero's
     def check_isbn_format(self, test_data):

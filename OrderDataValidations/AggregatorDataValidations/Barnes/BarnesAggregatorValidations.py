@@ -7,6 +7,7 @@ import os
 import json
 import pandas as pd
 from OrderDataValidations.ReadStagingData import ReadStagingData
+from OrderDataValidations.DataValidationsErrorHandling import DataValidationsErrorHandling
 from cerberus import Validator
 
 #############################
@@ -16,6 +17,8 @@ from cerberus import Validator
 agg_specific_rules_json_local_path = os.path.dirname(os.path.realpath(__file__))
 # Creating object for ReadStagingData class
 obj_read_data = ReadStagingData()
+# Creating object for Data validations Error Handler class
+obj_error_handler = DataValidationsErrorHandling()
 # Creating object for Cerberus validator class
 validator = Validator()
 #############################
@@ -38,25 +41,33 @@ class BarnesAggregatorValidations:
         # Initialising with barnes_val_rules with barnes_val_rule_json
         barnes_val_rules = barnes_val_rule_json["schema"]
         barnes_val_rules: dict
+        passed_data_val_df = pd.DataFrame()
+        failed_data_val_df = pd.DataFrame()
 
-        # Barnes aggregator validations for input_data against barnes_val_rules using cerberus
+        # Amazon aggregator validations for input_data against amazon_val_rules using cerberus
         cerberus_rule_val_df = load_data.to_dict('records')
         validator.allow_unknown = True
+
         for item in cerberus_rule_val_df:
             success = validator.validate(item, barnes_val_rules)
             if (success):
-                print("Barnes aggregator specific rules are checked and no issues are found for this data row")
+                item = {k: [v] for k, v in item.items()}
+                data_record_df = pd.DataFrame(item)
+                passed_data_val_df = pd.concat([passed_data_val_df, data_record_df], ignore_index=True)
+                passed_data_val_df['Validation Result'] = "PASS"
             else:
                 print(validator.errors)
                 print(item)
                 print("\n")
+                item = {k: [v] for k, v in item.items()}
+                data_record_df = pd.DataFrame(item)
+                failed_data_val_df = pd.concat([failed_data_val_df, data_record_df], ignore_index=True)
+                failed_data_val_df['Validation Result'] = "FAIL"
+                error = validator.errors
+                # Calling Error Handler class with reported to check if it is a forbidden error or not
+                obj_error_handler.glue_job_failure(error)
 
-                # Storing the failed values in a dataframe for Reporting purpose
-                # failed_barnes_val = pd.DataFrame.from_dict(item, orient='index')
-                # barnes_val_results = pd.DataFrame()
-                # barnes_val_results = barnes_val_results.append(failed_barnes_val)
-                # barnes_val_results['Validation Result'] = str(validator.errors)
+        # # Storing the data validation results in a dataframe for Reporting purpose
+        final_data_val_df = pd.concat([passed_data_val_df, failed_data_val_df])
 
-        # # Creating Final Data frame which failed validation Barnes validation rules
-        # final_barnes_val_results = pd.concat([barnes_val_results], ignore_index=True, sort=True)
-        # return final_barnes_val_results
+        return final_data_val_df

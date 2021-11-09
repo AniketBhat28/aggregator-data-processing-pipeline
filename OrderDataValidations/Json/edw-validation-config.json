@@ -1,0 +1,13 @@
+{
+      "aggregator_list": ["AMAZON", "PROQUEST", "FOLLETT", "EBSCO", "CHEGG", "REDSHELF", "BARNES", "GARDNERS",
+                          "BLACKWELLS", "OMS", "UBW", "AUSTLD", "SGBM", "UKBP", "USPT"],
+
+      "tran_type_list":  ["Rental", "Transfer", "Sale", "Subscription", "Gratis", "Stock Movement"],
+
+      "sale_type_list":  ["Return", null , "PDL", "REFUNDS", "Firm Order", "ATO Purchase", "Extension", "STL", "Switch", "Cancellation",
+                          "Subscription", "PDO", "Extension Cancellation", "Auto-Purchase", "Upgrade", "Checkout", "Perpetual", "ADJ",
+                          "Purchase", "ATO Loan", "PURCHASE", "Checkout Cancellation"],
+
+      "prod_frmt_cde_list": ["Print", "Electronic"]
+}
+

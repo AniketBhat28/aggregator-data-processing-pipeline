@@ -19,16 +19,29 @@
       },
       "sale_type": {
          "type": "string",
+         "nullable": true,
          "regex": "[a-zA-Z]*",
          "allowed": [
             "Purchase",
-            "Return"
+            "Return",
+            "NA"
          ]
       },
       "product_type": {
          "type": "string",
          "allowed": [
             "Print"
+         ]
+      },
+      "doc_type": {
+         "type": "string",
+         "required": true,
+         "empty": false,
+         "allowed": [
+            "RG", "RI", "RO", "RP", "RS", "RW", "S", "V", "Y", "ZC", "ZD", "ZR", "M", "GR", "ES1", "WRD", "T", "A", "G", "B", "C", "CA9", "CE1",
+            "CE2", "CE3", "CM1", "CM2", "CM3","CM4","CM8","CM9","EA9","ECA","ECB","ECD","EE1","EE2","EE3","EE4","EM1","EM2","EM4",
+            "EM6","EM7","EM9","EMA","EMB","EMC","EMD","EME","EMF","EMW","EP1","FC","FH","FP","FT","FU","I","N","OB","OJ","P","R","RA","RC","RD","RE",
+            "RDC","RDD","RDS","CSE","RB","EML","RF","U","X","»","CM6","RR","RV"
          ]
       }
    }

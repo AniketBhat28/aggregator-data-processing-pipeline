@@ -1,11 +1,12 @@
 {
-	"aggregator_name": "SGBM",
-	"input_bucket_name": "s3-use1-ap-pe-df-orders-insights-storage-d",
-	"output_bucket_name" : "s3-use1-ap-pe-df-orders-insights-storage-d",
-	"s3_base_dir" : "SGBM",
-	"job_type": "live",
-	"time_frame": "20170715",
-	"end_time_frame": "20170715",
+	"aggregator_name": "OMS",
+	"source_bucket": "s3-use1-ap-pe-df-orders-insights-storage-d",
+	"orders_bucket" : "s3-use1-ap-pe-df-orders-insights-storage-d",
+	"s3_temp_dir" : "OMS",
+	"source_start_range": "20211001",
+	"source_end_range": "20211003",
 	"input_layer": "staging_layer",
-	"source_type": "warehouse"
+	"source_type": "direct_sales",
+	"env": "uat",
+	"job_type": "BATCH"
 }
